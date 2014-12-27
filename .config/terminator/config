@@ -1,0 +1,38 @@
+[global_config]
+  title_transmit_bg_color = "#000000"
+  title_inactive_bg_color = "#000000"
+[keybindings]
+  go_up = Disabled
+  go_prev = Disabled
+  go_right = Disabled
+  go_next = Disabled
+  go_left = Disabled
+  hide_window = <Shift><Control>a
+[profiles]
+  [[default]]
+    scrollbar_position = hidden
+    palette = "#000000:#cc0000:#4e9a06:#c4a000:#3465a4:#75507b:#06989a:#d3d7cf:#555753:#ef2929:#8ae234:#fce94f:#729fcf:#ad7fa8:#34e2e2:#eeeeec"
+    login_shell = True
+    background_image = None
+    background_darkness = 0.69
+    scrollback_lines = 5000
+    background_type = transparent
+    use_system_font = False
+    cursor_color = "#d8d8d8"
+    foreground_color = "#d8d8d8"
+    scroll_on_output = False
+    show_titlebar = False
+    cursor_shape = ibeam
+    color_scheme = custom
+    font = Source Code Pro for Powerline 10
+    background_color = "#2e3436"
+    scrollback_infinite = True
+[layouts]
+  [[default]]
+    [[[child1]]]
+      type = Terminal
+      parent = window0
+    [[[window0]]]
+      type = Window
+      parent = ""
+[plugins]
