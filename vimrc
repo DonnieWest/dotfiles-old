@@ -1,8 +1,11 @@
-call plug#begin()
-" To install Vim Plug run:
-"
-" curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" Install Vim Plug if not installed
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall
+endif
 
+call plug#begin()
 "Generic Plugins
 
 Plug 'ctrlpvim/ctrlp.vim'
@@ -66,13 +69,13 @@ Plug 'camthompson/vim-ember'
 
 "Java/Android/Gradle plugins
 Plug 'rudes/vim-java'
-Plug 'artur-shaik/vim-javacomplete2'
+Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'development'}
 Plug 'idanarye/vim-vebugger'
 Plug 'tfnico/vim-gradle'
 Plug 'DonnieWest/VimStudio'
 "This one is an editted version of 'meonlol/vim-grand' and works with all
 "gradle projects
-" Plug 'DonnieWest/vim-grand', { 'rev' : 'develop' }
+" Plug 'DonnieWest/vim-grand', { 'branch' : 'develop' }
 
 "Ruby Plugins
 Plug 'tpope/vim-bundler'
@@ -95,6 +98,7 @@ Plug 'glidenote/octoeditor.vim'
 Plug 'amix/vim-zenroom2'
 
 call plug#end()
+
 
 filetype indent plugin on
 syn on
@@ -372,9 +376,7 @@ autocmd FileType gitcommit setlocal spell
 
 "VIM Android/Java/Gradle stuff
 
-
 let g:deoplete#omni_patterns.java = '[^. *\t]\.\w*'
-
 
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
@@ -383,26 +385,12 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 autocmd FileType java setlocal completefunc=javacomplete#CompleteParamsInfo
 
-autocmd FileType java :call javacomplete#StartServer()
-
 "Use vim-dispatch to run gradleTest
-autocmd FileType java nnoremap <F5> :w<bar>Dispatch gradle test -q<CR>
+autocmd FileType java nnoremap <F5> :w<bar>Make test<CR>
 
-autocmd FileType java nnoremap <F7> :call javacomplete#AddImport()<CR>
-
-autocmd FileType java nnoremap <F10> :call JavaSortImport()<CR>
-function! JavaSortImport()
-  call cursor(1, 1)
-  let start = search('^import') "find first line with import
-  let end = search('^\(import\|\n\)\@!') "find first non-import line
-  let end = end - 1
-  execute start.','.end.'sort'
-  execute start.','.end.'g/^$/d'
-  let newend = search('^\(import\|\n\)\@!') "find first non-import line
-  execute 'normal! '.newend.'gg'
-  execute 'normal! O'
-endfunction
-
+autocmd FileType java nnoremap <F8> :call javacomplete#AddImport()<CR>
+autocmd FileType java nnoremap <F6> :call javacomplete#RemoveUnusedImports()<CR>
+autocmd FileType java nnoremap <F7> :call javacomplete#AddMissingImports()<CR>
 
 "Tell syntastic where checkstyle is and use Google's checks
 let g:syntastic_java_checkstyle_classpath = "~/Code/checkstyle-6.1.1.jar"
@@ -444,7 +432,7 @@ endfunction
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 " blinking vertical bar
-" let &t_SI .= "\<Esc>[5 q"
+" let &t_SI .= "\<Esc>[6 q"
 " solid block
 " let &t_EI .= "\<Esc>[2 q"
 " 1 or 0 -> blinking block
