@@ -20,30 +20,25 @@ Plug 'osyo-manga/vim-over'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-tbone'
+Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-projectionist'
 Plug 'romainl/vim-qf'
 Plug 'rking/ag.vim'
-Plug 'tpope/vim-abolish'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'Raimondi/delimitMate'
-Plug 'tpope/vim-dispatch'
-Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-endwise'
-Plug 'sjl/gundo.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'Firef0x/PKGBUILD.vim'
 Plug 'airblade/vim-rooter'
 Plug 'honza/vim-snippets'
-Plug 'tpope/vim-tbone'
-Plug 'Wolfy87/vim-enmasse'
-Plug 'Wolfy87/vim-expand'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'uarun/vim-protobuf'
 Plug 'Valloric/ListToggle'
-
 Plug 'Shougo/deoplete.nvim'
 " Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
-Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 
 
 "Git plugins
@@ -85,7 +80,6 @@ Plug 'tpope/vim-rvm'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rake'
 " Plug 'vim-ruby/vim-ruby'
-Plug 'tpope/vim-rvm'
 Plug 'thoughtbot/vim-rspec'
 Plug 'osyo-manga/vim-monster'
 
@@ -113,9 +107,7 @@ set infercase
 set showmatch
 set autowrite
 set shiftround
-" set smartindent
 set shiftwidth=2
-" set copyindent
 set expandtab
 set softtabstop=2
 set tabstop=2
@@ -150,40 +142,17 @@ set splitright
 set ttimeoutlen=50
 " set completeopt-=preview
 
-set pastetoggle=<F1>
-nnoremap <F3> :GundoToggle<CR>
+nnoremap <F1> <Del>
+inoremap <F1> <Del>
+vnoremap <F1> <Del>
+snoremap <F1> <Del>
+cnoremap <F1> <Del>
+
 let g:NumberToggleTrigger="<F2>"
 nmap <F4> :TagbarToggle<CR>
 
 "Generic wildignores
 set wildignore+=*/build/*,*/log/*
-
-"Make VIM play nicely with TMUX
-if &term =~ '^screen' && exists('$TMUX')
-    " tmux will send xterm-style keys when xterm-keys is on
-    execute "set <xUp>=\e[1;*A"
-    execute "set <xDown>=\e[1;*B"
-    execute "set <xRight>=\e[1;*C"
-    execute "set <xLeft>=\e[1;*D"
-    execute "set <xHome>=\e[1;*H"
-    execute "set <xEnd>=\e[1;*F"
-    execute "set <Insert>=\e[2;*~"
-    execute "set <Delete>=\e[3;*~"
-    execute "set <PageUp>=\e[5;*~"
-    execute "set <PageDown>=\e[6;*~"
-    execute "set <xF1>=\e[1;*P"
-    execute "set <xF2>=\e[1;*Q"
-    execute "set <xF3>=\e[1;*R"
-    execute "set <xF4>=\e[1;*S"
-    execute "set <F5>=\e[15;*~"
-    execute "set <F6>=\e[17;*~"
-    execute "set <F7>=\e[18;*~"
-    execute "set <F8>=\e[19;*~"
-    execute "set <F9>=\e[20;*~"
-    execute "set <F10>=\e[21;*~"
-    execute "set <F11>=\e[23;*~"
-    execute "set <F12>=\e[24;*~"
-endif
 
 " Use SilverSearcher instead of Grep
 if executable("ag")
@@ -279,8 +248,8 @@ xnoremap <Leader>fr :call VisualFindAndReplaceWithSelection()<CR>
 
 
 "Make TComment work as I expect
-noremap <leader>/ :TComment <ENTER>
-vmap <leader>/ :TCommentBlock <ENTER>
+noremap <leader>/ :TComment <CR>
+vmap <leader>/ :TCommentBlock<CR>
 
 let g:tmux_navigator_no_mappings = 1
 
@@ -290,32 +259,12 @@ nnoremap <silent> <Alt-Down> :TmuxNavigateDown<cr>
 nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
 nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
 
-" let g:UltiSnipsExpandTrigger="<c-h>"
-" let g:UltiSnipsJumpForwardTrigger="<c-a>"
-" let g:UltiSnipsJumpBackwardTrigger="<c-d>"
-
 let g:airline_theme="zenburn"
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#right_sep = ''
 let g:airline#extensions#tabline#left_sep = ''
 let g:airline_right_sep = ''
 let g:airline_left_sep = ''
-
-
-" let g:ycm_filetype_blacklist = {
-"       \ 'tagbar' : 1,
-"       \ 'qf' : 1,
-"       \ 'notes' : 1,
-"       \ 'markdown' : 1,
-"       \ 'unite' : 1,
-"       \ 'text' : 1,
-"       \ 'vimwiki' : 1,
-"       \}
-"
-" let g:ycm_key_list_select_completion=[]
-" let g:ycm_key_list_previous_completion=[]
-" let g:ycm_path_to_python_interpreter = '/usr/bin/python2'
-" let g:ycm_server_keep_logfiles = 1
 
 
 "Deoplete stuff
@@ -353,7 +302,6 @@ noremap <leader>p :call LivedownPreview()<CR> \| :Goyo<CR>
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
 " Javascript Stuff
-"autocmd FileType javascript setlocal omnifunc=jscomplete#CompleteJS
 let g:mustache_abbreviations = 1
 
 " Ruby Stuff
@@ -430,18 +378,5 @@ endfunction
 " autocmd BufWritePost *.java silent! GrandCtags
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
-
-" blinking vertical bar
-" let &t_SI .= "\<Esc>[6 q"
-" solid block
-" let &t_EI .= "\<Esc>[2 q"
-" 1 or 0 -> blinking block
-" 2 solid block
-" 3 -> blinking underscore
-" 4 horizontal bar
-" Recent versions of xterm (282 or above) also support
-" 5 -> blinking vertical bar
-" 6 -> solid vertical bar
-
 
 source ~/.rhubarb_credentials
