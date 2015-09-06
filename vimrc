@@ -37,8 +37,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'uarun/vim-protobuf'
 Plug 'Valloric/ListToggle'
-Plug 'Shougo/deoplete.nvim'
-" Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 
 
 "Git plugins
@@ -267,18 +266,26 @@ let g:airline_right_sep = ''
 let g:airline_left_sep = ''
 
 
-"Deoplete stuff
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
+let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
 
-inoremap <expr><C-y>  deoplete#mappings#close_popup()
-inoremap <expr><C-e>  deoplete#mappings#cancel_popup()
 
-" <C-h>, <BS>: close popup and delete backword char.
-" inoremap <expr><C-h> deolete#mappings#smart_close_popup()."\<C-h>"
-" inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
+let g:ycm_filetype_blacklist = {
+      \ 'tagbar' : 1,
+      \ 'qf' : 1,
+      \ 'notes' : 1,
+      \ 'markdown' : 1,
+      \ 'unite' : 1,
+      \ 'text' : 1,
+      \ 'vimwiki' : 1,
+      \}
 
-let g:deoplete#omni_patterns = {}
+" Set ultisnips triggers
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:ultisnips_java_brace_style="none"
+
 
 " HTML/CSS/Markdown/Octopress Stuff
 
@@ -306,7 +313,6 @@ let g:mustache_abbreviations = 1
 
 " Ruby Stuff
 
-let g:deoplete#omni_patterns.ruby = ['[^. *\t]\.\w*', '\h\w*::']
 " autocmd FileType ruby,eruby setlocal omnifunc=rubycomplete#Complete
 autocmd FileType ruby compiler ruby
 " autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 0
@@ -323,8 +329,6 @@ autocmd FileType gitcommit setlocal spell
 
 
 "VIM Android/Java/Gradle stuff
-
-let g:deoplete#omni_patterns.java = '[^. *\t]\.\w*'
 
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
