@@ -6,9 +6,11 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 call plug#begin()
+
 "Generic Plugins
 
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'scrooloose/syntastic'
 Plug 'bling/vim-airline'
 Plug 'majutsushi/tagbar'
@@ -54,22 +56,20 @@ Plug 'Valloric/MatchTagAlways'
 
 "Javascript Plugins
 Plug 'jelera/vim-javascript-syntax'
+Plug 'moll/vim-node'
 Plug 'wookiehangover/jshint.vim'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'ain/vim-npm'
 Plug 'ain/vim-bower'
 Plug 'camthompson/vim-ember'
-" Plug 'marijnh/tern_for_vim'
+Plug 'marijnh/tern_for_vim'
 
 "Java/Android/Gradle plugins
 Plug 'rudes/vim-java'
-Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'development'}
+Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master'}
 Plug 'idanarye/vim-vebugger'
 Plug 'tfnico/vim-gradle'
-Plug 'DonnieWest/VimStudio'
-"This one is an editted version of 'meonlol/vim-grand' and works with all
-"gradle projects
-" Plug 'DonnieWest/vim-grand', { 'branch' : 'develop' }
+Plug 'DonnieWest/VimStudio', { 'branch': 'master'}
 
 "Ruby Plugins
 Plug 'tpope/vim-bundler'
@@ -78,7 +78,7 @@ Plug 'tpope/vim-haml'
 Plug 'tpope/vim-rvm'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rake'
-" Plug 'vim-ruby/vim-ruby'
+" Plug 'vim-ruby/vim-ruby' "Incompatible with Neovim
 Plug 'thoughtbot/vim-rspec'
 Plug 'osyo-manga/vim-monster'
 
@@ -89,6 +89,7 @@ Plug 'tangledhelix/vim-octopress'
 Plug 'shime/vim-livedown'
 Plug 'glidenote/octoeditor.vim'
 Plug 'amix/vim-zenroom2'
+Plug 'mrtazz/simplenote.vim'
 
 call plug#end()
 
@@ -130,8 +131,8 @@ set nowb
 set noswapfile
 set shortmess+=I
 set showcmd
-set t_ut=
-set t_Co=256
+" set t_ut=
+" set t_Co=256
 set laststatus=2
 set diffopt+=vertical
 nnoremap ! :! 
@@ -151,7 +152,7 @@ let g:NumberToggleTrigger="<F2>"
 nmap <F4> :TagbarToggle<CR>
 
 "Generic wildignores
-set wildignore+=*/build/*,*/log/*
+set wildignore+=*/build/*,*/log/*,*/.git/*,**/*.pyc
 
 " Use SilverSearcher instead of Grep
 if executable("ag")
@@ -160,14 +161,15 @@ if executable("ag")
     let g:ctrlp_use_caching = 0
 endif
 
+let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+
 "Use unix clipboard
 set clipboard+=unnamedplus
 
 " Some default colorschemes I like
-"colorscheme railscasts
-"colorscheme hemisu
+" colorscheme railscasts
 colorscheme darkburn
-"colorscheme jellyx
+" colorscheme distinguished
 
 "Gimme a colored column for lines that are too long
 highlight ColorColumn ctermbg=magenta
@@ -265,7 +267,7 @@ let g:airline#extensions#tabline#left_sep = ''
 let g:airline_right_sep = ''
 let g:airline_left_sep = ''
 
-
+let g:ycm_use_ultisnips_completer=1
 let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
 
@@ -286,7 +288,6 @@ let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 let g:ultisnips_java_brace_style="none"
 
-
 " HTML/CSS/Markdown/Octopress Stuff
 
 let g:user_emmet_install_global = 0
@@ -302,7 +303,7 @@ autocmd User GoyoLeave Limelight!
 let g:limelight_conceal_ctermfg = '232'
 autocmd FileType octopress setlocal lbr formatoptions=l textwidth=80 spell spelllang=en_us omnifunc=''
 
-noremap <leader>p :call LivedownPreview()<CR> \| :Goyo<CR>
+noremap <leader>p :LivedownPreview<CR> \| :Goyo<CR>
 
 " Python Stuff
 
@@ -330,12 +331,14 @@ autocmd FileType gitcommit setlocal spell
 
 "VIM Android/Java/Gradle stuff
 
+"Make vim-rooter recognize build.gradle as the top of the directory
+let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
+
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 "Setup Javacomplete2 as omnifunc
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
-autocmd FileType java setlocal completefunc=javacomplete#CompleteParamsInfo
 
 "Use vim-dispatch to run gradleTest
 autocmd FileType java nnoremap <F5> :w<bar>Make test<CR>
@@ -353,33 +356,10 @@ function! AndroidEmulator(emulatorName)
   execute 'silent! Dispatch! /home/igneo676/android-sdk-linux/tools/emulator @'.a:emulatorName." &"
 endfunction
 
-"" Temporary Junk Yard until I'm certain I really like my VimStudio Plugin
+command! JDB :call vebugger#jdb#start('Main',{
+    \'classpath':'build/classes',
+    \'srcpath':'src'})
 
-" "Make Vim-Grand like an IDE - automatically detect changes to libraries in
-" "build.gradle and reload new classpath
-" au BufWritePost build.gradle call GrandPathsOnBuildScriptChanged()
-" function! GrandPathsOnBuildScriptChanged() 
-"   call delete('.grand_source_paths')
-"   call delete('.output_paths_result')
-"   execute '!./gradlew outputPaths'
-"   GrandSetup
-" endfunction
-"
-" " When VIM is started, if the current directory contains a build.gradle file
-" " without a paths file, it will tell Gradle to generate said file and load the
-" " classpath to Javacomplete2
-" autocmd VimEnter * call GrandPathsIfGradle()
-" function! GrandPathsIfGradle()
-"   if filereadable("build.gradle")
-"     if !filereadable(".output_paths_result")
-"       silent execute "Dispatch! ./gradlew outputPaths" | GrandSetup
-"     endif
-"   endif
-" endfunction
-
-
-"Run GrandCtags command every time you save a java file
-" autocmd BufWritePost *.java silent! GrandCtags
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
