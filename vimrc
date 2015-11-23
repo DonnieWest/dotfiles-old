@@ -1,6 +1,6 @@
 " Install Vim Plug if not installed
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+if empty(glob('~/.config/nvim/autoload/plug.vim'))
+  silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall
 endif
@@ -9,6 +9,7 @@ call plug#begin()
 
 "Generic Plugins
 
+Plug 'PeterRincker/vim-argumentative'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'scrooloose/syntastic'
@@ -44,6 +45,7 @@ Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 
 "Git plugins
 Plug 'mattn/gist-vim'
+Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 "vim-rhubarb variables set in ~/.rhubarb_credentials
@@ -55,7 +57,7 @@ Plug 'mattn/emmet-vim'
 Plug 'Valloric/MatchTagAlways'
 
 "Javascript Plugins
-Plug 'jelera/vim-javascript-syntax'
+Plug 'pangloss/vim-javascript'
 Plug 'moll/vim-node'
 Plug 'wookiehangover/jshint.vim'
 Plug 'mustache/vim-mustache-handlebars'
@@ -66,7 +68,7 @@ Plug 'marijnh/tern_for_vim'
 
 "Java/Android/Gradle plugins
 Plug 'rudes/vim-java'
-Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master'}
+Plug 'DonnieWest/vim-javacomplete2', { 'branch': 'Gradle'}
 Plug 'idanarye/vim-vebugger'
 Plug 'tfnico/vim-gradle'
 Plug 'DonnieWest/VimStudio', { 'branch': 'master'}
@@ -140,13 +142,13 @@ nnoremap ; :
 set splitbelow
 set splitright
 set ttimeoutlen=50
-" set completeopt-=preview
+set completeopt-=preview
 
-nnoremap <F1> <Del>
-inoremap <F1> <Del>
-vnoremap <F1> <Del>
-snoremap <F1> <Del>
-cnoremap <F1> <Del>
+" nnoremap <F1> <Del>
+" inoremap <F1> <Del>
+" vnoremap <F1> <Del>
+" snoremap <F1> <Del>
+" cnoremap <F1> <Del>
 
 let g:NumberToggleTrigger="<F2>"
 nmap <F4> :TagbarToggle<CR>
@@ -332,20 +334,20 @@ autocmd FileType gitcommit setlocal spell
 "VIM Android/Java/Gradle stuff
 
 "Make vim-rooter recognize build.gradle as the top of the directory
-let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
+" let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
 
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 "Setup Javacomplete2 as omnifunc
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
+" autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 "Use vim-dispatch to run gradleTest
 autocmd FileType java nnoremap <F5> :w<bar>Make test<CR>
 
-autocmd FileType java nnoremap <F8> :call javacomplete#AddImport()<CR>
-autocmd FileType java nnoremap <F6> :call javacomplete#RemoveUnusedImports()<CR>
-autocmd FileType java nnoremap <F7> :call javacomplete#AddMissingImports()<CR>
+autocmd FileType java nnoremap <F8> :call javacomplete#imports#Add()<CR>
+autocmd FileType java nnoremap <F6> :call javacomplete#imports#RemoveUnused()<CR>
+autocmd FileType java nnoremap <F7> :call javacomplete#imports#AddMissing()<CR>
 
 "Tell syntastic where checkstyle is and use Google's checks
 let g:syntastic_java_checkstyle_classpath = "~/Code/checkstyle-6.1.1.jar"
