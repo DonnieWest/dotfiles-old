@@ -12,7 +12,8 @@ call plug#begin()
 Plug 'PeterRincker/vim-argumentative'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'FelikZ/ctrlp-py-matcher'
-" Plug 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic'
+" Plug 'DonnieWest/neomake', {'branch': 'fixexpansion'}
 Plug 'bling/vim-airline'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
@@ -41,7 +42,7 @@ Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'uarun/vim-protobuf'
 Plug 'Valloric/ListToggle'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
-" Plug 'benekastah/neomake'
+Plug 'terryma/vim-multiple-cursors'
 Plug 'pgdouyon/vim-accio'
 
 "Git plugins
@@ -60,7 +61,6 @@ Plug 'Valloric/MatchTagAlways'
 "Javascript Plugins
 Plug 'pangloss/vim-javascript'
 Plug 'moll/vim-node'
-Plug 'wookiehangover/jshint.vim'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'ain/vim-npm'
 Plug 'ain/vim-bower'
@@ -153,6 +153,7 @@ set splitbelow
 set splitright
 set ttimeoutlen=50
 set completeopt-=preview
+set tags=.tags;
 set nofoldenable    " disable folding
 
 " nnoremap <F1> <Del>
@@ -163,6 +164,7 @@ set nofoldenable    " disable folding
 
 let g:NumberToggleTrigger="<F2>"
 nmap <F4> :TagbarToggle<CR>
+nnoremap <F3> :UndotreeToggle<cr>
 
 "Generic wildignores
 set wildignore+=*/log/*,*/.git/*,**/*.pyc
@@ -176,6 +178,7 @@ endif
 
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 
+let g:ag_working_path_mode="r"
 "Use unix clipboard
 set clipboard+=unnamedplus
 
@@ -214,6 +217,19 @@ map Q <Nop>
 nnoremap <silent> <C-Right> :bnext<CR>
 nnoremap <silent> <C-Left> :bprevious<CR>
 nnoremap <silent> <C-Del> :bd
+
+" Experimentally integrate YouCompleteMe with vim-multiple-cursors, otherwise
+" the numerous Cursor events cause great slowness
+" (https://github.com/kristijanhusak/vim-multiple-cursors/issues/4)
+
+function Multiple_cursors_before()
+  let s:old_ycm_whitelist = g:ycm_filetype_whitelist
+  let g:ycm_filetype_whitelist = {}
+endfunction
+
+function Multiple_cursors_after()
+  let g:ycm_filetype_whitelist = s:old_ycm_whitelist
+endfunction
 
 
 "Some nice mappings for ag
@@ -349,9 +365,9 @@ autocmd FileType gitcommit setlocal spell
 " let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
 
 "Disable syntastic and use Neomake for Java files
-autocmd! BufWritePost *.java Neomake
+autocmd! BufWritePost *.java Accio gradle %
 let g:syntastic_java_checkers = ['']
-let g:neomake_verbose = 3
+let g:syntastic_enable_javac_checker = 0
 
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
