@@ -12,7 +12,7 @@ call plug#begin()
 Plug 'PeterRincker/vim-argumentative'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'FelikZ/ctrlp-py-matcher'
-Plug 'scrooloose/syntastic'
+" Plug 'scrooloose/syntastic'
 Plug 'bling/vim-airline'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
@@ -41,7 +41,8 @@ Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'uarun/vim-protobuf'
 Plug 'Valloric/ListToggle'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
-
+" Plug 'benekastah/neomake'
+Plug 'pgdouyon/vim-accio'
 
 "Git plugins
 Plug 'mattn/gist-vim'
@@ -68,7 +69,7 @@ Plug 'marijnh/tern_for_vim'
 
 "Java/Android/Gradle plugins
 Plug 'rudes/vim-java'
-Plug 'DonnieWest/vim-javacomplete2', { 'branch': 'Gradle'}
+Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master'}
 Plug 'idanarye/vim-vebugger'
 Plug 'tfnico/vim-gradle'
 Plug 'DonnieWest/VimStudio', { 'branch': 'master'}
@@ -85,6 +86,15 @@ Plug 'thoughtbot/vim-rspec'
 Plug 'osyo-manga/vim-monster'
 
 "Markdown/Octopress Plugins
+
+function! BuildComposer(info)
+  if a:info.status != 'unchanged' || a:info.force
+    !cargo build --release
+    UpdateRemotePlugins
+  endif
+endfunction
+
+Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'tangledhelix/vim-octopress'
@@ -143,6 +153,7 @@ set splitbelow
 set splitright
 set ttimeoutlen=50
 set completeopt-=preview
+set nofoldenable    " disable folding
 
 " nnoremap <F1> <Del>
 " inoremap <F1> <Del>
@@ -154,7 +165,7 @@ let g:NumberToggleTrigger="<F2>"
 nmap <F4> :TagbarToggle<CR>
 
 "Generic wildignores
-set wildignore+=*/build/*,*/log/*,*/.git/*,**/*.pyc
+set wildignore+=*/log/*,*/.git/*,**/*.pyc
 
 " Use SilverSearcher instead of Grep
 if executable("ag")
@@ -213,7 +224,6 @@ nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 " Map ,t to search for my Todos
 map <LEADER>t :Ag TODO: <CR>
 
-
 "Mapping to toggle quickfix window
 let g:lt_location_list_toggle_map = '<leader>l'
 let g:lt_quickfix_list_toggle_map = '<leader>q'
@@ -231,7 +241,7 @@ autocmd BufReadPost *
   \ endif
 
 "Automatically load .vimrc changes
-au BufWritePost .vimrc so $MYVIMRC
+au BufWritePost init.vim so $MYVIMRC
 
 " Automatically resize vim when terminal or tmux pane resized
 autocmd VimResized * :wincmd =
@@ -313,9 +323,11 @@ autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
 " Javascript Stuff
 let g:mustache_abbreviations = 1
+let g:tern_request_timeout = 6000
 
 " Ruby Stuff
 
+let g:monster#completion#rcodetools#backend = "async_rct_complete"
 " autocmd FileType ruby,eruby setlocal omnifunc=rubycomplete#Complete
 autocmd FileType ruby compiler ruby
 " autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 0
@@ -336,14 +348,16 @@ autocmd FileType gitcommit setlocal spell
 "Make vim-rooter recognize build.gradle as the top of the directory
 " let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
 
+"Disable syntastic and use Neomake for Java files
+autocmd! BufWritePost *.java Neomake
+let g:syntastic_java_checkers = ['']
+let g:neomake_verbose = 3
+
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 "Setup Javacomplete2 as omnifunc
-" autocmd FileType java setlocal omnifunc=javacomplete#Complete
-
-"Use vim-dispatch to run gradleTest
-autocmd FileType java nnoremap <F5> :w<bar>Make test<CR>
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 autocmd FileType java nnoremap <F8> :call javacomplete#imports#Add()<CR>
 autocmd FileType java nnoremap <F6> :call javacomplete#imports#RemoveUnused()<CR>
