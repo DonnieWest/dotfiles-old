@@ -11,9 +11,6 @@ call plug#begin()
 
 Plug 'mbbill/undotree'
 Plug 'PeterRincker/vim-argumentative'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'FelikZ/ctrlp-py-matcher'
-Plug 'scrooloose/syntastic'
 Plug 'bling/vim-airline'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
@@ -30,7 +27,6 @@ Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-projectionist'
 Plug 'romainl/vim-qf'
-Plug 'rking/ag.vim'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'Raimondi/delimitMate'
 Plug 'flazz/vim-colorschemes'
@@ -40,14 +36,17 @@ Plug 'honza/vim-snippets'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'uarun/vim-protobuf'
-Plug 'milkypostman/vim-togglelist'
+Plug 'Valloric/ListToggle'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 Plug 'terryma/vim-multiple-cursors'
 Plug 'pgdouyon/vim-accio'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'mhinz/vim-grepper'
 
 "Git plugins
 Plug 'shumphrey/fugitive-gitlab.vim'
 Plug 'mattn/gist-vim'
+Plug 'jreybert/vimagit'
 Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
@@ -73,7 +72,7 @@ Plug 'rudes/vim-java'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master'}
 Plug 'idanarye/vim-vebugger'
 Plug 'tfnico/vim-gradle'
-Plug 'DonnieWest/VimStudio', { 'branch': 'master'}
+Plug 'DonnieWest/vim-android', { 'branch': 'UseJavaComplete2Information' }
 
 "Ruby Plugins
 Plug 'tpope/vim-bundler'
@@ -165,15 +164,9 @@ nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
 " Use SilverSearcher instead of Grep
 if executable("ag")
     set grepprg=ag\ --nogroup\ --nocolor\ --smart-case
-    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-    let g:ctrlp_use_caching = 0
 endif
 
-let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-
 let g:ag_working_path_mode="r"
-
-
 "Use unix clipboard
 set clipboard+=unnamedplus
 
@@ -224,12 +217,19 @@ function Multiple_cursors_after()
 endfunction
 
 "Some nice mappings for ag
-nnoremap \ :Ag<SPACE>
-nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap <C-p> :FZF<ENTER>
+
+nnoremap \  :Grepper! -tool ag  -open -switch<cr>
+" nnoremap \ :Ag<SPACE>
+" nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
 
 " Map ,t to search for my Todos
 map <LEADER>t :Ag TODO: <CR>
 
+"Mapping to toggle quickfix window
+let g:lt_location_list_toggle_map = '<leader>l'
+let g:lt_quickfix_list_toggle_map = '<leader>q'
 
 " Automatically resize quickfix window to contents
 au FileType qf call AdjustWindowHeight(3, 15)
@@ -327,7 +327,6 @@ autocmd User GoyoLeave Limelight!
 let g:limelight_conceal_ctermfg = '232'
 autocmd FileType octopress setlocal lbr formatoptions=l textwidth=80 spell spelllang=en_us omnifunc=''
 
-" noremap <leader>p :LivedownPreview<CR> \| :Goyo<CR>
 
 " Python Stuff
 
@@ -360,37 +359,19 @@ autocmd FileType gitcommit setlocal spell
 "Make vim-rooter recognize build.gradle as the top of the directory
 " let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
 
-"Disable syntastic and use Neomake for Java files
-autocmd! BufWritePost *.java Accio gradle %
-let g:syntastic_java_checkers = ['']
+autocmd! BufWritePost *.java Accio gradle assembleDebug
+
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 "Setup Javacomplete2 as omnifunc
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
-"Use Neomake for Java files
-
-" autocmd! BufWritePost * Neomake
-" let g:syntastic_enable_javac_checker = 0
-
-
 autocmd FileType java nnoremap <F8> :call javacomplete#imports#Add()<CR>
 autocmd FileType java nnoremap <F6> :call javacomplete#imports#RemoveUnused()<CR>
 autocmd FileType java nnoremap <F7> :call javacomplete#imports#AddMissing()<CR>
 
-"Tell syntastic where checkstyle is and use Google's checks
-" let g:syntastic_java_checkstyle_classpath = "~/Code/checkstyle-6.1.1.jar"
-" let g:syntastic_java_checkstyle_conf_file = "~/Code/google_checks.xml"
-
-command! -nargs=1 Emulator call AndroidEmulator("<args>")
-function! AndroidEmulator(emulatorName)
-  execute 'silent! Dispatch! /home/igneo676/android-sdk-linux/tools/emulator @'.a:emulatorName." &"
-endfunction
-
-command! JDB :call vebugger#jdb#start('Main',{
-    \'classpath':'build/classes',
-    \'srcpath':'src'})
-
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
+
+source ~/.rhubarb_credentials
