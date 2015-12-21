@@ -9,6 +9,7 @@ call plug#begin()
 
 "Generic Plugins
 
+Plug 'scrooloose/syntastic'
 Plug 'mbbill/undotree'
 Plug 'PeterRincker/vim-argumentative'
 Plug 'bling/vim-airline'
@@ -37,7 +38,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'uarun/vim-protobuf'
 Plug 'Valloric/ListToggle'
-Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 Plug 'terryma/vim-multiple-cursors'
 Plug 'pgdouyon/vim-accio'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -66,13 +67,15 @@ Plug 'ain/vim-npm'
 Plug 'ain/vim-bower'
 Plug 'camthompson/vim-ember'
 Plug 'marijnh/tern_for_vim'
+Plug 'dpsxp/vim-jshint-compiler'
+Plug 'leafgarland/typescript-vim'
 
 "Java/Android/Gradle plugins
-Plug 'rudes/vim-java'
+Plug 'mattn/vim-javafmt'
+" Plug 'rudes/vim-java'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master'}
 Plug 'idanarye/vim-vebugger'
-Plug 'tfnico/vim-gradle'
-Plug 'DonnieWest/vim-android', { 'branch': 'UseJavaComplete2Information' }
+Plug 'hsanson/vim-android'
 
 "Ruby Plugins
 Plug 'tpope/vim-bundler'
@@ -151,6 +154,7 @@ set ttimeoutlen=50
 set completeopt-=preview
 set tags=.tags;
 set nofoldenable    " disable folding
+set list listchars=tab:»·,trail:·,nbsp:·
 
 let g:NumberToggleTrigger="<F2>"
 nnoremap <F4> :TagbarToggle<CR>
@@ -226,10 +230,6 @@ nnoremap \  :Grepper! -tool ag  -open -switch<cr>
 
 " Map ,t to search for my Todos
 map <LEADER>t :Ag TODO: <CR>
-
-"Mapping to toggle quickfix window
-let g:lt_location_list_toggle_map = '<leader>l'
-let g:lt_quickfix_list_toggle_map = '<leader>q'
 
 " Automatically resize quickfix window to contents
 au FileType qf call AdjustWindowHeight(3, 15)
@@ -335,6 +335,7 @@ autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 " Javascript Stuff
 let g:mustache_abbreviations = 1
 let g:tern_request_timeout = 6000
+autocmd! BufWritePost *.js Accio jshint
 
 " Ruby Stuff
 
@@ -358,8 +359,8 @@ autocmd FileType gitcommit setlocal spell
 
 "Make vim-rooter recognize build.gradle as the top of the directory
 " let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
-
-autocmd! BufWritePost *.java Accio gradle assembleDebug
+let g:syntastic_mode_map = { 'passive_filetypes': ['java', 'javascript'] }
+autocmd! BufWritePost *.java Accio gradle test
 
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
@@ -373,5 +374,3 @@ autocmd FileType java nnoremap <F7> :call javacomplete#imports#AddMissing()<CR>
 
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
-
-source ~/.rhubarb_credentials
