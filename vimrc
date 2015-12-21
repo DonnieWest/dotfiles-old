@@ -43,6 +43,7 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'pgdouyon/vim-accio'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'mhinz/vim-grepper'
+Plug 'Yggdroot/indentLine'
 
 "Git plugins
 Plug 'shumphrey/fugitive-gitlab.vim'
@@ -58,6 +59,7 @@ Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5.vim'
 Plug 'mattn/emmet-vim'
 Plug 'Valloric/MatchTagAlways'
+Plug 'KabbAmine/vCoolor.vim'
 
 "Javascript Plugins
 Plug 'pangloss/vim-javascript'
@@ -72,7 +74,7 @@ Plug 'leafgarland/typescript-vim'
 
 "Java/Android/Gradle plugins
 Plug 'mattn/vim-javafmt'
-" Plug 'rudes/vim-java'
+Plug 'vim-jp/vim-java'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master'}
 Plug 'idanarye/vim-vebugger'
 Plug 'hsanson/vim-android'
@@ -159,6 +161,7 @@ set list listchars=tab:»·,trail:·,nbsp:·
 let g:NumberToggleTrigger="<F2>"
 nnoremap <F4> :TagbarToggle<CR>
 nnoremap <F3> :UndotreeToggle<cr>
+nnoremap <F5> :IndentLinesToggle<CR>
 
 "Generic wildignores
 set wildignore+=*/log/*,*/.git/*,**/*.pyc
@@ -374,3 +377,5 @@ autocmd FileType java nnoremap <F7> :call javacomplete#imports#AddMissing()<CR>
 
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
+
+source ~/.rhubarb_credentials
