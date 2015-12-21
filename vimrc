@@ -349,7 +349,7 @@ autocmd FileType gitcommit setlocal spell
 
 let g:syntastic_mode_map = { 'passive_filetypes': ['java', 'javascript'] }
 autocmd! BufWritePost *.java Accio gradle test
-autocmd FileType java setlocal nnoremap <leader>fm :JavaFmt<CR>
+autocmd FileType java nnoremap <buffer> <leader>fm :JavaFmt<CR>
 
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
@@ -360,7 +360,6 @@ autocmd FileType java setlocal omnifunc=javacomplete#Complete
 autocmd FileType java nnoremap <F8> :call javacomplete#imports#Add()<CR>
 autocmd FileType java nnoremap <F6> :call javacomplete#imports#RemoveUnused()<CR>
 autocmd FileType java nnoremap <F7> :call javacomplete#imports#AddMissing()<CR>
-
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
