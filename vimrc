@@ -8,10 +8,9 @@ endif
 call plug#begin()
 
 "Generic Plugins
-
 Plug 'scrooloose/syntastic'
+Plug 'pgdouyon/vim-accio'
 Plug 'mbbill/undotree'
-Plug 'PeterRincker/vim-argumentative'
 Plug 'bling/vim-airline'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
@@ -39,11 +38,10 @@ Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'uarun/vim-protobuf'
 Plug 'Valloric/ListToggle'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-Plug 'terryma/vim-multiple-cursors'
-Plug 'pgdouyon/vim-accio'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'mhinz/vim-grepper'
 Plug 'Yggdroot/indentLine'
+Plug 'Chiel92/vim-autoformat'
 
 "Git plugins
 Plug 'shumphrey/fugitive-gitlab.vim'
@@ -70,6 +68,8 @@ Plug 'ain/vim-bower'
 Plug 'camthompson/vim-ember'
 Plug 'marijnh/tern_for_vim'
 Plug 'dpsxp/vim-jshint-compiler'
+
+"Typescript Plugins
 Plug 'leafgarland/typescript-vim'
 
 "Java/Android/Gradle plugins
@@ -88,7 +88,6 @@ Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rake'
 " Plug 'vim-ruby/vim-ruby' "Incompatible with Neovim
 Plug 'thoughtbot/vim-rspec'
-Plug 'osyo-manga/vim-monster'
 
 "Markdown/Octopress Plugins
 
@@ -105,7 +104,6 @@ Plug 'junegunn/limelight.vim'
 Plug 'tangledhelix/vim-octopress'
 Plug 'glidenote/octoeditor.vim'
 Plug 'amix/vim-zenroom2'
-Plug 'mrtazz/simplenote.vim'
 
 call plug#end()
 
@@ -163,10 +161,15 @@ nnoremap <F4> :TagbarToggle<CR>
 nnoremap <F3> :UndotreeToggle<cr>
 nnoremap <F5> :IndentLinesToggle<CR>
 
+"Set IndentLines to disabled by default
+let g:indentLine_enabled = 0
+
 "Generic wildignores
 set wildignore+=*/log/*,*/.git/*,**/*.pyc
 
 nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
+nnoremap <leader>fm :Autoformat<CR>
+
 
 " Use SilverSearcher instead of Grep
 if executable("ag")
@@ -210,22 +213,10 @@ nnoremap <silent> <C-Del> :bd
 
 let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com']
 
-" Experimentally integrate YouCompleteMe with vim-multiple-cursors, otherwise
-" the numerous Cursor events cause great slowness
-" (https://github.com/kristijanhusak/vim-multiple-cursors/issues/4)
-
-function Multiple_cursors_before()
-  let s:old_ycm_whitelist = g:ycm_filetype_whitelist
-  let g:ycm_filetype_whitelist = {}
-endfunction
-
-function Multiple_cursors_after()
-  let g:ycm_filetype_whitelist = s:old_ycm_whitelist
-endfunction
-
 "Some nice mappings for ag
 nnoremap <C-p> :FZF<ENTER>
 
+command! -nargs=* -complete=file Ag Grepper! -tool ag -query <args>
 nnoremap \  :Grepper! -tool ag  -open -switch<cr>
 " nnoremap \ :Ag<SPACE>
 " nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
@@ -342,14 +333,7 @@ autocmd! BufWritePost *.js Accio jshint
 
 " Ruby Stuff
 
-let g:monster#completion#rcodetools#backend = "async_rct_complete"
-" autocmd FileType ruby,eruby setlocal omnifunc=rubycomplete#Complete
 autocmd FileType ruby compiler ruby
-" autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 0
-" autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
-" autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
-" autocmd FileType ruby,eruby let g:rubycomplete_include_object = 1
-" autocmd FileType ruby,eruby let g:rubycomplete_include_objectspace = 1
 
 " Git Stuff
 
@@ -362,8 +346,10 @@ autocmd FileType gitcommit setlocal spell
 
 "Make vim-rooter recognize build.gradle as the top of the directory
 " let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
+
 let g:syntastic_mode_map = { 'passive_filetypes': ['java', 'javascript'] }
 autocmd! BufWritePost *.java Accio gradle test
+autocmd FileType java setlocal nnoremap <leader>fm :JavaFmt<CR>
 
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
