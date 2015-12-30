@@ -47,7 +47,8 @@ Plug 'Chiel92/vim-autoformat'
 Plug 'shumphrey/fugitive-gitlab.vim'
 Plug 'mattn/gist-vim'
 Plug 'jreybert/vimagit'
-Plug 'mhinz/vim-signify'
+Plug 'airblade/vim-gitgutter'
+" Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 "vim-rhubarb variables set in ~/.rhubarb_credentials
@@ -66,7 +67,6 @@ Plug 'mustache/vim-mustache-handlebars'
 Plug 'ain/vim-npm'
 Plug 'ain/vim-bower'
 Plug 'camthompson/vim-ember'
-Plug 'marijnh/tern_for_vim'
 Plug 'dpsxp/vim-jshint-compiler'
 
 "Typescript Plugins
@@ -243,7 +243,7 @@ au BufWritePost init.vim so $MYVIMRC
 " Automatically resize vim when terminal or tmux pane resized
 autocmd VimResized * :wincmd =
 
-" Generic Plugins
+" Generic Plugins/
 
 function! VisualFindAndReplace()
     :OverCommandLine%s/
@@ -329,7 +329,7 @@ autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 " Javascript Stuff
 let g:mustache_abbreviations = 1
 let g:tern_request_timeout = 6000
-autocmd! BufWritePost *.js Accio jshint
+" autocmd! BufWritePost *.js Accio jshint
 
 " Ruby Stuff
 
@@ -347,7 +347,7 @@ autocmd FileType gitcommit setlocal spell
 "Make vim-rooter recognize build.gradle as the top of the directory
 " let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
 
-let g:syntastic_mode_map = { 'passive_filetypes': ['java', 'javascript'] }
+let g:syntastic_mode_map = { 'passive_filetypes': ['java'] }
 autocmd! BufWritePost *.java Accio gradle test
 autocmd FileType java nnoremap <buffer> <leader>fm :JavaFmt<CR>
 
@@ -360,6 +360,7 @@ autocmd FileType java setlocal omnifunc=javacomplete#Complete
 autocmd FileType java nnoremap <F8> :call javacomplete#imports#Add()<CR>
 autocmd FileType java nnoremap <F6> :call javacomplete#imports#RemoveUnused()<CR>
 autocmd FileType java nnoremap <F7> :call javacomplete#imports#AddMissing()<CR>
+
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
