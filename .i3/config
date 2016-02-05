@@ -1,9 +1,10 @@
-#please see http://i3wm.org/docs/userguide.html for a complete reference!
+# Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 set $mod Mod4
 set $alt Mod1
 
 
+exec --no-startup-id export QT_STYLE_OVERRIDE=gtk && dropbox
 exec --no-startup-id nitrogen --restore ~/Wallpapers
 exec --no-startup-id compton -b
 exec --no-startup-id nm-applet
@@ -12,21 +13,24 @@ exec --no-startup-id xset r rate 250 25
 exec --no-startup-id xset b off
 exec --no-startup-id setxkbmap -option ctrl:nocaps
 exec --no-startup-id /home/igneo676/bin/libinput-gestures
+exec --no-startup-id xcalib /usr/share/color/icc/colord/D6500XYZLUT+MTX.icc
 
-font pango:Source Code Pro Sans 8
+font pango:Source Code Pro Sans 7
+
+bindsym $mod+F7 exec --no-startup-id xset r rate 250 25 && xset b off && setxkbmap -option ctrl:nocaps
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id st
+bindsym $mod+Return exec --no-startup-id termite
 
 # kill focused window
 bindsym $mod+q kill
 
 # start dmenu (a program launcher)
-bindsym XF86LaunchA exec --no-startup-id "dmenu_run -fn 'Source Code Pro Sans 8' -nb '#3f3f3f' -p run "
-bindsym XF86LaunchB exec --no-startup-id "dmenu_run -fn 'Source Code Pro Sans 8' -nb '#3f3f3f' -p run "
+bindcode 225 exec --no-startup-id "dmenu_run -fn 'Source Code Pro 9' -nb '#0c1014' -p run "
+bindsym $mod+F9 exec --no-startup-id "dmenu_run -fn 'Source Code Pro 9' -nb '#0c1014' -p run "
 
 # change focus
 bindsym $mod+j focus left
@@ -110,8 +114,8 @@ bindsym $mod+Shift+0 move container to workspace number 10: Code
 
 #Custom Keybindings
 
-bindsym XF86MonBrightnessUp exec --no-startup-id light -A 10 #-steps 1
-bindsym XF86MonBrightnessDown exec --no-startup-id light -U 10 #-steps 1
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10% #-steps 1
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 10% #-steps 1
 bindsym $mod+w exec --no-startup-id google-chrome-beta
 bindsym $mod+f exec --no-startup-id pcmanfm
 bindsym Print exec scrot -s -e 'mv $f ~/Downloads'
@@ -185,23 +189,25 @@ bindsym $mod+Control+Left resize shrink width 5 px or 5 ppt
 bar {
         position top
         status_command i3blocks
-        font pango:Source Code Pro Sans 8
+        font pango:Source Code Pro Sans 7
+        # strip_workspace_numbers yes
 
         colors {
-            background #383A3B
-            statusline #dcdccc
-            focused_workspace  #93b3a3 #383A3B #93b3a3
-            active_workspace   #ffcfaf #383A3B #ffcfaf
-            inactive_workspace #636363 #383A3B #dcdccc
-            urgent_workspace   #dca3a3 #383A3B #dca3a3
-        } 
+          separator #586e75
+          background #0c1014
+          statusline #aea79f
+          focused_workspace #091f2e #091f2e #ffffff
+          active_workspace #073642 #073642 #ffffff
+          inactive_workspace #0c1014 #0c1014 #aea79f
+          urgent_workspace #77216f #77216f #ffffff
+        }
 }
 
 # class                 border  backgr. text    indicator
-client.focused          #333333 #383A3B #dcdccc #2e9ef4
-client.focused_inactive #333333 #5f676a #ffffff #484e50
-client.unfocused        #333333 #222222 #888888 #292d2e
-client.urgent           #2f343a #900000 #ffffff #900000
+client.focused #586e75 #586e75 #fdf6e3 #268bd2
+client.focused_inactive #073642 #073642 #93a1a1 #002b36
+client.unfocused #002b36 #002b36 #586e75 #002b36
+client.urgent #dc322f #dc322f #fdf6e3 #dc322f
 
 exec --no-startup-id xfce4-volumed-pulse
 exec --no-startup-id pasystray
@@ -209,9 +215,8 @@ exec --no-startup-id pcmanfm -d
 # exec --no-startup-id volumeicon
 exec --no-startup-id pidgin
 # exec --no-startup-id yakyak
-exec --no-startup-id caffeine
 exec --no-startup-id rescuetime
-exec --no-startup-id blueman-applet 
+exec --no-startup-id blueman-applet
 
 bindsym XF86AudioLowerVolume exec --no-startup-id pulseaudio-ctl down
 bindsym XF86AudioRaiseVolume exec --no-startup-id pulseaudio-ctl up
