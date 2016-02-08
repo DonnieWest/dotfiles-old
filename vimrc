@@ -11,7 +11,8 @@ call plug#begin()
 Plug 'scrooloose/syntastic'
 Plug 'pgdouyon/vim-accio'
 Plug 'mbbill/undotree'
-Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
 Plug 'jeetsukumaran/vim-filebeagle'
@@ -37,11 +38,20 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'uarun/vim-protobuf'
 Plug 'Valloric/ListToggle'
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --gocode-completer --tern-completer --racer-completer' }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
 Plug 'mhinz/vim-grepper'
 Plug 'Yggdroot/indentLine'
 Plug 'Chiel92/vim-autoformat'
+Plug 'benekastah/neomake', {'on': 'Neomake'}
+Plug 'whatyouhide/vim-gotham'
+" Plug 'edkolev/tmuxline.vim'
+Plug 'mhinz/vim-startify'
+
+"Analytics
+
+Plug 'wakatime/vim-wakatime'
 
 "Git plugins
 Plug 'shumphrey/fugitive-gitlab.vim'
@@ -50,6 +60,7 @@ Plug 'jreybert/vimagit'
 Plug 'airblade/vim-gitgutter'
 " Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
 Plug 'tpope/vim-fugitive'
+Plug 'junegunn/gv.vim'
 Plug 'tpope/vim-rhubarb'
 "vim-rhubarb variables set in ~/.rhubarb_credentials
 
@@ -68,9 +79,10 @@ Plug 'ain/vim-npm'
 Plug 'ain/vim-bower'
 Plug 'camthompson/vim-ember'
 Plug 'dpsxp/vim-jshint-compiler'
+Plug 'othree/jspc.vim'
 
 "Typescript Plugins
-Plug 'leafgarland/typescript-vim'
+Plug 'HerringtonDarkholme/yats.vim'
 
 "Java/Android/Gradle plugins
 Plug 'mattn/vim-javafmt'
@@ -181,7 +193,9 @@ let g:ag_working_path_mode="r"
 set clipboard+=unnamedplus
 
 " Some default colorschemes I like
-colorscheme darkburn
+" colorscheme darkburn
+"colorscheme ego
+colorscheme gotham
 
 "Gimme a colored column for lines that are too long
 highlight ColorColumn ctermbg=magenta
@@ -209,18 +223,15 @@ map Q <Nop>
 "Ctrl + Left and Right switch buffers
 nnoremap <silent> <C-Right> :bnext<CR>
 nnoremap <silent> <C-Left> :bprevious<CR>
-nnoremap <silent> <C-Del> :bd
+nnoremap <silent> <C-Del> :Sayonara<CR>
 
 let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com']
 
 "Some nice mappings for ag
 nnoremap <C-p> :FZF<ENTER>
 
-command! -nargs=* -complete=file Ag Grepper! -tool ag -query <args>
-nnoremap \  :Grepper! -tool ag  -open -switch<cr>
-" nnoremap \ :Ag<SPACE>
-" nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
-
+command! -nargs=* -complete=file Ag Grepper -tool ag -query <args>
+nnoremap \  :Grepper -tool ag  -open -switch<cr>
 
 " Map ,t to search for my Todos
 map <LEADER>t :Ag TODO: <CR>
@@ -269,7 +280,7 @@ nnoremap <silent> <Alt-Down> :TmuxNavigateDown<cr>
 nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
 nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
 
-let g:airline_theme="zenburn"
+let g:airline_theme="gotham"
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#right_sep = ''
 let g:airline#extensions#tabline#left_sep = ''
@@ -305,6 +316,17 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 let g:ultisnips_java_brace_style="none"
+
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': ['java'] }
+
+fun! NeomakeFilterFiletypes()
+    "Ignore these files
+    if &ft =~ 'java'
+        return
+    endif
+    Neomake!
+endfun
+autocmd! BufWritePost * :call NeomakeFilterFiletypes()
 
 " HTML/CSS/Markdown/Octopress Stuff
 
@@ -347,7 +369,7 @@ autocmd FileType gitcommit setlocal spell
 "Make vim-rooter recognize build.gradle as the top of the directory
 " let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
 
-let g:syntastic_mode_map = { 'passive_filetypes': ['java'] }
+
 autocmd! BufWritePost *.java Accio gradle test
 autocmd FileType java nnoremap <buffer> <leader>fm :JavaFmt<CR>
 
@@ -360,7 +382,6 @@ autocmd FileType java setlocal omnifunc=javacomplete#Complete
 autocmd FileType java nnoremap <F8> :call javacomplete#imports#Add()<CR>
 autocmd FileType java nnoremap <F6> :call javacomplete#imports#RemoveUnused()<CR>
 autocmd FileType java nnoremap <F7> :call javacomplete#imports#AddMissing()<CR>
-
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
