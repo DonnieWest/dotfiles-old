@@ -38,7 +38,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'uarun/vim-protobuf'
 Plug 'Valloric/ListToggle'
-Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --gocode-completer --tern-completer --racer-completer' }
+Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --all' }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
 Plug 'mhinz/vim-grepper'
@@ -48,6 +48,11 @@ Plug 'benekastah/neomake', {'on': 'Neomake'}
 Plug 'whatyouhide/vim-gotham'
 " Plug 'edkolev/tmuxline.vim'
 Plug 'mhinz/vim-startify'
+Plug 'ryanoasis/vim-devicons'
+Plug 'sheerun/vim-polyglot'
+Plug 'floobits/floobits-neovim'
+Plug 'haya14busa/incsearch.vim'
+Plug 'easymotion/vim-easymotion'
 
 "Analytics
 
@@ -67,22 +72,19 @@ Plug 'tpope/vim-rhubarb'
 "HTML and CSS Plugins
 Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5.vim'
-Plug 'mattn/emmet-vim'
 Plug 'Valloric/MatchTagAlways'
-Plug 'KabbAmine/vCoolor.vim'
 
 "Javascript Plugins
 Plug 'pangloss/vim-javascript'
 Plug 'moll/vim-node'
 Plug 'mustache/vim-mustache-handlebars'
-Plug 'ain/vim-npm'
-Plug 'ain/vim-bower'
-Plug 'camthompson/vim-ember'
-Plug 'dpsxp/vim-jshint-compiler'
-Plug 'othree/jspc.vim'
+Plug 'mxw/vim-jsx'
+Plug 'samuelsimoes/vim-jsx-utils'
+Plug 'mlaursen/vim-react-snippets'
+Plug 'alampros/vim-react-keywords'
 
 "Typescript Plugins
-Plug 'HerringtonDarkholme/yats.vim'
+Plug 'leafgarland/typescript-vim'
 
 "Java/Android/Gradle plugins
 Plug 'mattn/vim-javafmt'
@@ -90,16 +92,6 @@ Plug 'vim-jp/vim-java'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master'}
 Plug 'idanarye/vim-vebugger'
 Plug 'hsanson/vim-android'
-
-"Ruby Plugins
-Plug 'tpope/vim-bundler'
-Plug 'tpope/vim-cucumber'
-Plug 'tpope/vim-haml'
-Plug 'tpope/vim-rvm'
-Plug 'tpope/vim-rails'
-Plug 'tpope/vim-rake'
-" Plug 'vim-ruby/vim-ruby' "Incompatible with Neovim
-Plug 'thoughtbot/vim-rspec'
 
 "Markdown/Octopress Plugins
 
@@ -182,11 +174,29 @@ set wildignore+=*/log/*,*/.git/*,**/*.pyc
 nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
 nnoremap <leader>fm :Autoformat<CR>
 
-
 " Use SilverSearcher instead of Grep
 if executable("ag")
     set grepprg=ag\ --nogroup\ --nocolor\ --smart-case
 endif
+
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+nmap s <Plug>(easymotion-overwin-f2)
+let g:EasyMotion_smartcase = 1
+
+" JK motions: Line motions
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+let g:incsearch#auto_nohlsearch = 1
+map n  <Plug>(incsearch-nohl-n)
+map N  <Plug>(incsearch-nohl-N)
+map *  <Plug>(incsearch-nohl-*)
+map #  <Plug>(incsearch-nohl-#)
+map g* <Plug>(incsearch-nohl-g*)
+map g# <Plug>(incsearch-nohl-g#)
 
 let g:ag_working_path_mode="r"
 "Use unix clipboard
@@ -317,7 +327,7 @@ let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 let g:ultisnips_java_brace_style="none"
 
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': ['java'] }
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['javascript'],'passive_filetypes': ['java'] }
 
 fun! NeomakeFilterFiletypes()
     "Ignore these files
@@ -349,9 +359,18 @@ autocmd FileType octopress setlocal lbr formatoptions=l textwidth=80 spell spell
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
 " Javascript Stuff
+let g:polyglot_disabled = ['css', 'javascript']
+let g:jsx_ext_required = 0
 let g:mustache_abbreviations = 1
 let g:tern_request_timeout = 6000
+let g:syntastic_javascript_checkers = ['eslint']
 " autocmd! BufWritePost *.js Accio jshint
+
+autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
+autocmd FileType javascript nnoremap oat :call JSXEachAttributeInLine()<CR>
+autocmd FileType javascript nnoremap eat :call JSXExtractPartialPrompt()<CR>
+autocmd FileType javascript nnoremap cat :call JSXChangeTagPrompt()<CR>
+autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
 
 " Ruby Stuff
 
