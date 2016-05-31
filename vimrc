@@ -8,8 +8,6 @@ endif
 call plug#begin()
 
 "Generic Plugins
-Plug 'scrooloose/syntastic'
-Plug 'pgdouyon/vim-accio'
 Plug 'mbbill/undotree'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -24,13 +22,13 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-tbone'
+Plug 'duggiefresh/vim-easydir'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-projectionist'
 Plug 'romainl/vim-qf'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'Raimondi/delimitMate'
-Plug 'flazz/vim-colorschemes'
 Plug 'Firef0x/PKGBUILD.vim'
 Plug 'airblade/vim-rooter'
 Plug 'honza/vim-snippets'
@@ -44,8 +42,6 @@ Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
 Plug 'mhinz/vim-grepper'
 Plug 'Yggdroot/indentLine'
 Plug 'Chiel92/vim-autoformat'
-Plug 'benekastah/neomake', {'on': 'Neomake'}
-Plug 'whatyouhide/vim-gotham'
 " Plug 'edkolev/tmuxline.vim'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
@@ -53,6 +49,17 @@ Plug 'sheerun/vim-polyglot'
 Plug 'floobits/floobits-neovim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'easymotion/vim-easymotion'
+Plug 'pbrisbin/vim-mkdir'
+
+" Colorschemes
+Plug 'w0ng/vim-hybrid'
+Plug 'whatyouhide/vim-gotham'
+Plug 'flazz/vim-colorschemes'
+
+" Syntax Checking
+Plug 'scrooloose/syntastic'
+Plug 'pgdouyon/vim-accio'
+Plug 'benekastah/neomake', {'on': 'Neomake'}
 
 "Analytics
 
@@ -208,7 +215,7 @@ set clipboard+=unnamedplus
 colorscheme gotham
 
 "Gimme a colored column for lines that are too long
-highlight ColorColumn ctermbg=magenta
+highlight ColorColumn ctermbg=blue
 call matchadd('ColorColumn', '\%81v', 100)
 
 " Split window Vertically
@@ -301,14 +308,19 @@ let g:ycm_use_ultisnips_completer=1
 let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
 
-" thanks to http://vimcasts.org/e/4
+" Ripped out of https://github.com/derekprior/vim-trimmer/blob/master/plugin/vim-trimmer.vim
+if !exists("g:trimmer_blacklist")
+  let g:trimmer_blacklist = []
+endif
+
 function! Strip_trailing_whitespace()
-  let previous_search=@/
-  let previous_cursor_line=line('.')
-  let previous_cursor_column=col('.')
-  %s/\s\+$//e
-  let @/=previous_search
-  call cursor(previous_cursor_line, previous_cursor_column)
+  if index(a:blacklist, &ft) < 0
+    let l:pos = getpos(".")
+    %s/\s\+$//e
+    %s/\n\{3,}/\r\r/e
+    %s#\($\n\s*\)\+\%$##e
+    call setpos(".", l:pos)
+  endif
 endfunction
 
 let g:ycm_filetype_blacklist = {
@@ -339,10 +351,6 @@ endfun
 autocmd! BufWritePost * :call NeomakeFilterFiletypes()
 
 " HTML/CSS/Markdown/Octopress Stuff
-
-let g:user_emmet_install_global = 0
-
-autocmd FileType html,css,eruby EmmetInstall
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css,scss,sass setlocal iskeyword+=-
 
