@@ -15,7 +15,7 @@ Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'tomtom/tcomment_vim'
-Plug 'SirVer/ultisnips'
+Plug 'Shougo/neosnippet-snippets'
 Plug 'osyo-manga/vim-over'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-repeat'
@@ -36,7 +36,6 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'uarun/vim-protobuf'
 Plug 'Valloric/ListToggle'
-Plug 'Valloric/YouCompleteMe', { 'do': 'python2 ./install.py --all' }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
 Plug 'mhinz/vim-grepper'
@@ -50,19 +49,21 @@ Plug 'floobits/floobits-neovim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'pbrisbin/vim-mkdir'
+Plug 'Shougo/unite.vim'
+function! DoRemote(arg)
+  UpdateRemotePlugins
+endfunction
+Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
 
 " Colorschemes
-Plug 'w0ng/vim-hybrid'
 Plug 'whatyouhide/vim-gotham'
 Plug 'flazz/vim-colorschemes'
 
 " Syntax Checking
 Plug 'scrooloose/syntastic'
-Plug 'pgdouyon/vim-accio'
 Plug 'benekastah/neomake', {'on': 'Neomake'}
 
 "Analytics
-
 Plug 'wakatime/vim-wakatime'
 
 "Git plugins
@@ -86,19 +87,24 @@ Plug 'pangloss/vim-javascript'
 Plug 'moll/vim-node'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'mxw/vim-jsx'
+Plug 'carlitux/deoplete-ternjs'
+Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'mlaursen/vim-react-snippets'
 Plug 'alampros/vim-react-keywords'
 
 "Typescript Plugins
 Plug 'leafgarland/typescript-vim'
+Plug 'Quramy/tsuquyomi', { 'do': 'npm install -g typescript' }
+Plug 'Quramy/vim-js-pretty-template'
+Plug 'mhartington/deoplete-typescript'
+Plug 'mhartington/vim-typings'
 
 "Java/Android/Gradle plugins
 Plug 'mattn/vim-javafmt'
 Plug 'vim-jp/vim-java'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master'}
 Plug 'idanarye/vim-vebugger'
-Plug 'hsanson/vim-android'
 
 "Markdown/Octopress Plugins
 
@@ -109,6 +115,7 @@ function! BuildComposer(info)
   endif
 endfunction
 
+Plug 'vtselfa/LanguageTool'
 Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
@@ -117,10 +124,6 @@ Plug 'glidenote/octoeditor.vim'
 Plug 'amix/vim-zenroom2'
 
 call plug#end()
-
-
-filetype indent plugin on
-syn on
 
 set hidden
 set number
@@ -137,7 +140,6 @@ set expandtab
 set softtabstop=2
 set tabstop=2
 set ignorecase
-set smartcase
 set magic
 set noshowmode
 set completeopt+=longest
@@ -166,6 +168,8 @@ set completeopt-=preview
 set tags=.tags;
 set nofoldenable    " disable folding
 set list listchars=tab:»·,trail:·,nbsp:·
+set exrc
+set secure
 
 let g:NumberToggleTrigger="<F2>"
 nnoremap <F4> :TagbarToggle<CR>
@@ -180,6 +184,8 @@ set wildignore+=*/log/*,*/.git/*,**/*.pyc
 
 nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
 nnoremap <leader>fm :Autoformat<CR>
+
+let g:deoplete#enable_at_startup = 1
 
 " Use SilverSearcher instead of Grep
 if executable("ag")
@@ -242,13 +248,11 @@ nnoremap <silent> <C-Right> :bnext<CR>
 nnoremap <silent> <C-Left> :bprevious<CR>
 nnoremap <silent> <C-Del> :Sayonara<CR>
 
-let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com']
+let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com', 'http://gitlab.codekoalas.com']
 
 "Some nice mappings for ag
 nnoremap <C-p> :FZF<ENTER>
-
-command! -nargs=* -complete=file Ag Grepper -tool ag -query <args>
-nnoremap \  :Grepper -tool ag  -open -switch<cr>
+nnoremap \  :Ag 
 
 " Map ,t to search for my Todos
 map <LEADER>t :Ag TODO: <CR>
@@ -284,6 +288,10 @@ endfunction
 nnoremap <Leader>fr :call VisualFindAndReplace()<CR>
 xnoremap <Leader>fr :call VisualFindAndReplaceWithSelection()<CR>
 
+autocmd User Startified setlocal buftype=
+let g:startify_bookmarks = [
+            \ { 'c': '~/.config/nvim/init.vim' },
+            \ ]
 
 "Make TComment work as I expect
 noremap <leader>/ :TComment <CR>
@@ -304,10 +312,6 @@ let g:airline#extensions#tabline#left_sep = ''
 let g:airline_right_sep = ''
 let g:airline_left_sep = ''
 
-let g:ycm_use_ultisnips_completer=1
-let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
-
 " Ripped out of https://github.com/derekprior/vim-trimmer/blob/master/plugin/vim-trimmer.vim
 if !exists("g:trimmer_blacklist")
   let g:trimmer_blacklist = []
@@ -323,27 +327,12 @@ function! Strip_trailing_whitespace()
   endif
 endfunction
 
-let g:ycm_filetype_blacklist = {
-      \ 'tagbar' : 1,
-      \ 'qf' : 1,
-      \ 'notes' : 1,
-      \ 'markdown' : 1,
-      \ 'unite' : 1,
-      \ 'text' : 1,
-      \ 'vimwiki' : 1,
-      \}
-
-" Set ultisnips triggers
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-let g:ultisnips_java_brace_style="none"
-
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['javascript'],'passive_filetypes': ['java'] }
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['javascript'],'passive_filetypes': ['java', 'typescript'] }
 
 fun! NeomakeFilterFiletypes()
     "Ignore these files
-    if &ft =~ 'java'
+    if &ft =~ ''
         return
     endif
     Neomake!
@@ -361,9 +350,7 @@ autocmd User GoyoLeave Limelight!
 let g:limelight_conceal_ctermfg = '232'
 autocmd FileType octopress setlocal lbr formatoptions=l textwidth=80 spell spelllang=en_us omnifunc=''
 
-
 " Python Stuff
-
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
 " Javascript Stuff
@@ -371,14 +358,33 @@ let g:polyglot_disabled = ['css', 'javascript']
 let g:jsx_ext_required = 0
 let g:mustache_abbreviations = 1
 let g:tern_request_timeout = 6000
-let g:syntastic_javascript_checkers = ['eslint']
-" autocmd! BufWritePost *.js Accio jshint
+
+" Use deoplete.
+let g:tern_request_timeout = 1
+let g:tern_show_signature_in_pum = 0  " This do disable full signature type on autocomplete
+" Use tern_for_vim.
+let g:tern#command = ["tern"]
+let g:tern#arguments = ["--persistent"]
 
 autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
 autocmd FileType javascript nnoremap oat :call JSXEachAttributeInLine()<CR>
 autocmd FileType javascript nnoremap eat :call JSXExtractPartialPrompt()<CR>
 autocmd FileType javascript nnoremap cat :call JSXChangeTagPrompt()<CR>
 autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
+" Typescript Stuff
+
+autocmd! BufWritePost *.ts Neomake
+autocmd! BufWritePost *.tsx Neomake
+let g:neomake_warning_sign = {
+  \ 'text': 'W',
+  \ 'texthl': 'WarningMsg',
+  \ }
+
+let g:neomake_error_sign = {
+  \ 'text': 'E',
+  \ 'texthl': 'ErrorMsg',
+  \ }
+
 
 " Ruby Stuff
 
@@ -393,17 +399,25 @@ autocmd FileType gitcommit setlocal spell
 
 "VIM Android/Java/Gradle stuff
 
-"Make vim-rooter recognize build.gradle as the top of the directory
-" let g:rooter_patterns = [ 'build.gradle', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
-
-
-autocmd! BufWritePost *.java Accio gradle test
-autocmd FileType java nnoremap <buffer> <leader>fm :JavaFmt<CR>
-
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 "Setup Javacomplete2 as omnifunc
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_ignore_case = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#enable_refresh_always = 1
+let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
+let g:deoplete#omni#input_patterns.java = [
+    \'[^. \t0-9]\.\w*',
+    \'[^. \t0-9]\->\w*',
+    \'[^. \t0-9]\::\w*',
+    \]
+let g:deoplete#omni#input_patterns.jsp = ['[^. \t0-9]\.\w*']
+let g:deoplete#ignore_sources = {}
+let g:deoplete#ignore_sources._ = ['javacomplete2']
+inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 autocmd FileType java nnoremap <F8> :call javacomplete#imports#Add()<CR>
