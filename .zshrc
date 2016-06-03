@@ -1,102 +1,55 @@
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
 ZSH_THEME="terminalparty"
 
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-# Set to this to use case-sensitive completion
-# CASE_SENSITIVE="true"
-
-# Uncomment this to disable bi-weekly auto-update checks
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment to change how often before auto-updates occur? (in days)
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment following line if you want to disable colors in ls
-# DISABLE_LS_COLORS="true"
-
-# Uncomment following line if you want to disable autosetting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment following line if you want to disable command autocorrection
-# DISABLE_CORRECTION="true"
-
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment following line if you want to disable marking untracked files under
-# VCS as dirty. This makes repository status check for large repositories much,
-# much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment following line if you want to  shown in the command execution time stamp 
-# in the history command output. The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|
-# yyyy-mm-dd
-# HIST_STAMPS="mm/dd/yyyy"
+GOTHAM_SHELL="$HOME/.config/gotham/gotham.sh"
+[[ -s $GOTHAM_SHELL ]] && source $GOTHAM_SHELL
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git bundler rvm mosh rake tmuxinator tmux gradle gem rails web-search heroku adb command-not-found common-aliases autojump)
+plugins=(tmuxinator gpg-agent)
 
+#Old one plugins=(git bundler rvm rake tmuxinator gem heroku adb autojump)
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-export apt_pref="apt-fast"
 export GRADLE_HOME="$HOME/gradle"
-export PATH="$PATH:/home/igneo676/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/igneo676/FTL:/home/igneo676/.rvm/bin:$GRADLE_HOME/bin"
+export PATH="$PATH:/usr/bin:/home/igneo676/bin:/usr/sbin:/sbin:/usr/local/bin:/bin:/usr/local/games:/usr/games:$GRADLE_HOME/bin"
 export ANDROID_HOME="$HOME/android-sdk-linux"
-export EDITOR="vim"
+export EDITOR="nvim"
 export POWERLINE_CONFIG_COMMAND="$HOME/.local/bin/powerline-config"
-alias apt-get='apt-fast'
+export FZF_DEFAULT_COMMAND='ag -g ""'
 
-# export MANPATH="/usr/local/man:$MANPATH"
+# Increase limit of files able to be handled by TernJS
 
-# # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-export TERM=xterm-256color
-#source ~/.bin/tmuxinator.zsh
+ulimit -n 2048
 
 source ~/.profile
 
-#if test -f ~/.rvm/scripts/rvm; then
-#fi
+eval $(dircolors ~/.dircolors)
 
-# BEGIN Ruboto setup
-source ~/.rubotorc
-# END Ruboto setup
+export SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
 
-export USE_CCACHE=1
+export JAVA8_HOME="/usr/lib/jvm/java-8-jdk"
+export JAVA7_HOME="/usr/lib/jvm/java-7-openjdk"
+#export JAVA6_HOME="/usr/lib/jvm/java-6-openjdk-amd64/"
 
-#export RAILS_ENV=development
+export PATH="/home/igneo676/.gem/ruby/2.2.2/bin:$PATH"
 
-export JAVA8_HOME="/usr/lib/jvm/java-8-oracle"
-export JAVA6_HOME="/usr/lib/jvm/java-6-openjdk-amd64/"
+eval "$(hub alias -s)"
 
-### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
+export NVM_DIR="/home/igneo676/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
-### REST commands via Resty
-source ~/.resty/resty
+export PATH="/home/igneo676/android-sdk-linux/tools:$PATH"
 
-### Retain SSH password 
-# eval `keychain --eval --agents ssh id_rsa`
+export DOCKER_HOST=unix:///var/run/docker.sock
+
+export PATH="$PATH:$HOME/.local/bin"
+
+export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
