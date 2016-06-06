@@ -47,6 +47,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
 Plug 'floobits/floobits-neovim'
 Plug 'haya14busa/incsearch.vim'
+Plug 'haya14busa/vim-asterisk'
 Plug 'easymotion/vim-easymotion'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'Shougo/unite.vim'
@@ -88,7 +89,7 @@ Plug 'moll/vim-node'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'mxw/vim-jsx'
 Plug 'carlitux/deoplete-ternjs'
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
+Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'mlaursen/vim-react-snippets'
 Plug 'alampros/vim-react-keywords'
@@ -103,8 +104,15 @@ Plug 'mhartington/vim-typings'
 "Java/Android/Gradle plugins
 Plug 'mattn/vim-javafmt'
 Plug 'vim-jp/vim-java'
-Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master'}
+Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 Plug 'idanarye/vim-vebugger'
+Plug 'DonnieWest/VimStudio'
+
+" Python Plugins
+Plug 'zchee/deoplete-jedi'
+
+"VIMScript Plugins
+Plug 'Shougo/neco-vim'
 
 "Markdown/Octopress Plugins
 
@@ -115,7 +123,7 @@ function! BuildComposer(info)
   endif
 endfunction
 
-Plug 'vtselfa/LanguageTool'
+Plug 'rhysd/vim-grammarous'
 Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
@@ -186,6 +194,15 @@ nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
 nnoremap <leader>fm :Autoformat<CR>
 
 let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_ignore_case = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#enable_refresh_always = 1
+let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
+let g:deoplete#omni#input_patterns.java = [
+    \'[^. \t0-9]\.\w*',
+    \'[^. \t0-9]\->\w*',
+    \'[^. \t0-9]\::\w*',
+    \]
 
 " Use SilverSearcher instead of Grep
 if executable("ag")
@@ -203,14 +220,16 @@ map <Leader>k <Plug>(easymotion-k)
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
-let g:incsearch#auto_nohlsearch = 1
 map n  <Plug>(incsearch-nohl-n)
 map N  <Plug>(incsearch-nohl-N)
-map *  <Plug>(incsearch-nohl-*)
-map #  <Plug>(incsearch-nohl-#)
-map g* <Plug>(incsearch-nohl-g*)
-map g# <Plug>(incsearch-nohl-g#)
 
+map *  <Plug>(asterisk-z*)
+map #  <Plug>(asterisk-z#)
+map g* <Plug>(asterisk-gz*)
+map g# <Plug>(asterisk-gz#)
+
+let g:incsearch#auto_nohlsearch = 1
+let g:asterisk#keeppos = 1
 let g:ag_working_path_mode="r"
 "Use unix clipboard
 set clipboard+=unnamedplus
@@ -318,26 +337,17 @@ if !exists("g:trimmer_blacklist")
 endif
 
 function! Strip_trailing_whitespace()
-  if index(a:blacklist, &ft) < 0
-    let l:pos = getpos(".")
-    %s/\s\+$//e
-    %s/\n\{3,}/\r\r/e
-    %s#\($\n\s*\)\+\%$##e
-    call setpos(".", l:pos)
-  endif
+  let l:pos = getpos(".")
+  %s/\s\+$//e
+  %s/\n\{3,}/\r\r/e
+  %s#\($\n\s*\)\+\%$##e
+  call setpos(".", l:pos)
 endfunction
 
 let g:syntastic_javascript_checkers = ['eslint']
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['javascript'],'passive_filetypes': ['java', 'typescript'] }
 
-fun! NeomakeFilterFiletypes()
-    "Ignore these files
-    if &ft =~ ''
-        return
-    endif
-    Neomake!
-endfun
-autocmd! BufWritePost * :call NeomakeFilterFiletypes()
+autocmd! BufWritePost * Neomake
 
 " HTML/CSS/Markdown/Octopress Stuff
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
@@ -357,12 +367,11 @@ autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 let g:polyglot_disabled = ['css', 'javascript']
 let g:jsx_ext_required = 0
 let g:mustache_abbreviations = 1
-let g:tern_request_timeout = 6000
 
-" Use deoplete.
-let g:tern_request_timeout = 1
-let g:tern_show_signature_in_pum = 0  " This do disable full signature type on autocomplete
 " Use tern_for_vim.
+let g:tern_request_timeout = 1
+let g:tern_request_timeout = 6000
+let g:tern_show_signature_in_pum = 0  " This do disable full signature type on autocomplete
 let g:tern#command = ["tern"]
 let g:tern#arguments = ["--persistent"]
 
@@ -385,7 +394,6 @@ let g:neomake_error_sign = {
   \ 'texthl': 'ErrorMsg',
   \ }
 
-
 " Ruby Stuff
 
 autocmd FileType ruby compiler ruby
@@ -396,29 +404,10 @@ autocmd FileType ruby compiler ruby
 autocmd FileType gitcommit setlocal textwidth=72
 autocmd FileType gitcommit setlocal spell
 
-
 "VIM Android/Java/Gradle stuff
 
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-"Setup Javacomplete2 as omnifunc
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_ignore_case = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#enable_refresh_always = 1
-let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
-let g:deoplete#omni#input_patterns.java = [
-    \'[^. \t0-9]\.\w*',
-    \'[^. \t0-9]\->\w*',
-    \'[^. \t0-9]\::\w*',
-    \]
-let g:deoplete#omni#input_patterns.jsp = ['[^. \t0-9]\.\w*']
-let g:deoplete#ignore_sources = {}
-let g:deoplete#ignore_sources._ = ['javacomplete2']
-inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 autocmd FileType java nnoremap <F8> :call javacomplete#imports#Add()<CR>
 autocmd FileType java nnoremap <F6> :call javacomplete#imports#RemoveUnused()<CR>
