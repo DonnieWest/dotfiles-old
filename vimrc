@@ -53,6 +53,7 @@ Plug 'haya14busa/vim-operator-flashy'
 Plug 'easymotion/vim-easymotion'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'Shougo/unite.vim'
+Plug 'KabbAmine/zeavim.vim'
 function! DoRemote(arg)
   UpdateRemotePlugins
 endfunction
@@ -266,6 +267,15 @@ vnoremap > >gv
 
 "Disable Ex mode
 map Q <Nop>
+
+let g:zv_file_types = {
+            \   'cpp'                   : 'c++',
+            \   '^(G|g)runtfile\.'      : 'grunt',
+            \   '^(G|g)ulpfile\.'       : 'gulp',
+            \   '.htaccess'             : 'apache_http_server',
+            \   '^(md|mdown|mkd|mkdn)$' : 'markdown',
+            \   'java'                   : 'java,android',
+            \ }
 
 "Ctrl + Left and Right switch buffers
 nnoremap <silent> <C-Right> :bnext<CR>
