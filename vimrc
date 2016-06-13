@@ -197,16 +197,15 @@ nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
 nnoremap <leader>fm :Autoformat<CR>
 
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_ignore_case = 1
 let g:deoplete#enable_smart_case = 1
-let g:deoplete#enable_refresh_always = 1
 let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
 let g:deoplete#omni#input_patterns.java = [
     \'[^. \t0-9]\.\w*',
     \'[^. \t0-9]\->\w*',
     \'[^. \t0-9]\::\w*',
     \]
-
+inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
 " Use SilverSearcher instead of Grep
 if executable("ag")
     set grepprg=ag\ --nogroup\ --nocolor\ --smart-case
@@ -424,9 +423,10 @@ autocmd FileType gitcommit setlocal spell
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
-autocmd FileType java nnoremap <F8> :call javacomplete#imports#Add()<CR>
-autocmd FileType java nnoremap <F6> :call javacomplete#imports#RemoveUnused()<CR>
-autocmd FileType java nnoremap <F7> :call javacomplete#imports#AddMissing()<CR>
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+autocmd FileType java nnoremap <F8> <Plug>(JavaComplete-Imports-Add)
+autocmd FileType java nnoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd FileType java nnoremap <F7> <Plug>(JavaComplete-Imports-AddMissing)
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
