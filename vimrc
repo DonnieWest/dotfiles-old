@@ -48,6 +48,8 @@ Plug 'sheerun/vim-polyglot'
 Plug 'floobits/floobits-neovim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/vim-asterisk'
+Plug 'kana/vim-operator-user'
+Plug 'haya14busa/vim-operator-flashy'
 Plug 'easymotion/vim-easymotion'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'Shougo/unite.vim'
@@ -227,6 +229,9 @@ map *  <Plug>(asterisk-z*)
 map #  <Plug>(asterisk-z#)
 map g* <Plug>(asterisk-gz*)
 map g# <Plug>(asterisk-gz#)
+
+map y <Plug>(operator-flashy)
+nmap Y <Plug>(operator-flashy)$
 
 let g:incsearch#auto_nohlsearch = 1
 let g:asterisk#keeppos = 1
