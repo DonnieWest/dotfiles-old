@@ -53,7 +53,7 @@ Plug 'haya14busa/vim-operator-flashy'
 Plug 'easymotion/vim-easymotion'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'Shougo/unite.vim'
-Plug 'KabbAmine/zeavim.vim'
+Plug 'KabbAmine/zeavim.vim'	
 function! DoRemote(arg)
   UpdateRemotePlugins
 endfunction
@@ -110,6 +110,7 @@ Plug 'vim-jp/vim-java'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 Plug 'idanarye/vim-vebugger'
 Plug 'DonnieWest/VimStudio'
+Plug 'pgdouyon/vim-accio'
 
 " Python Plugins
 Plug 'zchee/deoplete-jedi'
@@ -361,7 +362,14 @@ endfunction
 let g:syntastic_javascript_checkers = ['eslint']
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['javascript'],'passive_filetypes': ['java', 'typescript'] }
 
-autocmd! BufWritePost * Neomake
+fun! NeomakeFilterFiletypes()
+    "Ignore these files
+    if &ft =~ 'java'
+        return
+    endif
+    Neomake!
+endfun
+autocmd! BufWritePost * :call NeomakeFilterFiletypes()
 
 " HTML/CSS/Markdown/Octopress Stuff
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
@@ -427,6 +435,7 @@ autocmd FileType java setlocal omnifunc=javacomplete#Complete
 autocmd FileType java nnoremap <F8> <Plug>(JavaComplete-Imports-Add)
 autocmd FileType java nnoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 autocmd FileType java nnoremap <F7> <Plug>(JavaComplete-Imports-AddMissing)
+autocmd! BufWritePost *.java Accio gradle assembleDebug
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
