@@ -65,7 +65,7 @@ Plug 'flazz/vim-colorschemes'
 
 " Syntax Checking
 Plug 'scrooloose/syntastic'
-Plug 'benekastah/neomake', {'on': 'Neomake'}
+Plug 'neomake/neomake', { 'on': 'Neomake' }
 
 "Analytics
 Plug 'wakatime/vim-wakatime'
@@ -106,7 +106,6 @@ Plug 'mhartington/vim-typings'
 
 "Java/Android/Gradle plugins
 Plug 'mattn/vim-javafmt'
-Plug 'vim-jp/vim-java'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 Plug 'idanarye/vim-vebugger'
 Plug 'DonnieWest/VimStudio'
@@ -206,6 +205,10 @@ let g:deoplete#omni#input_patterns.java = [
     \]
 inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
+
+"Deoplete updates to remove anything with 'mappings' in the name
+" inoremap <expr><C-h> deoplete#smart_close_popup()."\<C-h>"
+" inoremap <expr><BS>  deoplete#smart_close_popup()."\<C-h>"
 " Use SilverSearcher instead of Grep
 if executable("ag")
     set grepprg=ag\ --nogroup\ --nocolor\ --smart-case
@@ -361,7 +364,7 @@ endfunction
 let g:syntastic_javascript_checkers = ['eslint']
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['javascript'],'passive_filetypes': ['java', 'typescript'] }
 
-autocmd! BufWritePost * Neomake
+" autocmd! BufWritePost * Neomake
 
 " HTML/CSS/Markdown/Octopress Stuff
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
@@ -398,16 +401,6 @@ autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
 
 autocmd! BufWritePost *.ts Neomake
 autocmd! BufWritePost *.tsx Neomake
-let g:neomake_warning_sign = {
-  \ 'text': 'W',
-  \ 'texthl': 'WarningMsg',
-  \ }
-
-let g:neomake_error_sign = {
-  \ 'text': 'E',
-  \ 'texthl': 'ErrorMsg',
-  \ }
-
 " Ruby Stuff
 
 autocmd FileType ruby compiler ruby
@@ -427,7 +420,7 @@ autocmd FileType java setlocal omnifunc=javacomplete#Complete
 autocmd FileType java nnoremap <F8> <Plug>(JavaComplete-Imports-Add)
 autocmd FileType java nnoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 autocmd FileType java nnoremap <F7> <Plug>(JavaComplete-Imports-AddMissing)
+let g:JavaComplete_ImportSortType = 'packageName'
+let g:JavaComplete_ImportOrder = ['android.', 'com.', 'java.', 'javax.', 'org.', 'net.'] 
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
-
-source ~/.rhubarb_credentials
