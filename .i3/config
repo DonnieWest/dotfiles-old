@@ -213,7 +213,7 @@ exec --no-startup-id xfce4-volumed-pulse
 exec --no-startup-id pasystray
 exec --no-startup-id pcmanfm -d
 # exec --no-startup-id volumeicon
-exec --no-startup-id pidgin
+# exec --no-startup-id pidgin
 # exec --no-startup-id yakyak
 exec --no-startup-id rescuetime
 exec --no-startup-id blueman-applet
