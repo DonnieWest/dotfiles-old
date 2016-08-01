@@ -31,7 +31,10 @@ source ~/.profile
 
 eval $(dircolors ~/.dircolors)
 
-export SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
+unset SSH_AGENT_PID
+if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+  export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
+fi
 
 export JAVA8_HOME="/usr/lib/jvm/java-8-jdk"
 export JAVA7_HOME="/usr/lib/jvm/java-7-openjdk"
