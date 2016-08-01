@@ -69,7 +69,7 @@ Plug 'flazz/vim-colorschemes'
 
 " Syntax Checking
 Plug 'scrooloose/syntastic'
-Plug 'benekastah/neomake', {'on': 'Neomake'}
+Plug 'neomake/neomake', { 'on': 'Neomake' }
 
 "Analytics
 Plug 'wakatime/vim-wakatime'
@@ -111,7 +111,6 @@ Plug 'mhartington/vim-typings'
 
 "Java/Android/Gradle plugins
 Plug 'mattn/vim-javafmt'
-Plug 'vim-jp/vim-java'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 Plug 'idanarye/vim-vebugger'
 Plug 'DonnieWest/VimStudio'
@@ -229,6 +228,10 @@ call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
 "call deoplete#custom#set('omni', 'min_pattern_length', 0)
 inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
+
+"Deoplete updates to remove anything with 'mappings' in the name
+" inoremap <expr><C-h> deoplete#smart_close_popup()."\<C-h>"
+" inoremap <expr><BS>  deoplete#smart_close_popup()."\<C-h>"
 " Use SilverSearcher instead of Grep
 if executable("ag")
     set grepprg=ag\ --nogroup\ --nocolor\ --smart-case
@@ -456,7 +459,7 @@ autocmd FileType java nnoremap <F7> <Plug>(JavaComplete-Imports-AddMissing)
 autocmd FileType java inoremap <F7> <Plug>(JavaComplete-Imports-AddMissing)
 autocmd FileType java nnoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 autocmd FileType java inoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
-
+let g:JavaComplete_ImportSortType = 'packageName'
 let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
 
 autocmd! BufWritePost *.java Accio gradle assembleDebug
@@ -465,5 +468,3 @@ let java_highlight_all = 1
 let java_highlight_debug = 1
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
-
-source ~/.rhubarb_credentials
