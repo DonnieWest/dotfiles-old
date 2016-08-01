@@ -22,6 +22,7 @@ export ANDROID_HOME="$HOME/android-sdk-linux"
 export EDITOR="nvim"
 export POWERLINE_CONFIG_COMMAND="$HOME/.local/bin/powerline-config"
 export FZF_DEFAULT_COMMAND='ag -g ""'
+export STEAM_RUNTIME=0
 
 # Increase limit of files able to be handled by TernJS
 
