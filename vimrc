@@ -182,6 +182,7 @@ set nofoldenable    " disable folding
 set list listchars=tab:»·,trail:·,nbsp:·
 set exrc
 set secure
+set termguicolors
 
 let g:NumberToggleTrigger="<F2>"
 nnoremap <F4> :TagbarToggle<CR>
