@@ -53,7 +53,11 @@ Plug 'haya14busa/vim-operator-flashy'
 Plug 'easymotion/vim-easymotion'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'Shougo/unite.vim'
-Plug 'KabbAmine/zeavim.vim'	
+Plug 'KabbAmine/zeavim.vim'
+Plug 'jiangmiao/auto-pairs'
+Plug 'kshenoy/vim-signature'
+Plug 'tmux-plugins/vim-tmux-focus-events'
+
 function! DoRemote(arg)
   UpdateRemotePlugins
 endfunction
@@ -85,6 +89,7 @@ Plug 'tpope/vim-rhubarb'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5.vim'
 Plug 'Valloric/MatchTagAlways'
+Plug 'alvan/vim-closetag'
 
 "Javascript Plugins
 Plug 'pangloss/vim-javascript'
@@ -111,6 +116,7 @@ Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 Plug 'idanarye/vim-vebugger'
 Plug 'DonnieWest/VimStudio'
 Plug 'pgdouyon/vim-accio'
+Plug 'npacker/vim-java-syntax-after'
 
 " Python Plugins
 Plug 'zchee/deoplete-jedi'
@@ -131,9 +137,8 @@ Plug 'rhysd/vim-grammarous'
 Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
-Plug 'tangledhelix/vim-octopress'
-Plug 'glidenote/octoeditor.vim'
-Plug 'amix/vim-zenroom2'
+Plug 'Juev/vim-jekyll'
+Plug 'tpope/vim-liquid'
 
 call plug#end()
 
@@ -192,20 +197,36 @@ nnoremap <F5> :IndentLinesToggle<CR>
 "Set IndentLines to disabled by default
 let g:indentLine_enabled = 0
 
+" Allow gitgutter on large files
+let g:gitgutter_max_signs=10000
+
 "Generic wildignores
 set wildignore+=*/log/*,*/.git/*,**/*.pyc
 
 nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
 nnoremap <leader>fm :Autoformat<CR>
 
+
 let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_ignore_case = 1
 let g:deoplete#enable_smart_case = 1
+let g:deoplete#enable_camel_case = 1
+let g:deoplete#enable_refresh_always = 1
+let g:deoplete#max_abbr_width = 0
+let g:deoplete#max_menu_width = 0
 let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
 let g:deoplete#omni#input_patterns.java = [
     \'[^. \t0-9]\.\w*',
     \'[^. \t0-9]\->\w*',
     \'[^. \t0-9]\::\w*',
     \]
+let g:deoplete#omni#input_patterns.jsp = ['[^. \t0-9]\.\w*']
+let g:deoplete#omni#input_patterns.php = '\h\w*\|[^. \t]->\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'
+let g:deoplete#ignore_sources = {}
+let g:deoplete#ignore_sources.java = ['omni']
+call deoplete#custom#set('javacomplete2', 'mark', '')
+call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
+"call deoplete#custom#set('omni', 'min_pattern_length', 0)
 inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
 " Use SilverSearcher instead of Grep
@@ -238,8 +259,9 @@ nmap Y <Plug>(operator-flashy)$
 let g:incsearch#auto_nohlsearch = 1
 let g:asterisk#keeppos = 1
 let g:ag_working_path_mode="r"
+
 "Use unix clipboard
-set clipboard+=unnamedplus
+set clipboard=unnamedplus
 
 " Some default colorschemes I like
 " colorscheme darkburn
@@ -368,7 +390,7 @@ fun! NeomakeFilterFiletypes()
     if &ft =~ 'java'
         return
     endif
-    Neomake!
+    Neomake
 endfun
 autocmd! BufWritePost * :call NeomakeFilterFiletypes()
 
@@ -376,12 +398,9 @@ autocmd! BufWritePost * :call NeomakeFilterFiletypes()
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css,scss,sass setlocal iskeyword+=-
 
-autocmd BufNewFile,BufRead *.markdown,*.textile,*md set filetype=octopress
-
 autocmd User GoyoEnter Limelight
 autocmd User GoyoLeave Limelight!
 let g:limelight_conceal_ctermfg = '232'
-autocmd FileType octopress setlocal lbr formatoptions=l textwidth=80 spell spelllang=en_us omnifunc=''
 
 " Python Stuff
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
@@ -394,9 +413,9 @@ let g:mustache_abbreviations = 1
 " Use tern_for_vim.
 let g:tern_request_timeout = 1
 let g:tern_request_timeout = 6000
-let g:tern_show_signature_in_pum = 0  " This do disable full signature type on autocomplete
 let g:tern#command = ["tern"]
 let g:tern#arguments = ["--persistent"]
+let g:deoplete#sources#tss#javascript_support = 1
 
 autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
 autocmd FileType javascript nnoremap oat :call JSXEachAttributeInLine()<CR>
@@ -405,8 +424,6 @@ autocmd FileType javascript nnoremap cat :call JSXChangeTagPrompt()<CR>
 autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
 " Typescript Stuff
 
-autocmd! BufWritePost *.ts Neomake
-autocmd! BufWritePost *.tsx Neomake
 let g:neomake_warning_sign = {
   \ 'text': 'W',
   \ 'texthl': 'WarningMsg',
@@ -434,9 +451,18 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 autocmd FileType java nnoremap <F8> <Plug>(JavaComplete-Imports-Add)
-autocmd FileType java nnoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd FileType java inoremap <F8> <Plug>(JavaComplete-Imports-Add)
 autocmd FileType java nnoremap <F7> <Plug>(JavaComplete-Imports-AddMissing)
+autocmd FileType java inoremap <F7> <Plug>(JavaComplete-Imports-AddMissing)
+autocmd FileType java nnoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd FileType java inoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
+
+let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
+
 autocmd! BufWritePost *.java Accio gradle assembleDebug
+let java_highlight_functions = 'style'
+let java_highlight_all = 1
+let java_highlight_debug = 1
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
