@@ -11,7 +11,6 @@ call plug#begin()
 Plug 'mbbill/undotree'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'tomtom/tcomment_vim'
@@ -57,6 +56,7 @@ Plug 'KabbAmine/zeavim.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'kshenoy/vim-signature'
 Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'Shougo/unite.vim'
 
 function! DoRemote(arg)
@@ -182,7 +182,7 @@ set splitbelow
 set splitright
 set ttimeoutlen=50
 set completeopt-=preview
-set tags=.tags;
+set tags=.tags,./tags,tags;
 set nofoldenable    " disable folding
 set list listchars=tab:»·,trail:·,nbsp:·
 set exrc
@@ -403,6 +403,22 @@ fun! NeomakeFilterFiletypes()
     Neomake
 endfun
 autocmd! BufWritePost * :call NeomakeFilterFiletypes()
+
+function! GutentagsFilter(path) abort
+    if fnamemodify(a:path, ':e') == 'java'
+      return 0
+    elseif fnamemodify(a:path, ':e') == ''
+      return 0
+    elseif fnamemodify(a:path, ':e') == 'xml'
+      return 0
+    elseif fnamemodify(a:path, ':e') == 'gradle'
+      return 0
+    else
+      return 1
+    endif
+endfunction
+
+let g:gutentags_enabled_user_func = 'GutentagsFilter'
 
 " HTML/CSS/Markdown/Octopress Stuff
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
