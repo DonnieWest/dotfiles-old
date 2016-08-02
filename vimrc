@@ -57,6 +57,7 @@ Plug 'KabbAmine/zeavim.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'kshenoy/vim-signature'
 Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'Shougo/unite.vim'
 
 function! DoRemote(arg)
   UpdateRemotePlugins
@@ -104,7 +105,7 @@ Plug 'alampros/vim-react-keywords'
 
 "Typescript Plugins
 Plug 'leafgarland/typescript-vim'
-Plug 'Quramy/tsuquyomi', { 'do': 'npm install -g typescript' }
+Plug 'DonnieWest/tsuquyomi', { 'do': 'npm install -g typescript' }
 Plug 'Quramy/vim-js-pretty-template'
 Plug 'mhartington/deoplete-typescript'
 Plug 'mhartington/vim-typings'
@@ -228,10 +229,6 @@ call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
 "call deoplete#custom#set('omni', 'min_pattern_length', 0)
 inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
-
-"Deoplete updates to remove anything with 'mappings' in the name
-" inoremap <expr><C-h> deoplete#smart_close_popup()."\<C-h>"
-" inoremap <expr><BS>  deoplete#smart_close_popup()."\<C-h>"
 " Use SilverSearcher instead of Grep
 if executable("ag")
     set grepprg=ag\ --nogroup\ --nocolor\ --smart-case
@@ -307,6 +304,9 @@ let g:zv_file_types = {
 nnoremap <silent> <C-Right> :bnext<CR>
 nnoremap <silent> <C-Left> :bprevious<CR>
 nnoremap <silent> <C-Del> :Sayonara<CR>
+tnoremap <silent> <C-Right> :bnext<CR>
+tnoremap <silent> <C-Left> :bprevious<CR>
+tnoremap <silent> <C-Del> :Sayonara<CR>
 
 let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com', 'http://gitlab.codekoalas.com']
 
@@ -365,6 +365,13 @@ nnoremap <silent> <Alt-Down> :TmuxNavigateDown<cr>
 nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
 nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
 
+tnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
+tnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
+tnoremap <silent> <Alt-Down> :TmuxNavigateDown<cr>
+tnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
+tnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
+tnoremap <Esc> <C-\><C-n>
+
 let g:airline_theme="gotham"
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#right_sep = ''
@@ -419,6 +426,7 @@ let g:tern_request_timeout = 6000
 let g:tern#command = ["tern"]
 let g:tern#arguments = ["--persistent"]
 let g:deoplete#sources#tss#javascript_support = 1
+let g:tsuquyomi_javascript_support = 1
 
 autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
 autocmd FileType javascript nnoremap oat :call JSXEachAttributeInLine()<CR>
@@ -462,7 +470,7 @@ autocmd FileType java inoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 let g:JavaComplete_ImportSortType = 'packageName'
 let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
 
-autocmd! BufWritePost *.java Accio gradle assembleDebug
+autocmd! BufWritePost *.java Accio gradle compileDebugSources
 let java_highlight_functions = 'style'
 let java_highlight_all = 1
 let java_highlight_debug = 1
