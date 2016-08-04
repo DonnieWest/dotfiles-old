@@ -115,7 +115,6 @@ Plug 'mattn/vim-javafmt'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 Plug 'idanarye/vim-vebugger'
 Plug 'DonnieWest/VimStudio'
-Plug 'pgdouyon/vim-accio'
 Plug 'npacker/vim-java-syntax-after'
 
 " Python Plugins
@@ -395,14 +394,7 @@ endfunction
 let g:syntastic_javascript_checkers = ['eslint']
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['javascript'],'passive_filetypes': ['java', 'typescript'] }
 
-fun! NeomakeFilterFiletypes()
-    "Ignore these files
-    if &ft =~ 'java'
-        return
-    endif
-    Neomake
-endfun
-autocmd! BufWritePost * :call NeomakeFilterFiletypes()
+autocmd! BufWritePost * Neomake
 
 function! GutentagsFilter(path) abort
     if fnamemodify(a:path, ':e') == 'java'
@@ -453,13 +445,15 @@ autocmd FileType javascript nnoremap cat :call JSXChangeTagPrompt()<CR>
 autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
 " Typescript Stuff
 
+" Enable error checking with Typescript files
+autocmd BufWritePost *.ts,*.tsx silent! call tsuquyomi#reloadAndGeterr()
 let g:neomake_warning_sign = {
-  \ 'text': 'W',
+  \ 'text': '?',
   \ 'texthl': 'WarningMsg',
   \ }
 
 let g:neomake_error_sign = {
-  \ 'text': 'E',
+  \ 'text': 'X',
   \ 'texthl': 'ErrorMsg',
   \ }
 
@@ -488,7 +482,6 @@ autocmd FileType java inoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 let g:JavaComplete_ImportSortType = 'packageName'
 let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
 
-autocmd! BufWritePost *.java Accio gradle compileDebugSources
 let java_highlight_functions = 'style'
 let java_highlight_all = 1
 let java_highlight_debug = 1
