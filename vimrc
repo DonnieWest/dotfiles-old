@@ -105,7 +105,7 @@ Plug 'alampros/vim-react-keywords'
 
 "Typescript Plugins
 Plug 'leafgarland/typescript-vim'
-Plug 'DonnieWest/tsuquyomi', { 'do': 'npm install -g typescript' }
+Plug 'DonnieWest/tsuquyomi', { 'do': 'npm install -g typescript', 'branch': 'javascriptSupport' }
 Plug 'Quramy/vim-js-pretty-template'
 Plug 'mhartington/deoplete-typescript'
 Plug 'mhartington/vim-typings'
@@ -443,6 +443,8 @@ let g:tern#command = ["tern"]
 let g:tern#arguments = ["--persistent"]
 let g:deoplete#sources#tss#javascript_support = 1
 let g:tsuquyomi_javascript_support = 1
+let g:tsuquyomi_auto_open = 1
+let g:tsuquyomi_disable_quickfix = 1
 
 autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
 autocmd FileType javascript nnoremap oat :call JSXEachAttributeInLine()<CR>
