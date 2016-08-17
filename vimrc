@@ -14,7 +14,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-unimpaired'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'tomtom/tcomment_vim'
-Plug 'Shougo/neosnippet-snippets'
+Plug 'SirVer/ultisnips'
 Plug 'osyo-manga/vim-over'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-repeat'
@@ -58,6 +58,7 @@ Plug 'kshenoy/vim-signature'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'Shougo/unite.vim'
+Plug 'eugen0329/vim-esearch'
 
 function! DoRemote(arg)
   UpdateRemotePlugins
@@ -309,8 +310,27 @@ tnoremap <silent> <C-Del> :Sayonara<CR>
 
 let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com', 'http://gitlab.codekoalas.com']
 
+let g:esearch = {
+  \ 'adapter':    'ag',
+  \ 'backend':    'nvim',
+  \ 'out':        'win',
+  \ 'batch_size': 1000,
+  \ 'use':        ['visual', 'hlsearch', 'last'],
+  \}
+
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
 "Some nice mappings for ag
 nnoremap <C-p> :FZF<ENTER>
+if has('nvim')
+  aug fzf_setup
+    au!
+    au TermOpen term://*FZF tnoremap <silent> <buffer><nowait> <esc> <c-c>
+  aug END
+end
+
 nnoremap \  :Ag 
 
 " Map ,t to search for my Todos
