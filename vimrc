@@ -15,7 +15,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'tomtom/tcomment_vim'
 Plug 'SirVer/ultisnips'
-Plug 'osyo-manga/vim-over'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
@@ -56,9 +55,11 @@ Plug 'KabbAmine/zeavim.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'kshenoy/vim-signature'
 Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'Shougo/unite.vim'
-Plug 'eugen0329/vim-esearch'
+Plug 'syngan/vim-vimlint'
+Plug 'ynkdir/vim-vimlparser'
 
 function! DoRemote(arg)
   UpdateRemotePlugins
@@ -68,6 +69,7 @@ Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
 " Colorschemes
 Plug 'whatyouhide/vim-gotham'
 Plug 'flazz/vim-colorschemes'
+Plug 'trevordmiller/nova-vim'
 
 " Syntax Checking
 Plug 'scrooloose/syntastic'
@@ -103,6 +105,8 @@ Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'mlaursen/vim-react-snippets'
 Plug 'alampros/vim-react-keywords'
+Plug 'neovim/node-host', { 'do': 'npm install' }
+Plug 'DonnieWest/sourcerer.nvim', { 'do': 'npm install' }
 
 "Typescript Plugins
 Plug 'leafgarland/typescript-vim'
@@ -121,6 +125,9 @@ Plug 'npacker/vim-java-syntax-after'
 " Python Plugins
 Plug 'zchee/deoplete-jedi'
 
+" PHP Plugins
+Plug 'm2mdas/phpcomplete-extended'
+
 "VIMScript Plugins
 Plug 'Shougo/neco-vim'
 
@@ -134,7 +141,6 @@ function! BuildComposer(info)
 endfunction
 
 Plug 'rhysd/vim-grammarous'
-Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'Juev/vim-jekyll'
@@ -188,6 +194,7 @@ set list listchars=tab:»·,trail:·,nbsp:·
 set exrc
 set secure
 set termguicolors
+set inccommand=split
 
 let g:NumberToggleTrigger="<F2>"
 nnoremap <F4> :TagbarToggle<CR>
@@ -205,7 +212,6 @@ set wildignore+=*/log/*,*/.git/*,**/*.pyc
 
 nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
 nnoremap <leader>fm :Autoformat<CR>
-
 
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_ignore_case = 1
@@ -259,14 +265,14 @@ nmap Y <Plug>(operator-flashy)$
 let g:incsearch#auto_nohlsearch = 1
 let g:asterisk#keeppos = 1
 let g:ag_working_path_mode="r"
-
 "Use unix clipboard
-set clipboard=unnamedplus
+set clipboard+=unnamedplus
 
 " Some default colorschemes I like
 " colorscheme darkburn
 "colorscheme ego
 colorscheme gotham
+" colorscheme nova
 
 "Gimme a colored column for lines that are too long
 highlight ColorColumn ctermbg=blue
@@ -304,10 +310,11 @@ let g:zv_file_types = {
 nnoremap <silent> <C-Right> :bnext<CR>
 nnoremap <silent> <C-Left> :bprevious<CR>
 nnoremap <silent> <C-Del> :Sayonara<CR>
-tnoremap <silent> <C-Right> :bnext<CR>
-tnoremap <silent> <C-Left> :bprevious<CR>
-tnoremap <silent> <C-Del> :Sayonara<CR>
+tnoremap <silent> <C-Right> <ESC>:bnext<CR>
+tnoremap <silent> <C-Left> <ESC>:bprevious<CR>
+tnoremap <silent> <C-Del> <ESC>:Sayonara<CR>
 
+let g:startify_custom_header = []
 let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com', 'http://gitlab.codekoalas.com']
 
 let g:esearch = {
@@ -331,10 +338,10 @@ if has('nvim')
   aug END
 end
 
-nnoremap \  :Ag 
+nnoremap \ :GrepperRg 
 
 " Map ,t to search for my Todos
-map <LEADER>t :Ag TODO: <CR>
+map <LEADER>t :GrepperRg TODO: <CR>
 
 " Automatically resize quickfix window to contents
 au FileType qf call AdjustWindowHeight(3, 15)
@@ -354,18 +361,8 @@ au BufWritePost init.vim so $MYVIMRC
 " Automatically resize vim when terminal or tmux pane resized
 autocmd VimResized * :wincmd =
 
-" Generic Plugins/
-
-function! VisualFindAndReplace()
-    :OverCommandLine%s/
-endfunction
-
-function! VisualFindAndReplaceWithSelection() range
-    :'<,'>OverCommandLine s/
-endfunction
-
-nnoremap <Leader>fr :call VisualFindAndReplace()<CR>
-xnoremap <Leader>fr :call VisualFindAndReplaceWithSelection()<CR>
+nnoremap <Leader>fr :%s/
+xnoremap <Leader>fr :s/
 
 autocmd User Startified setlocal buftype=
 let g:startify_bookmarks = [
@@ -397,11 +394,7 @@ let g:airline#extensions#tabline#right_sep = ''
 let g:airline#extensions#tabline#left_sep = ''
 let g:airline_right_sep = ''
 let g:airline_left_sep = ''
-
-" Ripped out of https://github.com/derekprior/vim-trimmer/blob/master/plugin/vim-trimmer.vim
-if !exists("g:trimmer_blacklist")
-  let g:trimmer_blacklist = []
-endif
+let g:airline#extensions#neomake#enabled = 0
 
 function! Strip_trailing_whitespace()
   let l:pos = getpos(".")
@@ -447,6 +440,11 @@ autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 let g:polyglot_disabled = ['css', 'javascript']
 let g:jsx_ext_required = 0
 let g:mustache_abbreviations = 1
+
+" PHP stuff
+
+
+autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
 
 " Use tern_for_vim.
 let g:tern_request_timeout = 1
@@ -501,6 +499,9 @@ autocmd FileType java nnoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 autocmd FileType java inoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 let g:JavaComplete_ImportSortType = 'packageName'
 let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
+
+let g:formatdef_google_java_format = "'java -jar /home/igneo676/Code/google-java-format-1.0.jar --lines '.a:firstline.':'.a:lastline.' -'"
+let g:formatters_java = ['google_java_format']
 
 let java_highlight_functions = 'style'
 let java_highlight_all = 1
