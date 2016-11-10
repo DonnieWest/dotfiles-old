@@ -58,6 +58,7 @@ Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'Shougo/unite.vim'
+Plug 'eugen0329/vim-esearch'
 Plug 'syngan/vim-vimlint'
 Plug 'ynkdir/vim-vimlparser'
 
@@ -98,26 +99,23 @@ Plug 'alvan/vim-closetag'
 "Javascript Plugins
 Plug 'pangloss/vim-javascript'
 Plug 'moll/vim-node'
-Plug 'mustache/vim-mustache-handlebars'
 Plug 'mxw/vim-jsx'
 Plug 'carlitux/deoplete-ternjs'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'mlaursen/vim-react-snippets'
 Plug 'alampros/vim-react-keywords'
+Plug '/home/igneo676/Code/sourcerer.nvim', { 'do': 'npm install && npm install -g neovim-client'}
 Plug 'neovim/node-host', { 'do': 'npm install' }
-Plug 'DonnieWest/sourcerer.nvim', { 'do': 'npm install' }
 
 "Typescript Plugins
 Plug 'leafgarland/typescript-vim'
-Plug 'DonnieWest/tsuquyomi', { 'do': 'npm install -g typescript', 'branch': 'javascriptSupport' }
+Plug 'Quramy/tsuquyomi'
 Plug 'Quramy/vim-js-pretty-template'
 Plug 'mhartington/deoplete-typescript'
-Plug 'mhartington/vim-typings'
 
 "Java/Android/Gradle plugins
-Plug 'mattn/vim-javafmt'
-Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
+Plug 'artur-shaik/vim-javacomplete2'
 Plug 'idanarye/vim-vebugger'
 Plug 'DonnieWest/VimStudio'
 Plug 'npacker/vim-java-syntax-after'
@@ -396,6 +394,11 @@ let g:airline_right_sep = ''
 let g:airline_left_sep = ''
 let g:airline#extensions#neomake#enabled = 0
 
+" Ripped out of https://github.com/derekprior/vim-trimmer/blob/master/plugin/vim-trimmer.vim
+if !exists("g:trimmer_blacklist")
+  let g:trimmer_blacklist = []
+endif
+
 function! Strip_trailing_whitespace()
   let l:pos = getpos(".")
   %s/\s\+$//e
@@ -456,6 +459,7 @@ let g:tsuquyomi_javascript_support = 1
 let g:tsuquyomi_auto_open = 1
 let g:tsuquyomi_disable_quickfix = 1
 
+autocmd FileType javascript setlocal omnifunc=tsuquyomi#complete
 autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
 autocmd FileType javascript nnoremap oat :call JSXEachAttributeInLine()<CR>
 autocmd FileType javascript nnoremap eat :call JSXExtractPartialPrompt()<CR>
