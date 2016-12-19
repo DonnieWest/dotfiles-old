@@ -40,6 +40,7 @@ Plug 'mhinz/vim-grepper'
 Plug 'Yggdroot/indentLine'
 Plug 'Chiel92/vim-autoformat'
 " Plug 'edkolev/tmuxline.vim'
+Plug 'lervag/file-line'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
@@ -105,6 +106,7 @@ Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'mlaursen/vim-react-snippets'
 Plug 'alampros/vim-react-keywords'
+Plug 'steelsojka/deoplete-flow'
 Plug '/home/igneo676/Code/sourcerer.nvim', { 'do': 'npm install && npm install -g neovim-client'}
 Plug 'neovim/node-host', { 'do': 'npm install' }
 
@@ -112,10 +114,9 @@ Plug 'neovim/node-host', { 'do': 'npm install' }
 Plug 'leafgarland/typescript-vim'
 Plug 'Quramy/tsuquyomi'
 Plug 'Quramy/vim-js-pretty-template'
-Plug 'mhartington/deoplete-typescript'
 
 "Java/Android/Gradle plugins
-Plug 'artur-shaik/vim-javacomplete2'
+Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'develop' }
 Plug 'idanarye/vim-vebugger'
 Plug 'DonnieWest/VimStudio'
 Plug 'npacker/vim-java-syntax-after'
@@ -228,6 +229,11 @@ let g:deoplete#omni#input_patterns.jsp = ['[^. \t0-9]\.\w*']
 let g:deoplete#omni#input_patterns.php = '\h\w*\|[^. \t]->\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'
 let g:deoplete#ignore_sources = {}
 let g:deoplete#ignore_sources.java = ['omni']
+let g:deoplete#omni#functions = {}
+let g:deoplete#omni#functions.javascript = [
+      \ 'tsuquyomi#complete',
+      \]
+let g:deoplete#omni#input_patterns.javascript = '[^. \t]\.\w*'
 call deoplete#custom#set('javacomplete2', 'mark', '')
 call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
 "call deoplete#custom#set('omni', 'min_pattern_length', 0)
@@ -308,9 +314,9 @@ let g:zv_file_types = {
 nnoremap <silent> <C-Right> :bnext<CR>
 nnoremap <silent> <C-Left> :bprevious<CR>
 nnoremap <silent> <C-Del> :Sayonara<CR>
-tnoremap <silent> <C-Right> <ESC>:bnext<CR>
-tnoremap <silent> <C-Left> <ESC>:bprevious<CR>
-tnoremap <silent> <C-Del> <ESC>:Sayonara<CR>
+tnoremap <silent> <C-Right> :bnext<CR>
+tnoremap <silent> <C-Left> :bprevious<CR>
+tnoremap <silent> <C-Del> :Sayonara<CR>
 
 let g:startify_custom_header = []
 let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com', 'http://gitlab.codekoalas.com']
@@ -458,6 +464,7 @@ let g:deoplete#sources#tss#javascript_support = 1
 let g:tsuquyomi_javascript_support = 1
 let g:tsuquyomi_auto_open = 1
 let g:tsuquyomi_disable_quickfix = 1
+let g:tsuquyomi_completion_detail = 1
 
 autocmd FileType javascript setlocal omnifunc=tsuquyomi#complete
 autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
@@ -504,7 +511,7 @@ autocmd FileType java inoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 let g:JavaComplete_ImportSortType = 'packageName'
 let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
 
-let g:formatdef_google_java_format = "'java -jar /home/igneo676/Code/google-java-format-1.0.jar --lines '.a:firstline.':'.a:lastline.' -'"
+let g:formatdef_google_java_format = "'java -jar /home/igneo676/Code/google-java-format.jar --lines '.a:firstline.':'.a:lastline.' -'"
 let g:formatters_java = ['google_java_format']
 
 let java_highlight_functions = 'style'
