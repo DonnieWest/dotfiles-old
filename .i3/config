@@ -3,7 +3,6 @@
 set $mod Mod4
 set $alt Mod1
 
-exec --no-startup-id export QT_STYLE_OVERRIDE=gtk && dropbox
 exec --no-startup-id nitrogen --restore ~/Wallpapers
 # exec --no-startup-id compton -b
 exec --no-startup-id nm-applet
@@ -13,10 +12,11 @@ exec --no-startup-id xset b off
 exec --no-startup-id setxkbmap -option ctrl:nocaps
 exec --no-startup-id /home/igneo676/bin/libinput-gestures
 exec --no-startup-id /home/igneo676/bin/pullover
+exec --no-startup-id /home/igneo676/bin/mail-checker
 exec --no-startup-id xcalib /usr/share/color/icc/colord/D6500XYZLUT+MTX.icc
 exec --no-startup-id nightshift -l 39.0315533:-94.4954291 -d
 
-font pango:Source Code Pro Sans 7
+font pango:Hasklig 7
 
 bindsym $mod+F7 exec --no-startup-id xset r rate 250 25 && xset b off && setxkbmap -option ctrl:nocaps
 
@@ -118,7 +118,7 @@ bindsym $mod+Shift+0 move container to workspace number 10: Code
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10% #-steps 1
 bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 10% #-steps 1
 bindsym $mod+w exec --no-startup-id google-chrome-beta
-bindsym $mod+f exec --no-startup-id spacefm
+bindsym $mod+f exec --no-startup-id pcmanfm
 bindsym Print exec scrot -s -e 'mv $f ~/Downloads'
 bindsym $mod+m move scratchpad
 bindsym $mod+n scratchpad show
@@ -190,7 +190,7 @@ bindsym $mod+Control+Left resize shrink width 5 px or 5 ppt
 bar {
         position top
         status_command i3blocks
-        font pango:Source Code Pro Sans 7
+        font pango:Hasklig 7
         # strip_workspace_numbers yes
 
         colors {
@@ -210,14 +210,14 @@ client.focused_inactive #073642 #073642 #93a1a1 #002b36
 client.unfocused #002b36 #002b36 #586e75 #002b36
 client.urgent #dc322f #dc322f #fdf6e3 #dc322f
 
-exec --no-startup-id xfce4-volumed-pulse
-exec --no-startup-id pasystray
-exec --no-startup-id spacefm -d
-exec --no-startup-id rescuetime
+# exec --no-startup-id xfce4-volumed-pulse
+# exec --no-startup-id pasystray
+exec --no-startup-id pcmanfm -d
+# exec --no-startup-id rescuetime
 exec --no-startup-id blueman-applet
 exec --no-startup-id dunst
 
-bindsym XF86AudioLowerVolume exec --no-startup-id pulseaudio-ctl down
-bindsym XF86AudioRaiseVolume exec --no-startup-id pulseaudio-ctl up
-bindsym XF86AudioMute exec --no-startup-id pulseaudio-ctl mute
+bindsym XF86AudioLowerVolume exec --no-startup-id "pulseaudio-ctl down ; pkill -RTMIN+1 i3blocks"
+bindsym XF86AudioRaiseVolume exec --no-startup-id "pulseaudio-ctl up ; pkill -RTMIN+1 i3blocks"
+bindsym XF86AudioMute exec --no-startup-id "pulseaudio-ctl mute ; pkill -RTMIN+1 i3blocks"
 # Chrome special flags and others set in /etc/profiles.d/variables.sh like the following: --touch-devices=2 --force-device-scale-factor=2

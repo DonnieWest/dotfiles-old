@@ -15,7 +15,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'tomtom/tcomment_vim'
 Plug 'SirVer/ultisnips'
-Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-dispatch'
@@ -26,13 +25,12 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-projectionist'
 Plug 'romainl/vim-qf'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
-Plug 'Raimondi/delimitMate'
+Plug 'jiangmiao/auto-pairs'
 Plug 'Firef0x/PKGBUILD.vim'
 Plug 'airblade/vim-rooter'
 Plug 'honza/vim-snippets'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-Plug 'uarun/vim-protobuf'
 Plug 'Valloric/ListToggle'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
@@ -44,23 +42,19 @@ Plug 'lervag/file-line'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
-Plug 'floobits/floobits-neovim'
-Plug 'haya14busa/incsearch.vim'
+" Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/vim-asterisk'
 Plug 'kana/vim-operator-user'
 Plug 'haya14busa/vim-operator-flashy'
-Plug 'easymotion/vim-easymotion'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'Shougo/unite.vim'
 Plug 'KabbAmine/zeavim.vim'
-Plug 'jiangmiao/auto-pairs'
 Plug 'kshenoy/vim-signature'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'Shougo/unite.vim'
 Plug 'eugen0329/vim-esearch'
-Plug 'syngan/vim-vimlint'
 Plug 'ynkdir/vim-vimlparser'
 
 function! DoRemote(arg)
@@ -71,7 +65,6 @@ Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
 " Colorschemes
 Plug 'whatyouhide/vim-gotham'
 Plug 'flazz/vim-colorschemes'
-Plug 'trevordmiller/nova-vim'
 
 " Syntax Checking
 Plug 'scrooloose/syntastic'
@@ -99,33 +92,27 @@ Plug 'alvan/vim-closetag'
 
 "Javascript Plugins
 Plug 'pangloss/vim-javascript'
-Plug 'moll/vim-node'
 Plug 'mxw/vim-jsx'
 Plug 'carlitux/deoplete-ternjs'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'mlaursen/vim-react-snippets'
 Plug 'alampros/vim-react-keywords'
-Plug 'steelsojka/deoplete-flow'
 Plug '/home/igneo676/Code/sourcerer.nvim', { 'do': 'npm install && npm install -g neovim-client'}
 Plug 'neovim/node-host', { 'do': 'npm install' }
 
 "Typescript Plugins
 Plug 'leafgarland/typescript-vim'
 Plug 'Quramy/tsuquyomi'
-Plug 'Quramy/vim-js-pretty-template'
+Plug 'DonnieWest/nvim-typescript', { 'branch': 'compilerOptionsTweaks' }
 
 "Java/Android/Gradle plugins
-Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'develop' }
-Plug 'idanarye/vim-vebugger'
+Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 Plug 'DonnieWest/VimStudio'
 Plug 'npacker/vim-java-syntax-after'
 
 " Python Plugins
 Plug 'zchee/deoplete-jedi'
-
-" PHP Plugins
-Plug 'm2mdas/phpcomplete-extended'
 
 "VIMScript Plugins
 Plug 'Shougo/neco-vim'
@@ -140,10 +127,11 @@ function! BuildComposer(info)
 endfunction
 
 Plug 'rhysd/vim-grammarous'
-Plug 'junegunn/goyo.vim'
-Plug 'junegunn/limelight.vim'
-Plug 'Juev/vim-jekyll'
-Plug 'tpope/vim-liquid'
+Plug 'mrtazz/simplenote.vim'
+" Plug 'junegunn/goyo.vim'
+" Plug 'junegunn/limelight.vim'
+" Plug 'Juev/vim-jekyll'
+" Plug 'tpope/vim-liquid'
 
 call plug#end()
 
@@ -230,33 +218,27 @@ let g:deoplete#omni#input_patterns.php = '\h\w*\|[^. \t]->\%(\h\w*\)\?\|\h\w*::\
 let g:deoplete#ignore_sources = {}
 let g:deoplete#ignore_sources.java = ['omni']
 let g:deoplete#omni#functions = {}
-let g:deoplete#omni#functions.javascript = [
-      \ 'tsuquyomi#complete',
-      \]
+" let g:deoplete#omni#functions.javascript = [
+"       \ 'tsuquyomi#complete',
+"       \]
 let g:deoplete#omni#input_patterns.javascript = '[^. \t]\.\w*'
 call deoplete#custom#set('javacomplete2', 'mark', '')
 call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
 "call deoplete#custom#set('omni', 'min_pattern_length', 0)
 inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
-" Use SilverSearcher instead of Grep
-if executable("ag")
-    set grepprg=ag\ --nogroup\ --nocolor\ --smart-case
+inoremap <expr><C-x><C-o> deoplete#mappings#manual_complete()
+" Use RipGrep instead of Grep
+if executable("rg")
+    set grepprg=rg\ --vimgrep\ --no-heading
+    set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
 
-let g:EasyMotion_do_mapping = 0 " Disable default mappings
-nmap s <Plug>(easymotion-overwin-f2)
-let g:EasyMotion_smartcase = 1
-
-" JK motions: Line motions
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
-
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
-map n  <Plug>(incsearch-nohl-n)
-map N  <Plug>(incsearch-nohl-N)
+" map /  <Plug>(incsearch-forward)
+" map ?  <Plug>(incsearch-backward)
+" map g/ <Plug>(incsearch-stay)
+" map n  <Plug>(incsearch-nohl-n)
+" map N  <Plug>(incsearch-nohl-N)
 
 map *  <Plug>(asterisk-z*)
 map #  <Plug>(asterisk-z#)
@@ -270,13 +252,11 @@ let g:incsearch#auto_nohlsearch = 1
 let g:asterisk#keeppos = 1
 let g:ag_working_path_mode="r"
 "Use unix clipboard
-set clipboard+=unnamedplus
+set clipboard=unnamedplus
 
 " Some default colorschemes I like
 " colorscheme darkburn
-"colorscheme ego
 colorscheme gotham
-" colorscheme nova
 
 "Gimme a colored column for lines that are too long
 highlight ColorColumn ctermbg=blue
@@ -322,7 +302,7 @@ let g:startify_custom_header = []
 let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com', 'http://gitlab.codekoalas.com']
 
 let g:esearch = {
-  \ 'adapter':    'ag',
+  \ 'adapter':    'rg',
   \ 'backend':    'nvim',
   \ 'out':        'win',
   \ 'batch_size': 1000,
@@ -412,7 +392,9 @@ function! Strip_trailing_whitespace()
   %s#\($\n\s*\)\+\%$##e
   call setpos(".", l:pos)
 endfunction
-
+let g:nvim_typescript#max_completion_detail = 200
+let g:nvim_typescript#type_info_on_hold = 1
+let g:nvim_typescript#signature_complete = 1
 let g:syntastic_javascript_checkers = ['eslint']
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['javascript'],'passive_filetypes': ['java', 'typescript'] }
 
@@ -444,29 +426,26 @@ let g:limelight_conceal_ctermfg = '232'
 
 " Python Stuff
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+let g:python_host_prog = '/bin/python2'
+let g:python3_host_prog = '/bin/python3'
 
 " Javascript Stuff
 let g:polyglot_disabled = ['css', 'javascript']
 let g:jsx_ext_required = 0
 let g:mustache_abbreviations = 1
 
-" PHP stuff
-
-
-autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
-
 " Use tern_for_vim.
 let g:tern_request_timeout = 1
 let g:tern_request_timeout = 6000
 let g:tern#command = ["tern"]
 let g:tern#arguments = ["--persistent"]
-let g:deoplete#sources#tss#javascript_support = 1
+let g:nvim_typescript#javascript_support = 1
 let g:tsuquyomi_javascript_support = 1
 let g:tsuquyomi_auto_open = 1
 let g:tsuquyomi_disable_quickfix = 1
 let g:tsuquyomi_completion_detail = 1
 
-autocmd FileType javascript setlocal omnifunc=tsuquyomi#complete
+" autocmd FileType javascript setlocal omnifunc=tsuquyomi#complete
 autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
 autocmd FileType javascript nnoremap oat :call JSXEachAttributeInLine()<CR>
 autocmd FileType javascript nnoremap eat :call JSXExtractPartialPrompt()<CR>
@@ -485,10 +464,6 @@ let g:neomake_error_sign = {
   \ 'text': 'X',
   \ 'texthl': 'ErrorMsg',
   \ }
-
-" Ruby Stuff
-
-autocmd FileType ruby compiler ruby
 
 " Git Stuff
 
@@ -518,4 +493,10 @@ let java_highlight_functions = 'style'
 let java_highlight_all = 1
 let java_highlight_debug = 1
 
+let g:SimplenoteFiletype = 'markdown'
+
+
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
+
+source ~/.rhubarb_credentials
+source ~/.simplenoterc
