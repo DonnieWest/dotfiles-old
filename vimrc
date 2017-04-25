@@ -33,6 +33,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'Valloric/ListToggle'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
 Plug 'mhinz/vim-grepper'
 Plug 'Yggdroot/indentLine'
@@ -42,8 +43,6 @@ Plug 'lervag/file-line'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
-" Plug 'haya14busa/incsearch.vim'
-Plug 'haya14busa/vim-asterisk'
 Plug 'kana/vim-operator-user'
 Plug 'haya14busa/vim-operator-flashy'
 Plug 'pbrisbin/vim-mkdir'
@@ -56,6 +55,7 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'Shougo/unite.vim'
 Plug 'eugen0329/vim-esearch'
 Plug 'ynkdir/vim-vimlparser'
+Plug 'pgdouyon/vim-evanesco'
 
 function! DoRemote(arg)
   UpdateRemotePlugins
@@ -67,7 +67,6 @@ Plug 'whatyouhide/vim-gotham'
 Plug 'flazz/vim-colorschemes'
 
 " Syntax Checking
-Plug 'scrooloose/syntastic'
 Plug 'neomake/neomake', { 'on': 'Neomake' }
 
 "Analytics
@@ -92,19 +91,19 @@ Plug 'alvan/vim-closetag'
 
 "Javascript Plugins
 Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
+Plug 'maxmellon/vim-jsx-pretty'
 Plug 'carlitux/deoplete-ternjs'
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
+Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g DonnieWest/tern' }
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'mlaursen/vim-react-snippets'
 Plug 'alampros/vim-react-keywords'
 Plug '/home/igneo676/Code/sourcerer.nvim', { 'do': 'npm install && npm install -g neovim-client'}
 Plug 'neovim/node-host', { 'do': 'npm install' }
+Plug 'mhartington/nvim-typescript'
 
 "Typescript Plugins
 Plug 'leafgarland/typescript-vim'
-Plug 'Quramy/tsuquyomi'
-Plug 'DonnieWest/nvim-typescript', { 'branch': 'compilerOptionsTweaks' }
+" Plug 'DonnieWest/nvim-typescript', { 'branch': 'compilerOptionsTweaks' }
 
 "Java/Android/Gradle plugins
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
@@ -133,8 +132,12 @@ Plug 'mrtazz/simplenote.vim'
 " Plug 'Juev/vim-jekyll'
 " Plug 'tpope/vim-liquid'
 
+" C++
+Plug 'zchee/deoplete-clang'
+
 call plug#end()
 
+set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
 set hidden
 set number
 set wrapscan
@@ -182,6 +185,7 @@ set exrc
 set secure
 set termguicolors
 set inccommand=split
+set mouse=a
 
 let g:NumberToggleTrigger="<F2>"
 nnoremap <F4> :TagbarToggle<CR>
@@ -233,17 +237,6 @@ if executable("rg")
     set grepprg=rg\ --vimgrep\ --no-heading
     set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
-
-" map /  <Plug>(incsearch-forward)
-" map ?  <Plug>(incsearch-backward)
-" map g/ <Plug>(incsearch-stay)
-" map n  <Plug>(incsearch-nohl-n)
-" map N  <Plug>(incsearch-nohl-N)
-
-map *  <Plug>(asterisk-z*)
-map #  <Plug>(asterisk-z#)
-map g* <Plug>(asterisk-gz*)
-map g# <Plug>(asterisk-gz#)
 
 map y <Plug>(operator-flashy)
 nmap Y <Plug>(operator-flashy)$
@@ -392,11 +385,11 @@ function! Strip_trailing_whitespace()
   %s#\($\n\s*\)\+\%$##e
   call setpos(".", l:pos)
 endfunction
+
+let g:nvim_typescript#javascript_support = 1
 let g:nvim_typescript#max_completion_detail = 200
 let g:nvim_typescript#type_info_on_hold = 1
 let g:nvim_typescript#signature_complete = 1
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['javascript'],'passive_filetypes': ['java', 'typescript'] }
 
 autocmd! BufWritePost * Neomake
 
@@ -500,3 +493,21 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 source ~/.rhubarb_credentials
 source ~/.simplenoterc
+let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
+let g:deoplete#sources#clang#clang_header = '/usr/lib/clang' 
+
+set diffopt+=iwhite
+set diffexpr=DiffW()
+function DiffW()
+  let opt = ""
+  if &diffopt =~ "icase"
+    let opt = opt . "-i "
+  endif
+  if &diffopt =~ "iwhite"
+    let opt = opt . "-w " " swapped vim's -b with -w
+  endif
+  silent execute "!diff -a --binary " . opt .
+    \ v:fname_in . " " . v:fname_new .  " > " . v:fname_out
+endfunction
+let g:startify_change_to_vcs_root = 1
+let g:qf_auto_open_loclist = 0
