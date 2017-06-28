@@ -60,7 +60,6 @@ Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 Plug 'kassio/neoterm'
 Plug 'KabbAmine/zeavim.vim'
 Plug 'ludovicchabant/vim-gutentags'
@@ -112,10 +111,7 @@ Plug 'trkw/yarn.vim'
 Plug 'fleischie/vim-styled-components'
 
 " PHP
-" Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs', 'for': 'php'}
 Plug 'lumiliet/vim-twig'
-Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
-" Plug 'https://git.drupal.org/project/vimrc.git', { 'rtp': 'bundle/vim-plugin-for-drupal', 'as': 'vim-drupal-config' }
 Plug 'StanAngeloff/php.vim'
 Plug 'noahfrederick/vim-composer', { 'for': 'php' }
 
@@ -173,7 +169,6 @@ set shiftwidth=2
 set expandtab
 set softtabstop=2
 set tabstop=2
-set ignorecase
 set magic
 set noshowmode
 set completeopt+=longest
@@ -242,9 +237,8 @@ let g:deoplete#omni#input_patterns.java = [
     \]
 let g:deoplete#auto_complete_delay = 50
 let g:deoplete#ignore_sources = get(g:,'deoplete#ignore_sources',{})
-let g:deoplete#omni#input_patterns.php = '\h\w*\|[^. \t]->\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'
-let g:deoplete#ignore_sources = get(g:,'deoplete#ignore_sources',{})
 let g:deoplete#ignore_sources.java = ['omni']
+let g:deoplete#ignore_sources.php = ['omni']
 let g:deoplete#omni#functions = get(g:,'deoplete#omni#functions',{})
 call deoplete#custom#set('javacomplete2', 'mark', '')
 call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
