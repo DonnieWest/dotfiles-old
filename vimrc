@@ -5,16 +5,12 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall
 endif
 
+let g:python_host_prog = '/bin/python2'
+let g:python3_host_prog = '/bin/python3'
+
 call plug#begin()
 
 "Generic Plugins
-Plug 'mbbill/undotree'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'tpope/vim-unimpaired'
-Plug 'jeetsukumaran/vim-filebeagle'
-Plug 'tomtom/tcomment_vim'
-Plug 'SirVer/ultisnips'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-dispatch'
@@ -23,51 +19,62 @@ Plug 'duggiefresh/vim-easydir'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-projectionist'
-Plug 'romainl/vim-qf'
-Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'jiangmiao/auto-pairs'
-Plug 'Firef0x/PKGBUILD.vim'
+
+
+" VIM Quirks fixes
+Plug 'lervag/file-line'
+Plug 'pbrisbin/vim-mkdir'
+Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
+Plug 'romainl/vim-qf'
+Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'eugen0329/vim-esearch'
+Plug 'ynkdir/vim-vimlparser'
+Plug 'tpope/vim-unimpaired'
 Plug 'airblade/vim-rooter'
-Plug 'honza/vim-snippets'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'Valloric/ListToggle'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
-Plug 'mhinz/vim-grepper'
 Plug 'Yggdroot/indentLine'
-Plug 'Chiel92/vim-autoformat'
-" Plug 'edkolev/tmuxline.vim'
-Plug 'lervag/file-line'
-Plug 'mhinz/vim-startify'
-Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
+Plug 'pgdouyon/vim-evanesco'
 Plug 'kana/vim-operator-user'
 Plug 'haya14busa/vim-operator-flashy'
-Plug 'pbrisbin/vim-mkdir'
-Plug 'Shougo/unite.vim'
-Plug 'KabbAmine/zeavim.vim'
 Plug 'kshenoy/vim-signature'
-Plug 'tmux-plugins/vim-tmux-focus-events'
-Plug 'kassio/neoterm'
-Plug 'ludovicchabant/vim-gutentags'
-Plug 'Shougo/unite.vim'
-Plug 'eugen0329/vim-esearch'
-Plug 'ynkdir/vim-vimlparser'
-Plug 'pgdouyon/vim-evanesco'
+Plug 'Firef0x/PKGBUILD.vim'
 
-function! DoRemote(arg)
-  UpdateRemotePlugins
-endfunction
-Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
-
-" Colorschemes
+" UI
 Plug 'whatyouhide/vim-gotham'
-Plug 'flazz/vim-colorschemes'
+Plug 'mhinz/vim-startify'
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'Shougo/unite.vim'
+Plug 'ryanoasis/vim-devicons'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+" Plug 'edkolev/tmuxline.vim'
 
-" Syntax Checking
+" Generic IDE features
+
+Plug 'rhysd/clever-f.vim'
+Plug 'tomtom/tcomment_vim'
+Plug 'mbbill/undotree'
+Plug 'jeetsukumaran/vim-filebeagle'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+Plug 'kassio/neoterm'
+Plug 'KabbAmine/zeavim.vim'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'mhinz/vim-grepper'
 Plug 'neomake/neomake', { 'on': 'Neomake' }
+Plug 'DonnieWest/sourcerer.nvim', { 'do': 'npm install && npm install -g neovim-client'}
+
+" Screen sharing
+Plug 'floobits/floobits-neovim'
+
+" Formatters
+Plug 'sbdchd/neoformat'
 
 "Analytics
 Plug 'wakatime/vim-wakatime'
@@ -88,22 +95,32 @@ Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5.vim'
 Plug 'Valloric/MatchTagAlways'
 Plug 'alvan/vim-closetag'
+Plug 'mattn/emmet-vim'
 
 "Javascript Plugins
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'carlitux/deoplete-ternjs'
+Plug 'galooshi/vim-import-js', { 'do': 'npm install -g import-js' }
+Plug 'billyvg/deoplete-import-js'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g DonnieWest/tern' }
 Plug 'samuelsimoes/vim-jsx-utils'
-Plug 'mlaursen/vim-react-snippets'
 Plug 'alampros/vim-react-keywords'
-Plug '/home/igneo676/Code/sourcerer.nvim', { 'do': 'npm install && npm install -g neovim-client'}
 Plug 'neovim/node-host', { 'do': 'npm install' }
 Plug 'mhartington/nvim-typescript'
+Plug 'trkw/yarn.vim'
+Plug 'fleischie/vim-styled-components'
 
-"Typescript Plugins
+" PHP
+" Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs', 'for': 'php'}
+Plug 'lumiliet/vim-twig'
+Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+" Plug 'https://git.drupal.org/project/vimrc.git', { 'rtp': 'bundle/vim-plugin-for-drupal', 'as': 'vim-drupal-config' }
+Plug 'StanAngeloff/php.vim'
+Plug 'noahfrederick/vim-composer', { 'for': 'php' }
+
+" Typescript
 Plug 'leafgarland/typescript-vim'
-" Plug 'DonnieWest/nvim-typescript', { 'branch': 'compilerOptionsTweaks' }
 
 "Java/Android/Gradle plugins
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
@@ -111,12 +128,25 @@ Plug 'DonnieWest/VimStudio'
 Plug 'npacker/vim-java-syntax-after'
 
 " Python Plugins
-Plug 'zchee/deoplete-jedi'
+Plug 'zchee/deoplete-jedi', { 'for': 'python' }
 
 "VIMScript Plugins
 Plug 'Shougo/neco-vim'
 
 "Markdown/Octopress Plugins
+
+Plug 'rhysd/vim-grammarous'
+" Plug 'junegunn/goyo.vim'
+" Plug 'junegunn/limelight.vim'
+" Plug 'Juev/vim-jekyll'
+" Plug 'tpope/vim-liquid'
+
+" C++
+Plug 'zchee/deoplete-clang'
+
+function! DoRemote(arg)
+  UpdateRemotePlugins
+endfunction
 
 function! BuildComposer(info)
   if a:info.status != 'unchanged' || a:info.force
@@ -125,15 +155,6 @@ function! BuildComposer(info)
   endif
 endfunction
 
-Plug 'rhysd/vim-grammarous'
-Plug 'mrtazz/simplenote.vim'
-" Plug 'junegunn/goyo.vim'
-" Plug 'junegunn/limelight.vim'
-" Plug 'Juev/vim-jekyll'
-" Plug 'tpope/vim-liquid'
-
-" C++
-Plug 'zchee/deoplete-clang'
 
 call plug#end()
 
@@ -202,7 +223,9 @@ let g:gitgutter_max_signs=10000
 set wildignore+=*/log/*,*/.git/*,**/*.pyc
 
 nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
-nnoremap <leader>fm :Autoformat<CR>
+let g:neoformat_enabled_javascript = ['prettiereslint']
+let g:neoformat_enabled_typescript = ['prettier']
+nnoremap <leader>fm :Neoformat<CR>
 
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_ignore_case = 1
@@ -217,17 +240,16 @@ let g:deoplete#omni#input_patterns.java = [
     \'[^. \t0-9]\->\w*',
     \'[^. \t0-9]\::\w*',
     \]
-let g:deoplete#omni#input_patterns.jsp = ['[^. \t0-9]\.\w*']
+let g:deoplete#auto_complete_delay = 50
+let g:deoplete#ignore_sources = get(g:,'deoplete#ignore_sources',{})
 let g:deoplete#omni#input_patterns.php = '\h\w*\|[^. \t]->\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'
-let g:deoplete#ignore_sources = {}
+let g:deoplete#ignore_sources = get(g:,'deoplete#ignore_sources',{})
 let g:deoplete#ignore_sources.java = ['omni']
-let g:deoplete#omni#functions = {}
-" let g:deoplete#omni#functions.javascript = [
-"       \ 'tsuquyomi#complete',
-"       \]
-let g:deoplete#omni#input_patterns.javascript = '[^. \t]\.\w*'
+let g:deoplete#omni#functions = get(g:,'deoplete#omni#functions',{})
 call deoplete#custom#set('javacomplete2', 'mark', '')
 call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
+let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
+let g:deoplete#sources#clang#clang_header = '/usr/lib/clang' 
 "call deoplete#custom#set('omni', 'min_pattern_length', 0)
 inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
@@ -245,7 +267,7 @@ let g:incsearch#auto_nohlsearch = 1
 let g:asterisk#keeppos = 1
 let g:ag_working_path_mode="r"
 "Use unix clipboard
-set clipboard=unnamedplus
+set clipboard+=unnamedplus
 
 " Some default colorschemes I like
 " colorscheme darkburn
@@ -287,11 +309,12 @@ let g:zv_file_types = {
 nnoremap <silent> <C-Right> :bnext<CR>
 nnoremap <silent> <C-Left> :bprevious<CR>
 nnoremap <silent> <C-Del> :Sayonara<CR>
-tnoremap <silent> <C-Right> :bnext<CR>
-tnoremap <silent> <C-Left> :bprevious<CR>
-tnoremap <silent> <C-Del> :Sayonara<CR>
 
 let g:startify_custom_header = []
+let g:startify_change_to_vcs_root = 1
+
+let g:qf_auto_open_loclist = 0
+
 let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com', 'http://gitlab.codekoalas.com']
 
 let g:esearch = {
@@ -340,6 +363,8 @@ autocmd VimResized * :wincmd =
 
 nnoremap <Leader>fr :%s/
 xnoremap <Leader>fr :s/
+autocmd FileType esearch nnoremap <buffer> <Leader>fr :ESubstitute/
+autocmd FileType esearch xnoremap <buffer> <Leader>fr :ESubstitute/
 
 autocmd User Startified setlocal buftype=
 let g:startify_bookmarks = [
@@ -357,14 +382,11 @@ nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
 nnoremap <silent> <Alt-Down> :TmuxNavigateDown<cr>
 nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
 nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
-
-tnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
-tnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
-tnoremap <silent> <Alt-Down> :TmuxNavigateDown<cr>
-tnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
-tnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
-tnoremap <Esc> <C-\><C-n>
-
+" These mappings are used when nvim IS inside tmux
+nnoremap <silent> <C-W>k    :TmuxNavigateUp<CR>
+nnoremap <silent> <C-W>j    :TmuxNavigateDown<CR>
+nnoremap <silent> <C-W>h    :TmuxNavigateLeft<CR>
+nnoremap <silent> <C-W>l    :TmuxNavigateRight<CR>
 let g:airline_theme="gotham"
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#right_sep = ''
@@ -386,12 +408,25 @@ function! Strip_trailing_whitespace()
   call setpos(".", l:pos)
 endfunction
 
-let g:nvim_typescript#javascript_support = 1
-let g:nvim_typescript#max_completion_detail = 200
-let g:nvim_typescript#type_info_on_hold = 1
-let g:nvim_typescript#signature_complete = 1
+function! Lint()
+  if &filetype =~ 'javascript'
+    Neomake eslint
+  else
+    Neomake
+  end
+endfunction
 
-autocmd! BufWritePost * Neomake
+let g:neomake_typescript_eslint_maker = {
+  \ 'args': ['-f', 'compact'],
+  \ 'errorformat': '%E%f: line %l\, col %c\, Error - %m,' .
+  \   '%W%f: line %l\, col %c\, Warning - %m,%-G,%-G%*\d problems%#'
+  \ }
+let g:neomake_typescript_enabled_makers = ['eslint']
+
+augroup lint_events
+  autocmd!
+  autocmd BufWritePost * call Lint()
+augroup end
 
 function! GutentagsFilter(path) abort
     if fnamemodify(a:path, ':e') == 'java'
@@ -408,6 +443,8 @@ function! GutentagsFilter(path) abort
 endfunction
 
 let g:gutentags_enabled_user_func = 'GutentagsFilter'
+let g:gutentags_ctags_tagfile = '.tags'
+let g:gutentags_ctags_executable_php = 'ctags --langmap=php:.engine.inc.module.theme.install.php --php-kinds=cdfi --fields=+l'
 
 " HTML/CSS/Markdown/Octopress Stuff
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
@@ -419,24 +456,22 @@ let g:limelight_conceal_ctermfg = '232'
 
 " Python Stuff
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-let g:python_host_prog = '/bin/python2'
-let g:python3_host_prog = '/bin/python3'
 
 " Javascript Stuff
 let g:polyglot_disabled = ['css', 'javascript']
 let g:jsx_ext_required = 0
 let g:mustache_abbreviations = 1
+autocmd BufNewFile,BufRead .eslintrc set ft=json
 
 " Use tern_for_vim.
 let g:tern_request_timeout = 1
 let g:tern_request_timeout = 6000
 let g:tern#command = ["tern"]
 let g:tern#arguments = ["--persistent"]
+let g:nvim_typescript#type_info_on_hold = 1
+let g:nvim_typescript#signature_complete = 1
 let g:nvim_typescript#javascript_support = 1
-let g:tsuquyomi_javascript_support = 1
-let g:tsuquyomi_auto_open = 1
-let g:tsuquyomi_disable_quickfix = 1
-let g:tsuquyomi_completion_detail = 1
+let g:nvim_typescript#max_completion_detail = 200
 
 " autocmd FileType javascript setlocal omnifunc=tsuquyomi#complete
 autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
@@ -444,10 +479,7 @@ autocmd FileType javascript nnoremap oat :call JSXEachAttributeInLine()<CR>
 autocmd FileType javascript nnoremap eat :call JSXExtractPartialPrompt()<CR>
 autocmd FileType javascript nnoremap cat :call JSXChangeTagPrompt()<CR>
 autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
-" Typescript Stuff
 
-" Enable error checking with Typescript files
-autocmd BufWritePost *.ts,*.tsx silent! call tsuquyomi#reloadAndGeterr()
 let g:neomake_warning_sign = {
   \ 'text': '?',
   \ 'texthl': 'WarningMsg',
@@ -470,44 +502,25 @@ autocmd FileType gitcommit setlocal spell
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
-autocmd FileType java nnoremap <F8> <Plug>(JavaComplete-Imports-Add)
-autocmd FileType java inoremap <F8> <Plug>(JavaComplete-Imports-Add)
-autocmd FileType java nnoremap <F7> <Plug>(JavaComplete-Imports-AddMissing)
-autocmd FileType java inoremap <F7> <Plug>(JavaComplete-Imports-AddMissing)
-autocmd FileType java nnoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
-autocmd FileType java inoremap <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd FileType java nnoremap <buffer> <F8> <Plug>(JavaComplete-Imports-Add)
+autocmd FileType java inoremap <buffer> <F8> <Plug>(JavaComplete-Imports-Add)
+autocmd FileType java nnoremap <buffer> <F7> <Plug>(JavaComplete-Imports-AddMissing)
+autocmd FileType java inoremap <buffer> <F7> <Plug>(JavaComplete-Imports-AddMissing)
+autocmd FileType java nnoremap <buffer> <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd FileType java inoremap <buffer> <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
 let g:JavaComplete_ImportSortType = 'packageName'
 let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
 
-let g:formatdef_google_java_format = "'java -jar /home/igneo676/Code/google-java-format.jar --lines '.a:firstline.':'.a:lastline.' -'"
-let g:formatters_java = ['google_java_format']
+let g:neoformat_java_googleformatter = {
+            \ 'exe': 'google-java-format',
+            \ 'args': ['-'],
+            \ 'stdin': 1,
+            \ }
+
+let g:neoformat_enabled_java = ['googleformatter']
 
 let java_highlight_functions = 'style'
 let java_highlight_all = 1
 let java_highlight_debug = 1
 
-let g:SimplenoteFiletype = 'markdown'
-
-
-let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
-
 source ~/.rhubarb_credentials
-source ~/.simplenoterc
-let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
-let g:deoplete#sources#clang#clang_header = '/usr/lib/clang' 
-
-set diffopt+=iwhite
-set diffexpr=DiffW()
-function DiffW()
-  let opt = ""
-  if &diffopt =~ "icase"
-    let opt = opt . "-i "
-  endif
-  if &diffopt =~ "iwhite"
-    let opt = opt . "-w " " swapped vim's -b with -w
-  endif
-  silent execute "!diff -a --binary " . opt .
-    \ v:fname_in . " " . v:fname_new .  " > " . v:fname_out
-endfunction
-let g:startify_change_to_vcs_root = 1
-let g:qf_auto_open_loclist = 0
