@@ -23,6 +23,7 @@ Plug 'jiangmiao/auto-pairs'
 
 
 " VIM Quirks fixes
+Plug 'haya14busa/vim-stacktrace', { 'do': 'make' }
 Plug 'lervag/file-line'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
@@ -55,6 +56,9 @@ Plug 'vim-airline/vim-airline-themes'
 
 " Generic IDE features
 
+Plug 'simnalamburt/vim-mundo'
+Plug 'blueyed/vim-auto-programming', { 'branch': 'neovim' }
+Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 Plug 'rhysd/clever-f.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
@@ -67,7 +71,9 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
 Plug 'neomake/neomake', { 'on': 'Neomake' }
-Plug 'DonnieWest/sourcerer.nvim', { 'do': 'npm install && npm install -g neovim-client'}
+Plug 'benjie/neomake-local-eslint.vim'
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
 
 " Screen sharing
 Plug 'floobits/floobits-neovim'
@@ -105,10 +111,12 @@ Plug 'billyvg/deoplete-import-js'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g DonnieWest/tern' }
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
-Plug 'neovim/node-host', { 'do': 'npm install' }
 Plug 'mhartington/nvim-typescript'
 Plug 'trkw/yarn.vim'
-Plug 'fleischie/vim-styled-components'
+Plug 'neovim/node-host', { 'do': 'npm install' }
+" Plug 'billyvg/tigris.nvim', { 'do': './install.sh' }
+Plug 'jparise/vim-graphql'
+Plug 'styled-components/vim-styled-components'
 
 " PHP
 Plug 'lumiliet/vim-twig'
@@ -205,7 +213,7 @@ set mouse=a
 
 let g:NumberToggleTrigger="<F2>"
 nnoremap <F4> :TagbarToggle<CR>
-nnoremap <F3> :UndotreeToggle<cr>
+nnoremap <F3> :MundoToggle<CR>
 nnoremap <F5> :IndentLinesToggle<CR>
 
 "Set IndentLines to disabled by default
@@ -227,6 +235,7 @@ let g:deoplete#enable_ignore_case = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#enable_camel_case = 1
 let g:deoplete#enable_refresh_always = 1
+let g:deoplete#file#enable_buffer_path = 1
 let g:deoplete#max_abbr_width = 0
 let g:deoplete#max_menu_width = 0
 let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
@@ -235,6 +244,8 @@ let g:deoplete#omni#input_patterns.java = [
     \'[^. \t0-9]\->\w*',
     \'[^. \t0-9]\::\w*',
     \]
+
+set completefunc=autoprogramming#complete
 let g:deoplete#auto_complete_delay = 50
 let g:deoplete#ignore_sources = get(g:,'deoplete#ignore_sources',{})
 let g:deoplete#ignore_sources.java = ['omni']
@@ -319,9 +330,23 @@ let g:esearch = {
   \ 'use':        ['visual', 'hlsearch', 'last'],
   \}
 
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+" Plugin key-mappings.
+" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" SuperTab like snippets behavior.
+" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+imap <expr><TAB> pumvisible() ? "\<C-n>" : (neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>") 
+imap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
+
+let g:neosnippet#snippets_directory='~/Code/react-snippets'
+
+" Conceal neosnippet markers
+set conceallevel=2
+set concealcursor=niv
 
 "Some nice mappings for ag
 nnoremap <C-p> :FZF<ENTER>
@@ -410,6 +435,14 @@ function! Lint()
   end
 endfunction
 
+let g:neomake_json_pjdl_maker = {
+  \ 'errorformat': '%E%f: line %l\, col %c\, Error - %m,' .
+  \   '%W%f: line %l\, col %c\, Warning - %m,%-G,%-G%*\d problems%#'
+  \ }
+let g:neomake_json_enabled_makers = ['pjdl']
+
+autocmd BufRead,BufWritePost package.json Neomake pjdl
+
 let g:neomake_typescript_eslint_maker = {
   \ 'args': ['-f', 'compact'],
   \ 'errorformat': '%E%f: line %l\, col %c\, Error - %m,' .
@@ -474,6 +507,7 @@ autocmd FileType javascript nnoremap eat :call JSXExtractPartialPrompt()<CR>
 autocmd FileType javascript nnoremap cat :call JSXChangeTagPrompt()<CR>
 autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
 
+let g:tigris#enabled = 1
 let g:neomake_warning_sign = {
   \ 'text': '?',
   \ 'texthl': 'WarningMsg',
