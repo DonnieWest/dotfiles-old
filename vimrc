@@ -37,7 +37,6 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'Valloric/ListToggle'
 Plug 'Yggdroot/indentLine'
-Plug 'sheerun/vim-polyglot'
 Plug 'pgdouyon/vim-evanesco'
 Plug 'kana/vim-operator-user'
 Plug 'haya14busa/vim-operator-flashy'
@@ -48,7 +47,6 @@ Plug 'Firef0x/PKGBUILD.vim'
 Plug 'whatyouhide/vim-gotham'
 Plug 'mhinz/vim-startify'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
-Plug 'Shougo/unite.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -58,14 +56,13 @@ Plug 'vim-airline/vim-airline-themes'
 
 Plug 'simnalamburt/vim-mundo'
 Plug 'blueyed/vim-auto-programming', { 'branch': 'neovim' }
-Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 Plug 'rhysd/clever-f.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Shougo/context_filetype.vim'
 Plug 'kassio/neoterm'
-Plug 'KabbAmine/zeavim.vim'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -75,18 +72,10 @@ Plug 'benjie/neomake-local-eslint.vim'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 
-" Screen sharing
-Plug 'floobits/floobits-neovim'
-
 " Formatters
 Plug 'sbdchd/neoformat'
 
-"Analytics
-Plug 'wakatime/vim-wakatime'
-
 "Git plugins
-Plug 'shumphrey/fugitive-gitlab.vim'
-Plug 'mattn/gist-vim'
 Plug 'jreybert/vimagit'
 Plug 'airblade/vim-gitgutter'
 " Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
@@ -98,30 +87,19 @@ Plug 'tpope/vim-rhubarb'
 "HTML and CSS Plugins
 Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5.vim'
-Plug 'Valloric/MatchTagAlways'
 Plug 'alvan/vim-closetag'
-Plug 'mattn/emmet-vim'
 
 "Javascript Plugins
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
-Plug 'carlitux/deoplete-ternjs'
-Plug 'galooshi/vim-import-js', { 'do': 'npm install -g import-js' }
-Plug 'billyvg/deoplete-import-js'
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g DonnieWest/tern' }
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
 Plug 'mhartington/nvim-typescript'
-Plug 'trkw/yarn.vim'
 Plug 'neovim/node-host', { 'do': 'npm install' }
 " Plug 'billyvg/tigris.nvim', { 'do': './install.sh' }
 Plug 'jparise/vim-graphql'
 Plug 'styled-components/vim-styled-components'
-
-" PHP
-Plug 'lumiliet/vim-twig'
-Plug 'StanAngeloff/php.vim'
-Plug 'noahfrederick/vim-composer', { 'for': 'php' }
+Plug 'ap/vim-css-color'
 
 " Typescript
 Plug 'leafgarland/typescript-vim'
@@ -144,9 +122,6 @@ Plug 'rhysd/vim-grammarous'
 " Plug 'junegunn/limelight.vim'
 " Plug 'Juev/vim-jekyll'
 " Plug 'tpope/vim-liquid'
-
-" C++
-Plug 'zchee/deoplete-clang'
 
 function! DoRemote(arg)
   UpdateRemotePlugins
@@ -245,17 +220,25 @@ let g:deoplete#omni#input_patterns.java = [
     \'[^. \t0-9]\::\w*',
     \]
 
+call deoplete#custom#set('buffer', 'mark', 'ℬ')
+call deoplete#custom#set('ternjs', 'mark', '')
+call deoplete#custom#set('omni', 'mark', '⌾')
+call deoplete#custom#set('file', 'mark', 'file')
+call deoplete#custom#set('jedi', 'mark', '')
+call deoplete#custom#set('typescript', 'mark', '')
+call deoplete#custom#set('neosnippet', 'mark', '')
+call deoplete#custom#set('java', 'mark', '')
+call deoplete#custom#set('javacomplete2', 'mark', '')
+
+call deoplete#custom#set('typescript',  'rank', 630)
+
 set completefunc=autoprogramming#complete
 let g:deoplete#auto_complete_delay = 50
 let g:deoplete#ignore_sources = get(g:,'deoplete#ignore_sources',{})
 let g:deoplete#ignore_sources.java = ['omni']
 let g:deoplete#ignore_sources.php = ['omni']
 let g:deoplete#omni#functions = get(g:,'deoplete#omni#functions',{})
-call deoplete#custom#set('javacomplete2', 'mark', '')
 call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
-let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
-let g:deoplete#sources#clang#clang_header = '/usr/lib/clang' 
-"call deoplete#custom#set('omni', 'min_pattern_length', 0)
 inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
 inoremap <expr><C-x><C-o> deoplete#mappings#manual_complete()
@@ -276,7 +259,7 @@ set clipboard+=unnamedplus
 
 " Some default colorschemes I like
 " colorscheme darkburn
-colorscheme gotham
+colorscheme gotham256
 
 "Gimme a colored column for lines that are too long
 highlight ColorColumn ctermbg=blue
@@ -485,20 +468,44 @@ let g:limelight_conceal_ctermfg = '232'
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
 " Javascript Stuff
-let g:polyglot_disabled = ['css', 'javascript']
 let g:jsx_ext_required = 0
 let g:mustache_abbreviations = 1
 autocmd BufNewFile,BufRead .eslintrc set ft=json
 
-" Use tern_for_vim.
-let g:tern_request_timeout = 1
-let g:tern_request_timeout = 6000
-let g:tern#command = ["tern"]
-let g:tern#arguments = ["--persistent"]
 let g:nvim_typescript#type_info_on_hold = 1
 let g:nvim_typescript#signature_complete = 1
 let g:nvim_typescript#javascript_support = 1
 let g:nvim_typescript#max_completion_detail = 200
+
+let g:nvim_typescript#kind_symbols = {
+    \ 'keyword': 'keyword',
+    \ 'class': '',
+    \ 'interface': 'interface',
+    \ 'script': 'script',
+    \ 'module': '',
+    \ 'local class': 'local class',
+    \ 'type': 'type',
+    \ 'enum': '',
+    \ 'enum member': '',
+    \ 'alias': '',
+    \ 'type parameter': 'type param',
+    \ 'primitive type': 'primitive type',
+    \ 'var': '',
+    \ 'local var': '',
+    \ 'property': '',
+    \ 'let': '',
+    \ 'const': '',
+    \ 'label': 'label',
+    \ 'parameter': 'param',
+    \ 'index': 'index',
+    \ 'function': '',
+    \ 'local function': 'local function',
+    \ 'method': '',
+    \ 'getter': '',
+    \ 'setter': '',
+    \ 'call': 'call',
+    \ 'constructor': '',
+\}
 
 " autocmd FileType javascript setlocal omnifunc=tsuquyomi#complete
 autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
@@ -507,14 +514,13 @@ autocmd FileType javascript nnoremap eat :call JSXExtractPartialPrompt()<CR>
 autocmd FileType javascript nnoremap cat :call JSXChangeTagPrompt()<CR>
 autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
 
-let g:tigris#enabled = 1
 let g:neomake_warning_sign = {
-  \ 'text': '?',
+  \ 'text': '•',
   \ 'texthl': 'WarningMsg',
   \ }
 
 let g:neomake_error_sign = {
-  \ 'text': 'X',
+  \ 'text': '•',
   \ 'texthl': 'ErrorMsg',
   \ }
 
