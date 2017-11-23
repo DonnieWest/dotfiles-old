@@ -20,6 +20,7 @@ Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-projectionist'
 Plug 'jiangmiao/auto-pairs'
+Plug 'wellle/tmux-complete.vim'
 
 
 " VIM Quirks fixes
@@ -42,6 +43,8 @@ Plug 'kana/vim-operator-user'
 Plug 'haya14busa/vim-operator-flashy'
 Plug 'kshenoy/vim-signature'
 Plug 'Firef0x/PKGBUILD.vim'
+Plug 'blueyed/vim-diminactive'
+Plug 'tmux-plugins/vim-tmux-focus-events' " to restore focus events while using tmux
 
 " UI
 Plug 'whatyouhide/vim-gotham'
@@ -90,7 +93,7 @@ Plug 'othree/html5.vim'
 Plug 'alvan/vim-closetag'
 
 "Javascript Plugins
-Plug 'pangloss/vim-javascript'
+Plug 'jungomi/vim-mdnquery'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
@@ -100,6 +103,9 @@ Plug 'neovim/node-host', { 'do': 'npm install' }
 Plug 'jparise/vim-graphql'
 Plug 'styled-components/vim-styled-components'
 Plug 'ap/vim-css-color'
+Plug 'mvolkmann/vim-react'
+Plug 'mvolkmann/vim-js-arrow-function'
+Plug 'vimlab/mdn.vim'
 
 " Typescript
 Plug 'leafgarland/typescript-vim'
@@ -118,10 +124,15 @@ Plug 'Shougo/neco-vim'
 "Markdown/Octopress Plugins
 
 Plug 'rhysd/vim-grammarous'
-" Plug 'junegunn/goyo.vim'
+Plug 'junegunn/goyo.vim'
 " Plug 'junegunn/limelight.vim'
 " Plug 'Juev/vim-jekyll'
 " Plug 'tpope/vim-liquid'
+
+" Swift
+
+Plug 'mitsuse/autocomplete-swift'
+Plug 'keith/swift.vim'
 
 function! DoRemote(arg)
   UpdateRemotePlugins
@@ -205,7 +216,9 @@ let g:neoformat_enabled_javascript = ['prettiereslint']
 let g:neoformat_enabled_typescript = ['prettier']
 nnoremap <leader>fm :Neoformat<CR>
 
-let g:deoplete#enable_at_startup = 1
+let g:tmuxcomplete#trigger = ''
+let g:deoplete#enable_at_startup = 0
+autocmd InsertEnter * call deoplete#enable()
 let g:deoplete#enable_ignore_case = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#enable_camel_case = 1
@@ -459,6 +472,7 @@ let g:gutentags_ctags_executable_php = 'ctags --langmap=php:.engine.inc.module.t
 " HTML/CSS/Markdown/Octopress Stuff
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css,scss,sass setlocal iskeyword+=-
+autocmd FileType html setlocal keywordprg=:MdnQueryFirstMatch
 
 autocmd User GoyoEnter Limelight
 autocmd User GoyoLeave Limelight!

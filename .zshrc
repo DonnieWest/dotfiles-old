@@ -1,20 +1,105 @@
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+source ~/.zplug/init.zsh
+zplug "zdharma/fast-syntax-highlighting"
+zplug "themes/terminalparty", from:oh-my-zsh, as:theme
+zplug "zsh-users/zsh-history-substring-search"
+zplug "zsh-users/zsh-completions"
+zplug "lukechilds/zsh-nvm"
 
-ZSH_THEME="terminalparty"
+bindkey "^[[B" history-substring-search-down
+bindkey "^[[A" history-substring-search-up
 
-GOTHAM_SHELL="$HOME/.config/gotham/gotham.sh"
-[[ -s $GOTHAM_SHELL ]] && source $GOTHAM_SHELL
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(common-aliases gpg-agent)
+# Then, source plugins and add commands to $PATH
+zplug load
+# Enable completions
+if [ -d ~/.zsh/comp ]; then
+    fpath=(~/.zsh/comp $fpath)
+    autoload -U ~/.zsh/comp/*(:t)
+fi
 
-#Old one plugins=(git bundler rvm rake tmuxinator gem heroku adb autojump)
-source $ZSH/oh-my-zsh.sh
+# Changing/making/removing directory
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt pushdminus
 
-# User configuration
+## Command history configuration
+if [ -z "$HISTFILE" ]; then
+    HISTFILE=$HOME/.zsh_history
+fi
+
+HISTSIZE=10000
+SAVEHIST=10000
+
+# Show history
+case $HIST_STAMPS in
+  "mm/dd/yyyy") alias history='fc -fl 1' ;;
+  "dd.mm.yyyy") alias history='fc -El 1' ;;
+  "yyyy-mm-dd") alias history='fc -il 1' ;;
+  *) alias history='fc -l 1' ;;
+esac
+
+setopt append_history
+setopt extended_history
+setopt hist_expire_dups_first
+setopt hist_ignore_dups # ignore duplication command history list
+setopt hist_ignore_space
+setopt hist_verify
+setopt inc_append_history
+setopt share_history # share command history data
+
+unsetopt menu_complete   # do not autoselect the first completion entry
+unsetopt flowcontrol
+setopt auto_menu         # show completion menu on successive tab press
+setopt complete_in_word
+setopt always_to_end
+
+zstyle ':completion:*:*:*:*:*' menu select
+
+# case insensitive (all), partial-word and substring completion
+if [[ "$CASE_SENSITIVE" = true ]]; then
+  zstyle ':completion:*' matcher-list 'r:|=*' 'l:|=* r:|=*'
+else
+  if [[ "$HYPHEN_INSENSITIVE" = true ]]; then
+    zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' 'r:|=*' 'l:|=* r:|=*'
+  else
+    zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+  fi
+fi
+unset CASE_SENSITIVE HYPHEN_INSENSITIVE
+
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+
+# disable named-directories autocompletion
+zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories
+
+# Use caching so that commands like apt and dpkg complete are useable
+zstyle ':completion::complete:*' use-cache 1
+zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
+zstyle ':completion:*' rehash true
+
+# Don't complete uninteresting users
+zstyle ':completion:*:*:*:users' ignored-patterns \
+        adm amanda apache at avahi avahi-autoipd beaglidx bin cacti canna \
+        clamav daemon dbus distcache dnsmasq dovecot fax ftp games gdm \
+        gkrellmd gopher hacluster haldaemon halt hsqldb ident junkbust kdm \
+        ldap lp mail mailman mailnull man messagebus  mldonkey mysql nagios \
+        named netdump news nfsnobody nobody nscd ntp nut nx obsrun openvpn \
+        operator pcap polkitd postfix postgres privoxy pulse pvm quagga radvd \
+        rpc rpcuser rpm rtkit scard shutdown squid sshd statd svn sync tftp \
+        usbmux uucp vcsa wwwrun xfs '_*'
+
+# ... unless we really want to.
+zstyle '*' single-ignored show
+
+alias ls="ls --color"
 
 export GRADLE_HOME="$HOME/gradle"
 export PATH="$PATH:/usr/bin:/home/igneo676/bin:/usr/sbin:/sbin:/usr/local/bin:/bin:/usr/local/games:/usr/games:$GRADLE_HOME/bin:$HOME/.cabal/bin:/usr/bin/core_perl"
@@ -57,12 +142,7 @@ export JAVA7_HOME="/usr/lib/jvm/java-7-openjdk"
 
 export PATH="/home/igneo676/.gem/ruby/2.2.2/bin:$PATH"
 
-eval "$(hub alias -s)"
-
 alias package-json-dependency-lint=pjdl
-
-export NVM_DIR="/home/igneo676/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 export PATH="/home/igneo676/android-sdk-linux/emulator:$PATH"
 export PATH="/home/igneo676/android-sdk-linux/platform-tools:$PATH"
