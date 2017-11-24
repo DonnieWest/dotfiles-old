@@ -29,7 +29,6 @@ Plug 'lervag/file-line'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
 Plug 'romainl/vim-qf'
-Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'eugen0329/vim-esearch'
 Plug 'ynkdir/vim-vimlparser'
 Plug 'tpope/vim-unimpaired'
@@ -44,7 +43,6 @@ Plug 'haya14busa/vim-operator-flashy'
 Plug 'kshenoy/vim-signature'
 Plug 'Firef0x/PKGBUILD.vim'
 Plug 'blueyed/vim-diminactive'
-Plug 'tmux-plugins/vim-tmux-focus-events' " to restore focus events while using tmux
 
 " UI
 Plug 'whatyouhide/vim-gotham'
@@ -63,7 +61,7 @@ Plug 'rhysd/clever-f.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'jeetsukumaran/vim-filebeagle'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'roxma/nvim-completion-manager'
 Plug 'Shougo/context_filetype.vim'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
@@ -74,6 +72,7 @@ Plug 'neomake/neomake', { 'on': 'Neomake' }
 Plug 'benjie/neomake-local-eslint.vim'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
+Plug 'metakirby5/codi.vim'
 
 " Formatters
 Plug 'sbdchd/neoformat'
@@ -114,9 +113,6 @@ Plug 'leafgarland/typescript-vim'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 Plug 'DonnieWest/VimStudio'
 Plug 'npacker/vim-java-syntax-after'
-
-" Python Plugins
-Plug 'zchee/deoplete-jedi', { 'for': 'python' }
 
 "VIMScript Plugins
 Plug 'Shougo/neco-vim'
@@ -166,6 +162,8 @@ set tabstop=2
 set magic
 set noshowmode
 set completeopt+=longest
+set completeopt+=noselect
+set completeopt-=preview
 set shiftround
 set autoread
 set whichwrap+=<,>,h,l,[,]
@@ -187,7 +185,6 @@ nnoremap ; :
 set splitbelow
 set splitright
 set ttimeoutlen=50
-set completeopt-=preview
 set tags=.tags,./tags,tags;
 set nofoldenable    " disable folding
 set list listchars=tab:»·,trail:·,nbsp:·
@@ -216,45 +213,29 @@ let g:neoformat_enabled_javascript = ['prettiereslint']
 let g:neoformat_enabled_typescript = ['prettier']
 nnoremap <leader>fm :Neoformat<CR>
 
+let g:cm_sources_override = {
+  \ 'cm-tags': {'enable':0}
+\ }
+
+au User CmSetup call cm#register_source({'name' : 'java',
+        \ 'priority': 9, 
+        \ 'scopes': ['java'],
+        \ 'abbreviation': 'java',
+        \ 'cm_refresh_patterns':['\.', '::', '\->'],
+        \ 'cm_refresh': {'omnifunc': 'javacomplete#Complete' },
+        \ })
+
+au User CmSetup call cm#register_source({'name' : 'autoprogramming',
+        \ 'priority': 2,
+        \ 'abbreviation': 'auto',
+        \ 'word_pattern': '\S+',
+        \ 'cm_refresh': {'omnifunc': 'autoprogramming#complete'},
+        \ })
+
+imap <C-x><C-o> <Plug>(cm_force_refresh)
+
 let g:tmuxcomplete#trigger = ''
-let g:deoplete#enable_at_startup = 0
-autocmd InsertEnter * call deoplete#enable()
-let g:deoplete#enable_ignore_case = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#enable_camel_case = 1
-let g:deoplete#enable_refresh_always = 1
-let g:deoplete#file#enable_buffer_path = 1
-let g:deoplete#max_abbr_width = 0
-let g:deoplete#max_menu_width = 0
-let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
-let g:deoplete#omni#input_patterns.java = [
-    \'[^. \t0-9]\.\w*',
-    \'[^. \t0-9]\->\w*',
-    \'[^. \t0-9]\::\w*',
-    \]
 
-call deoplete#custom#set('buffer', 'mark', 'ℬ')
-call deoplete#custom#set('ternjs', 'mark', '')
-call deoplete#custom#set('omni', 'mark', '⌾')
-call deoplete#custom#set('file', 'mark', 'file')
-call deoplete#custom#set('jedi', 'mark', '')
-call deoplete#custom#set('typescript', 'mark', '')
-call deoplete#custom#set('neosnippet', 'mark', '')
-call deoplete#custom#set('java', 'mark', '')
-call deoplete#custom#set('javacomplete2', 'mark', '')
-
-call deoplete#custom#set('typescript',  'rank', 630)
-
-set completefunc=autoprogramming#complete
-let g:deoplete#auto_complete_delay = 50
-let g:deoplete#ignore_sources = get(g:,'deoplete#ignore_sources',{})
-let g:deoplete#ignore_sources.java = ['omni']
-let g:deoplete#ignore_sources.php = ['omni']
-let g:deoplete#omni#functions = get(g:,'deoplete#omni#functions',{})
-call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
-inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
-inoremap <expr><C-x><C-o> deoplete#mappings#manual_complete()
 " Use RipGrep instead of Grep
 if executable("rg")
     set grepprg=rg\ --vimgrep\ --no-heading
@@ -490,6 +471,9 @@ let g:nvim_typescript#type_info_on_hold = 1
 let g:nvim_typescript#signature_complete = 1
 let g:nvim_typescript#javascript_support = 1
 let g:nvim_typescript#max_completion_detail = 200
+
+autocmd FileType javascript nnoremap <buffer> <F8> :TSImport<CR>
+autocmd FileType javascript inoremap <buffer> <F8> :TSImport<CR>
 
 let g:nvim_typescript#kind_symbols = {
     \ 'keyword': 'keyword',
