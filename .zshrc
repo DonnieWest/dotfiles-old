@@ -1,41 +1,79 @@
-source ~/.zplug/init.zsh
-zplug "zdharma/fast-syntax-highlighting"
-zplug "themes/terminalparty", from:oh-my-zsh, as:theme
-zplug "zsh-users/zsh-history-substring-search"
-zplug "zsh-users/zsh-completions"
-zplug "lukechilds/zsh-nvm"
+source ~/.profile
 
-bindkey "^[[B" history-substring-search-down
-bindkey "^[[A" history-substring-search-up
+autoload -Uz compinit promptinit
+compinit
+promptinit
 
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
-fi
+# Outputs current branch info in prompt format
+function git_prompt_info() {
+  local ref
+  ref=$(command git symbolic-ref HEAD 2> /dev/null) || \
+  ref=$(command git rev-parse --short HEAD 2> /dev/null) || return 0
+  echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$(parse_git_dirty)$ZSH_THEME_GIT_PROMPT_SUFFIX"
+}
 
-# Then, source plugins and add commands to $PATH
-zplug load
-# Enable completions
-if [ -d ~/.zsh/comp ]; then
-    fpath=(~/.zsh/comp $fpath)
-    autoload -U ~/.zsh/comp/*(:t)
-fi
+# Checks if working tree is dirty
+function parse_git_dirty() {
+  local STATUS=''
+  local -a FLAGS
+  FLAGS=('--porcelain')
+  if [[ "$DISABLE_UNTRACKED_FILES_DIRTY" == "true" ]]; then
+    FLAGS+='--untracked-files=no'
+  fi
+  STATUS=$(command git status ${FLAGS} 2> /dev/null | tail -n1)
+  if [[ -n $STATUS ]]; then
+    echo "$ZSH_THEME_GIT_PROMPT_DIRTY"
+  else
+    echo "$ZSH_THEME_GIT_PROMPT_CLEAN"
+  fi
+}
+
+autoload -U colors && colors
+
+setopt prompt_subst
+
+PROMPT='%(?,%{$fg[green]%},%{$fg[red]%}) %% '
+
+RPS1='%{$fg[white]%}%2~$(git_prompt_info) %{$fg_bold[blue]%}%m%{$reset_color%}'
+
+ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg[yellow]%}("
+ZSH_THEME_GIT_PROMPT_SUFFIX=")%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_CLEAN=""
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%} ⚡%{$fg[yellow]%}"
+
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search # Up
+bindkey "^[[B" down-line-or-beginning-search # Down
+
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+
+bindkey '^[[1;5C' forward-word  # [Ctrl-RightArrow] - move forward one word
+bindkey '^[[1;5D' backward-word # [Ctrl-LeftArrow] - move backward one word
+
+bindkey ' ' magic-space # [Space] - do history expansion
+
+bindkey "^[[3~" delete-char
+bindkey "^[3;5~" delete-char
+bindkey "\e[3~" delete-char
+
+bindkey '^?' backward-delete-char # [Backspace] - delete backward
 
 # Changing/making/removing directory
 setopt auto_pushd
 setopt pushd_ignore_dups
 setopt pushdminus
 
-## Command history configuration
-if [ -z "$HISTFILE" ]; then
-    HISTFILE=$HOME/.zsh_history
-fi
+HISTFILE=$HOME/.zsh_history
 
 HISTSIZE=10000
 SAVEHIST=10000
+
+# Record only the latest uses of commands in history
+export HISTCONTROL=ignoreboth:erasedups
 
 # Show history
 case $HIST_STAMPS in
@@ -102,7 +140,7 @@ zstyle '*' single-ignored show
 alias ls="ls --color"
 
 export GRADLE_HOME="$HOME/gradle"
-export PATH="$PATH:/usr/bin:/home/igneo676/bin:/usr/sbin:/sbin:/usr/local/bin:/bin:/usr/local/games:/usr/games:$GRADLE_HOME/bin:$HOME/.cabal/bin:/usr/bin/core_perl"
+export PATH="$PATH:/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/bin:/usr/local/games:/usr/games:$GRADLE_HOME/bin:$HOME/.cabal/bin:/usr/bin/core_perl"
 export ANDROID_HOME="$HOME/android-sdk-linux"
 export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
 export EDITOR="nvim"
@@ -112,11 +150,6 @@ export STEAM_RUNTIME=0
 
 # Increase limit of files able to be handled by TernJS
 ulimit -n 2048
-
-# Record only the latest uses of commands in history
-export HISTCONTROL=ignoreboth:erasedups
-
-source ~/.profile
 
 eval $(dircolors ~/.dircolors)
 
@@ -140,19 +173,17 @@ export JAVA8_HOME="/usr/lib/jvm/java-8-jdk"
 export JAVA7_HOME="/usr/lib/jvm/java-7-openjdk"
 #export JAVA6_HOME="/usr/lib/jvm/java-6-openjdk-amd64/"
 
-export PATH="/home/igneo676/.gem/ruby/2.2.2/bin:$PATH"
-
 alias package-json-dependency-lint=pjdl
 
-export PATH="/home/igneo676/android-sdk-linux/emulator:$PATH"
-export PATH="/home/igneo676/android-sdk-linux/platform-tools:$PATH"
+export PATH="$HOME/android-sdk-linux/emulator:$PATH"
+export PATH="$HOME/android-sdk-linux/platform-tools:$PATH"
 
-export PATH="/home/igneo676/android-sdk-linux/tools/bin:$PATH"
+export PATH="$HOME/android-sdk-linux/tools/bin:$PATH"
 
 export PATH="$PATH:$HOME/.local/bin"
 
+export PATH="$HOME/bin:$PATH"
+export PATH="$PATH:$HOME/.npm-global/bin"
+
 export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
-
-export PATH="$PATH:/var/lib/snapd/snap/bin"
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
