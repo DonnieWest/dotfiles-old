@@ -20,11 +20,8 @@ Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-projectionist'
 Plug 'jiangmiao/auto-pairs'
-Plug 'wellle/tmux-complete.vim'
-
 
 " VIM Quirks fixes
-Plug 'haya14busa/vim-stacktrace', { 'do': 'make' }
 Plug 'lervag/file-line'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
@@ -47,7 +44,6 @@ Plug 'blueyed/vim-diminactive'
 " UI
 Plug 'whatyouhide/vim-gotham'
 Plug 'mhinz/vim-startify'
-Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'ryanoasis/vim-devicons'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -56,7 +52,6 @@ Plug 'vim-airline/vim-airline-themes'
 " Generic IDE features
 
 Plug 'simnalamburt/vim-mundo'
-Plug 'blueyed/vim-auto-programming', { 'branch': 'neovim' }
 Plug 'rhysd/clever-f.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
@@ -125,11 +120,6 @@ Plug 'junegunn/goyo.vim'
 " Plug 'Juev/vim-jekyll'
 " Plug 'tpope/vim-liquid'
 
-" Swift
-
-Plug 'mitsuse/autocomplete-swift'
-Plug 'keith/swift.vim'
-
 function! DoRemote(arg)
   UpdateRemotePlugins
 endfunction
@@ -194,10 +184,7 @@ set termguicolors
 set inccommand=split
 set mouse=a
 
-let g:NumberToggleTrigger="<F2>"
-nnoremap <F4> :TagbarToggle<CR>
-nnoremap <F3> :MundoToggle<CR>
-nnoremap <F5> :IndentLinesToggle<CR>
+nnoremap <F2> :MundoToggle<CR>
 
 "Set IndentLines to disabled by default
 let g:indentLine_enabled = 0
@@ -213,28 +200,26 @@ let g:neoformat_enabled_javascript = ['prettiereslint']
 let g:neoformat_enabled_typescript = ['prettier']
 nnoremap <leader>fm :Neoformat<CR>
 
+let g:closetag_xhtml_filenames = '*.xhtml,*.js,*.tsx'
+
+" This will make the list of non closing tags case sensitive (e.g. `<Link>` will be closed while `<link>` won't.)
+let g:closetag_emptyTags_caseSensitive = 1
+
 let g:cm_sources_override = {
   \ 'cm-tags': {'enable':0}
 \ }
 
 au User CmSetup call cm#register_source({'name' : 'java',
-        \ 'priority': 9, 
+        \ 'priority': 9,
         \ 'scopes': ['java'],
         \ 'abbreviation': 'java',
-        \ 'cm_refresh_patterns':['\.', '::', '\->'],
+        \ 'scoping': 1,
+        \ 'early_cache': 1,
+        \ 'cm_refresh_patterns': ['\w+\.', '::', '\->'],
         \ 'cm_refresh': {'omnifunc': 'javacomplete#Complete' },
         \ })
 
-au User CmSetup call cm#register_source({'name' : 'autoprogramming',
-        \ 'priority': 2,
-        \ 'abbreviation': 'auto',
-        \ 'word_pattern': '\S+',
-        \ 'cm_refresh': {'omnifunc': 'autoprogramming#complete'},
-        \ })
-
 imap <C-x><C-o> <Plug>(cm_force_refresh)
-
-let g:tmuxcomplete#trigger = ''
 
 " Use RipGrep instead of Grep
 if executable("rg")
@@ -277,15 +262,6 @@ vnoremap > >gv
 
 "Disable Ex mode
 map Q <Nop>
-
-let g:zv_file_types = {
-            \   'cpp'                   : 'c++',
-            \   '^(G|g)runtfile\.'      : 'grunt',
-            \   '^(G|g)ulpfile\.'       : 'gulp',
-            \   '.htaccess'             : 'apache_http_server',
-            \   '^(md|mdown|mkd|mkdn)$' : 'markdown',
-            \   'java'                   : 'java,android',
-            \ }
 
 "Ctrl + Left and Right switch buffers
 nnoremap <silent> <C-Right> :bnext<CR>
@@ -455,10 +431,6 @@ autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css,scss,sass setlocal iskeyword+=-
 autocmd FileType html setlocal keywordprg=:MdnQueryFirstMatch
 
-autocmd User GoyoEnter Limelight
-autocmd User GoyoLeave Limelight!
-let g:limelight_conceal_ctermfg = '232'
-
 " Python Stuff
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
@@ -472,8 +444,8 @@ let g:nvim_typescript#signature_complete = 1
 let g:nvim_typescript#javascript_support = 1
 let g:nvim_typescript#max_completion_detail = 200
 
-autocmd FileType javascript nnoremap <buffer> <F8> :TSImport<CR>
-autocmd FileType javascript inoremap <buffer> <F8> :TSImport<CR>
+autocmd FileType javascript nnoremap <buffer> <F3> :TSImport<CR>
+autocmd FileType javascript inoremap <buffer> <F3> :TSImport<CR>
 
 let g:nvim_typescript#kind_symbols = {
     \ 'keyword': 'keyword',
@@ -513,12 +485,12 @@ autocmd FileType javascript nnoremap cat :call JSXChangeTagPrompt()<CR>
 autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
 
 let g:neomake_warning_sign = {
-  \ 'text': '•',
+  \ 'text': '!',
   \ 'texthl': 'WarningMsg',
   \ }
 
 let g:neomake_error_sign = {
-  \ 'text': '•',
+  \ 'text': 'X',
   \ 'texthl': 'ErrorMsg',
   \ }
 
@@ -534,12 +506,12 @@ autocmd FileType gitcommit setlocal spell
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
-autocmd FileType java nnoremap <buffer> <F8> <Plug>(JavaComplete-Imports-Add)
-autocmd FileType java inoremap <buffer> <F8> <Plug>(JavaComplete-Imports-Add)
-autocmd FileType java nnoremap <buffer> <F7> <Plug>(JavaComplete-Imports-AddMissing)
-autocmd FileType java inoremap <buffer> <F7> <Plug>(JavaComplete-Imports-AddMissing)
-autocmd FileType java nnoremap <buffer> <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
-autocmd FileType java inoremap <buffer> <F6> <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd FileType java nnoremap <buffer> <F3> <Plug>(JavaComplete-Imports-Add)
+autocmd FileType java inoremap <buffer> <F3> <Plug>(JavaComplete-Imports-Add)
+autocmd FileType java nnoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMissing)
+autocmd FileType java inoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMissing)
+autocmd FileType java nnoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd FileType java inoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
 let g:JavaComplete_ImportSortType = 'packageName'
 let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
 
