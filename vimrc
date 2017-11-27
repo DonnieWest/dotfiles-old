@@ -5,8 +5,8 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall
 endif
 
-let g:python_host_prog = '/bin/python2'
-let g:python3_host_prog = '/bin/python3'
+let g:python_host_prog = '/usr/bin/python2'
+let g:python3_host_prog = '/usr/bin/python3'
 
 call plug#begin()
 
@@ -73,6 +73,7 @@ Plug 'metakirby5/codi.vim'
 Plug 'sbdchd/neoformat'
 
 "Git plugins
+Plug 'shumphrey/fugitive-gitlab.vim'
 Plug 'jreybert/vimagit'
 Plug 'airblade/vim-gitgutter'
 " Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
@@ -88,12 +89,14 @@ Plug 'alvan/vim-closetag'
 
 "Javascript Plugins
 Plug 'jungomi/vim-mdnquery'
+Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
+Plug 'roxma/ncm-flow'
+Plug 'wokalski/autocomplete-flow'
 Plug 'mhartington/nvim-typescript'
 Plug 'neovim/node-host', { 'do': 'npm install' }
-" Plug 'billyvg/tigris.nvim', { 'do': './install.sh' }
 Plug 'jparise/vim-graphql'
 Plug 'styled-components/vim-styled-components'
 Plug 'ap/vim-css-color'
@@ -103,11 +106,20 @@ Plug 'vimlab/mdn.vim'
 
 " Typescript
 Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
 
 "Java/Android/Gradle plugins
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 Plug 'DonnieWest/VimStudio'
 Plug 'npacker/vim-java-syntax-after'
+
+" Ruby
+Plug 'tpope/vim-rails'
+Plug 'vim-ruby/vim-ruby'
+Plug 'tpope/vim-bundler'
+
+" Python Plugins
+Plug 'zchee/deoplete-jedi', { 'for': 'python' }
 
 "VIMScript Plugins
 Plug 'Shougo/neco-vim'
@@ -197,7 +209,7 @@ set wildignore+=*/log/*,*/.git/*,**/*.pyc
 
 nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
 let g:neoformat_enabled_javascript = ['prettiereslint']
-let g:neoformat_enabled_typescript = ['prettier']
+" let g:neoformat_enabled_typescript = ['prettier']
 nnoremap <leader>fm :Neoformat<CR>
 
 let g:closetag_xhtml_filenames = '*.xhtml,*.js,*.tsx'
@@ -208,16 +220,6 @@ let g:closetag_emptyTags_caseSensitive = 1
 let g:cm_sources_override = {
   \ 'cm-tags': {'enable':0}
 \ }
-
-au User CmSetup call cm#register_source({'name' : 'java',
-        \ 'priority': 9,
-        \ 'scopes': ['java'],
-        \ 'abbreviation': 'java',
-        \ 'scoping': 1,
-        \ 'early_cache': 1,
-        \ 'cm_refresh_patterns': ['\w+\.', '::', '\->'],
-        \ 'cm_refresh': {'omnifunc': 'javacomplete#Complete' },
-        \ })
 
 imap <C-x><C-o> <Plug>(cm_force_refresh)
 
@@ -269,10 +271,6 @@ nnoremap <silent> <C-Left> :bprevious<CR>
 nnoremap <silent> <C-Del> :Sayonara<CR>
 
 let g:startify_custom_header = []
-let g:startify_change_to_vcs_root = 1
-
-let g:qf_auto_open_loclist = 0
-
 let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com', 'http://gitlab.codekoalas.com']
 
 let g:esearch = {
@@ -288,6 +286,7 @@ let g:esearch = {
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 xmap <C-k>     <Plug>(neosnippet_expand_target)
+let g:neosnippet#enable_completed_snippet = 1
 
 " SuperTab like snippets behavior.
 " Note: It must be "imap" and "smap".  It uses <Plug> mappings.
@@ -302,7 +301,7 @@ set conceallevel=2
 set concealcursor=niv
 
 "Some nice mappings for ag
-nnoremap <C-p> :FZF<ENTER>
+nnoremap <C-p> :FZF<CR>
 if has('nvim')
   aug fzf_setup
     au!
@@ -381,28 +380,33 @@ function! Strip_trailing_whitespace()
 endfunction
 
 function! Lint()
-  if &filetype =~ 'javascript'
-    Neomake eslint
+  if &filetype =~ 'typescript'
+    if (executable(findfile('node_modules/.bin/prettier-tslint', '.;')))
+      Neomake tslint
+    else
+      Neomake eslint
+    endif
   else
     Neomake
   end
 endfunction
 
-let g:neomake_json_pjdl_maker = {
-  \ 'errorformat': '%E%f: line %l\, col %c\, Error - %m,' .
-  \   '%W%f: line %l\, col %c\, Warning - %m,%-G,%-G%*\d problems%#'
-  \ }
-let g:neomake_json_enabled_makers = ['pjdl']
+autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
-autocmd BufRead,BufWritePost package.json Neomake pjdl
+let g:neoformat_typescript_prettiereslint = {
+        \ 'exe': 'prettier-eslint',
+        \ 'args': ['--stdin', '--stdin-filepath', '%:p'],
+        \ 'stdin': 1,
+        \ }
+let g:neoformat_enabled_typescript = ['prettiereslint']
 
 let g:neomake_typescript_eslint_maker = {
   \ 'args': ['-f', 'compact'],
   \ 'errorformat': '%E%f: line %l\, col %c\, Error - %m,' .
   \   '%W%f: line %l\, col %c\, Warning - %m,%-G,%-G%*\d problems%#'
   \ }
-let g:neomake_typescript_enabled_makers = ['eslint']
-
+let g:neomake_typescript_enabled_makers = ['tsc', 'eslint']
+let g:neomake_javascript_enabled_makers = ['flow', 'eslint']
 augroup lint_events
   autocmd!
   autocmd BufWritePost * call Lint()
@@ -485,7 +489,7 @@ autocmd FileType javascript nnoremap cat :call JSXChangeTagPrompt()<CR>
 autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
 
 let g:neomake_warning_sign = {
-  \ 'text': '!',
+  \ 'text': '?',
   \ 'texthl': 'WarningMsg',
   \ }
 
@@ -515,6 +519,15 @@ autocmd FileType java inoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveU
 let g:JavaComplete_ImportSortType = 'packageName'
 let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
 
+au User CmSetup call cm#register_source({'name' : 'java',
+        \ 'priority': 9,
+        \ 'scopes': ['java'],
+        \ 'abbreviation': 'java',
+        \ 'cm_refresh_length': -1,
+        \ 'cm_refresh_patterns': ['\w+\.', '::', '\->'],
+        \ 'cm_refresh': {'omnifunc': 'javacomplete#Complete' },
+        \ })
+
 let g:neoformat_java_googleformatter = {
             \ 'exe': 'google-java-format',
             \ 'args': ['-'],
@@ -527,4 +540,17 @@ let java_highlight_functions = 'style'
 let java_highlight_all = 1
 let java_highlight_debug = 1
 
-source ~/.rhubarb_credentials
+" Ruby
+let g:rubycomplete_rails = 1
+let g:rubycomplete_buffer_loading = 1
+let g:rubycomplete_classes_in_global = 1
+
+
+hi htmlArg gui=italic
+hi Comment gui=italic
+hi Type    gui=italic
+hi htmlArg cterm=italic
+hi Comment cterm=italic
+hi Type    cterm=italic
+let g:startify_change_to_vcs_root = 1
+let g:qf_auto_open_loclist = 0
