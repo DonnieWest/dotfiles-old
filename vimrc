@@ -20,6 +20,7 @@ Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-projectionist'
 Plug 'jiangmiao/auto-pairs'
+Plug 'junegunn/vim-easy-align'
 
 " VIM Quirks fixes
 Plug 'lervag/file-line'
@@ -36,7 +37,7 @@ Plug 'Valloric/ListToggle'
 Plug 'Yggdroot/indentLine'
 Plug 'pgdouyon/vim-evanesco'
 Plug 'kana/vim-operator-user'
-Plug 'haya14busa/vim-operator-flashy'
+Plug 'machakann/vim-highlightedyank'
 Plug 'kshenoy/vim-signature'
 Plug 'Firef0x/PKGBUILD.vim'
 Plug 'blueyed/vim-diminactive'
@@ -223,14 +224,18 @@ let g:cm_sources_override = {
 
 imap <C-x><C-o> <Plug>(cm_force_refresh)
 
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
+
 " Use RipGrep instead of Grep
 if executable("rg")
     set grepprg=rg\ --vimgrep\ --no-heading
     set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
-
-map y <Plug>(operator-flashy)
-nmap Y <Plug>(operator-flashy)$
 
 let g:incsearch#auto_nohlsearch = 1
 let g:asterisk#keeppos = 1
@@ -336,6 +341,8 @@ nnoremap <Leader>fr :%s/
 xnoremap <Leader>fr :s/
 autocmd FileType esearch nnoremap <buffer> <Leader>fr :ESubstitute/
 autocmd FileType esearch xnoremap <buffer> <Leader>fr :ESubstitute/
+
+let g:highlightedyank_highlight_duration = 100
 
 autocmd User Startified setlocal buftype=
 let g:startify_bookmarks = [
