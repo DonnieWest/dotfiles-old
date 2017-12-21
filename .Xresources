@@ -7,11 +7,8 @@ Xft.hinting: 1
 Xft.antialias: 0
 Xft.rgba: rgb
 
-URxvt.font: xft:FuraMono Nerd Font Mono:size=6:antialias=false
-URxvt.boldFont: xft:FuraMono Nerd Font Mono:size=6
-URxvt.letterSpace: -3
-URxvt.scrollBar: off
-
+xterm*charClass: 33:48,37-38:48,45-47:48,64:48,58:48,126:48,61:48,63:48,43:48,35:48
+<Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0)
 XTerm*.LoginShell: true
 XTerm*VT100.geometry: 80x24
 XTerm.termName: xterm-256color
@@ -31,16 +28,15 @@ XTerm*altSendsEscape: true
 XTerm*decTerminalID: vt340
 XTerm*numColorRegisters: 256
 xterm*eightBitInput: false
-XTerm*faceName: FuraMono Nerd Font Mono:style=Regular:antialias=false
-XTerm*faceSize: 6
+XTerm*faceName: FuraMono Nerd Font Mono:style=Regular
+XTerm*faceSize: 5.5
 XTerm*scaleHeight: 0.95
 xterm*saveLines: 16384
-xterm*charClass: 33:48,35:48,37:48,43:48,45-47:48,64:48,95:48,126:48
 xterm*VT100.Translations: #override \
     Shift <KeyPress> Insert: insert-selection(CLIPBOARD) \n\
     Ctrl Shift <Key>V:    insert-selection(CLIPBOARD) \n\
     Ctrl Shift <Key>C:    copy-selection(CLIPBOARD) \n\
-    Meta <Btn1Up>: exec-formatted("xdg-open '%t'", PRIMARY)
+    Shift <Btn1Up>: exec-formatted("xdg-open '%t'", CLIPBOARD)
 !! Only select text
 XTerm*highlightSelection: true
 XTerm*selectToClipboard:true
