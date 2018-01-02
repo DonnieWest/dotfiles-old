@@ -4,6 +4,14 @@ autoload -Uz compinit promptinit
 compinit
 promptinit
 
+setopt autocd
+setopt extendedglob
+setopt NO_NOMATCH
+
+export CLICOLOR=1
+
+## Prompt
+
 # Outputs current branch info in prompt format
 function git_prompt_info() {
   local ref
@@ -41,47 +49,47 @@ ZSH_THEME_GIT_PROMPT_SUFFIX=")%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%} ⚡%{$fg[yellow]%}"
 
+## Keybindings
+
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search # Up
-bindkey "^[[B" down-line-or-beginning-search # Down
 
-bindkey '^[[H' beginning-of-line
-bindkey '^[[F' end-of-line
-
-bindkey '^[[1;5C' forward-word  # [Ctrl-RightArrow] - move forward one word
-bindkey '^[[1;5D' backward-word # [Ctrl-LeftArrow] - move backward one word
-
-bindkey ' ' magic-space # [Space] - do history expansion
-
+bindkey -e
+bindkey '\ew' kill-region
+bindkey -s '\el' "ls\n"
+bindkey '^r' history-incremental-search-backward
+bindkey "^[[5~" up-line-or-history
+bindkey "^[[6~" down-line-or-history
+bindkey "^[[A" up-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+bindkey "^[[H" beginning-of-line
+bindkey "^[[1~" beginning-of-line
+bindkey "^[OH" beginning-of-line
+bindkey "^[[F" end-of-line
+bindkey "^[[4~" end-of-line
+bindkey "^[OF" end-of-line
+bindkey ' ' magic-space
+bindkey "^F" forward-word
+bindkey "^B" backward-word
+bindkey '^[[Z' reverse-menu-complete
+bindkey '^?' backward-delete-char
 bindkey "^[[3~" delete-char
 bindkey "^[3;5~" delete-char
 bindkey "\e[3~" delete-char
+bindkey '^[[1;5C' forward-word
+bindkey '^[[1;5D' backward-word
+bindkey ' ' magic-space
 
-bindkey '^?' backward-delete-char # [Backspace] - delete backward
+## History
 
-# Changing/making/removing directory
-setopt auto_pushd
-setopt pushd_ignore_dups
-setopt pushdminus
-
-HISTFILE=$HOME/.zsh_history
-
-HISTSIZE=10000
-SAVEHIST=10000
-
-# Record only the latest uses of commands in history
-export HISTCONTROL=ignoreboth:erasedups
-
-# Show history
-case $HIST_STAMPS in
-  "mm/dd/yyyy") alias history='fc -fl 1' ;;
-  "dd.mm.yyyy") alias history='fc -El 1' ;;
-  "yyyy-mm-dd") alias history='fc -il 1' ;;
-  *) alias history='fc -l 1' ;;
-esac
+if [ -z $HISTFILE ]; then
+    HISTFILE=$HOME/.zsh_history
+fi
+HISTSIZE=100000
+SAVEHIST=100000
+HISTCONTROL=ignoreboth:erasedups
 
 setopt append_history
 setopt extended_history
@@ -92,13 +100,20 @@ setopt hist_verify
 setopt inc_append_history
 setopt share_history # share command history data
 
+alias history='fc -l 1'
+
+## Completion
+
 unsetopt menu_complete   # do not autoselect the first completion entry
 unsetopt flowcontrol
-setopt auto_menu         # show completion menu on successive tab press
+setopt auto_menu         # show completion menu on succesive tab press
 setopt complete_in_word
 setopt always_to_end
+setopt COMPLETE_ALIASES
 
-zstyle ':completion:*:*:*:*:*' menu select
+WORDCHARS=''
+
+zmodload -i zsh/complist
 
 # case insensitive (all), partial-word and substring completion
 if [[ "$CASE_SENSITIVE" = true ]]; then
@@ -113,16 +128,37 @@ fi
 unset CASE_SENSITIVE HYPHEN_INSENSITIVE
 
 zstyle ':completion:*' list-colors ''
+
+zstyle ':completion:*:*:*:*:*' menu select
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+zstyle ':completion:*:*:*:*:processes' command "ps -u `whoami` -o pid,user,comm -w -w"
 
 # disable named-directories autocompletion
 zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories
+cdpath=(.)
+
+bindkey -M menuselect '^o' accept-and-infer-next-history
+
+# use /etc/hosts and known_hosts for hostname completion
+[ -r /etc/ssh/ssh_known_hosts ] && _global_ssh_hosts=(${${${${(f)"$(</etc/ssh/ssh_known_hosts)"}:#[\|]*}%%\ *}%%,*}) || _global_ssh_hosts=()
+[ -r ~/.ssh/known_hosts ] && _ssh_hosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[\|]*}%%\ *}%%,*}) || _ssh_hosts=()
+[ -r ~/.ssh/config ] && _ssh_config=($(cat ~/.ssh/config | sed -ne 's/Host[=\t ]//p')) || _ssh_config=()
+[ -r /etc/hosts ] && : ${(A)_etc_hosts:=${(s: :)${(ps:\t:)${${(f)~~"$(</etc/hosts)"}%%\#*}##[:blank:]#[^[:blank:]]#}}} || _etc_hosts=()
+hosts=(
+  "$_ssh_config[@]"
+  "$_global_ssh_hosts[@]"
+  "$_ssh_hosts[@]"
+  "$_etc_hosts[@]"
+  "$HOST"
+  localhost
+)
+zstyle ':completion:*:hosts' hosts $hosts
+zstyle ':completion:*' users off
 
 # Use caching so that commands like apt and dpkg complete are useable
 zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
+zstyle ':completion::complete:*' cache-path $ZSH/cache/
 zstyle ':completion:*' rehash true
-
 # Don't complete uninteresting users
 zstyle ':completion:*:*:*:users' ignored-patterns \
         adm amanda apache at avahi avahi-autoipd beaglidx bin cacti canna \
@@ -137,21 +173,41 @@ zstyle ':completion:*:*:*:users' ignored-patterns \
 # ... unless we really want to.
 zstyle '*' single-ignored show
 
+if [ "x$COMPLETION_WAITING_DOTS" = "xtrue" ]; then
+  expand-or-complete-with-dots() {
+    echo -n "\e[31m......\e[0m"
+    zle expand-or-complete
+    zle redisplay
+  }
+  zle -N expand-or-complete-with-dots
+  bindkey "^I" expand-or-complete-with-dots
+fi
+
+zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
+
+## Aliases
+
+alias less='less -R'
+alias grep='grep --color=auto'
+alias ..='cd ../'
 alias ls="ls --color"
 
-export GRADLE_HOME="$HOME/gradle"
-export PATH="$PATH:/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/bin:/usr/local/games:/usr/games:$GRADLE_HOME/bin:$HOME/.cabal/bin:/usr/bin/core_perl"
-export ANDROID_HOME="$HOME/android-sdk-linux"
-export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
-export EDITOR="nvim"
-export POWERLINE_CONFIG_COMMAND="$HOME/.local/bin/powerline-config"
-export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
-export STEAM_RUNTIME=0
+## Stack
 
-# Increase limit of files able to be handled by TernJS
-ulimit -n 2048
+DIRSTACKSIZE=8
+setopt autopushd pushdminus pushdsilent pushdtohome pushd_ignore_dups
+alias dh='dirs -v'
 
-eval $(dircolors ~/.dircolors)
+## Correction
+
+setopt correct_all
+alias man='nocorrect man'
+alias mv='nocorrect mv'
+alias mkdir='nocorrect mkdir'
+alias gist='nocorrect gist'
+alias sudo='nocorrect sudo'
+
+## GPG Agent
 
 unset SSH_AGENT_PID
 if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
@@ -169,21 +225,46 @@ export GPG_TTY=$(tty)
 # Refresh gpg-agent tty in case user switches into an X session
 gpg-connect-agent updatestartuptty /bye >/dev/null
 
+
+## Misc
+
+# Increase limit of files able to be handled by TernJS
+ulimit -n 2048
+
+# Activate FZF
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Use custom dircolors
+eval $(dircolors ~/.dircolors)
+
+# Setup Env variables
+export GRADLE_HOME="$HOME/gradle"
+export ANDROID_HOME="$HOME/android-sdk-linux"
+export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
+export POWERLINE_CONFIG_COMMAND="$HOME/.local/bin/powerline-config"
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+export STEAM_RUNTIME=0
+
+export EDITOR="nvim"
+
 export JAVA8_HOME="/usr/lib/jvm/java-8-jdk"
 export JAVA7_HOME="/usr/lib/jvm/java-7-openjdk"
 #export JAVA6_HOME="/usr/lib/jvm/java-6-openjdk-amd64/"
 
-alias package-json-dependency-lint=pjdl
+# Setup PATH
+
+export PATH="$PATH:/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/bin:/usr/local/games:/usr/games:$GRADLE_HOME/bin:$HOME/.cabal/bin:/usr/bin/core_perl"
 
 export PATH="$HOME/android-sdk-linux/emulator:$PATH"
 export PATH="$HOME/android-sdk-linux/platform-tools:$PATH"
-
 export PATH="$HOME/android-sdk-linux/tools/bin:$PATH"
 
 export PATH="$PATH:$HOME/.local/bin"
-
 export PATH="$HOME/bin:$PATH"
-export PATH="$PATH:$HOME/.npm-global/bin"
 
+export PATH="$PATH:$HOME/.npm-global/bin"
+export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Custom aliases
+alias package-json-dependency-lint=pjdl
