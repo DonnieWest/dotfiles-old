@@ -21,6 +21,7 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-projectionist'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-easy-align'
+Plug 'idanarye/vim-vebugger', { 'branch': 'develop' }
 
 " VIM Quirks fixes
 Plug 'lervag/file-line'
@@ -57,7 +58,7 @@ Plug 'rhysd/clever-f.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'jeetsukumaran/vim-filebeagle'
-Plug 'roxma/nvim-completion-manager'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/context_filetype.vim'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
@@ -69,12 +70,19 @@ Plug 'benjie/neomake-local-eslint.vim'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'metakirby5/codi.vim'
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': './install.sh'
+    \ }
+
+" Appearance
+
+Plug 'thiagoalessio/rainbow_levels.vim'
 
 " Formatters
 Plug 'sbdchd/neoformat'
 
 "Git plugins
-Plug 'shumphrey/fugitive-gitlab.vim'
 Plug 'jreybert/vimagit'
 Plug 'airblade/vim-gitgutter'
 " Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
@@ -87,6 +95,7 @@ Plug 'tpope/vim-rhubarb'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5.vim'
 Plug 'alvan/vim-closetag'
+Plug 'styled-components/vim-styled-components'
 
 "Javascript Plugins
 Plug 'jungomi/vim-mdnquery'
@@ -94,8 +103,6 @@ Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
-Plug 'roxma/ncm-flow'
-Plug 'wokalski/autocomplete-flow'
 Plug 'mhartington/nvim-typescript'
 Plug 'neovim/node-host', { 'do': 'npm install' }
 Plug 'jparise/vim-graphql'
@@ -103,11 +110,10 @@ Plug 'styled-components/vim-styled-components'
 Plug 'ap/vim-css-color'
 Plug 'mvolkmann/vim-react'
 Plug 'mvolkmann/vim-js-arrow-function'
-Plug 'vimlab/mdn.vim'
+Plug 'PsychoLlama/further.vim'
 
 " Typescript
 Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
 
 "Java/Android/Gradle plugins
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
@@ -124,6 +130,10 @@ Plug 'zchee/deoplete-jedi', { 'for': 'python' }
 
 "VIMScript Plugins
 Plug 'Shougo/neco-vim'
+
+" Rust
+
+Plug 'rust-lang/rust.vim', { 'do': 'cargo install racer && rustup component add rust-src' }
 
 "Markdown/Octopress Plugins
 
@@ -199,6 +209,9 @@ set mouse=a
 
 nnoremap <F2> :MundoToggle<CR>
 
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
 "Set IndentLines to disabled by default
 let g:indentLine_enabled = 0
 
@@ -210,19 +223,25 @@ set wildignore+=*/log/*,*/.git/*,**/*.pyc
 
 nnoremap <leader><space> :call Strip_trailing_whitespace()<CR>
 let g:neoformat_enabled_javascript = ['prettiereslint']
-" let g:neoformat_enabled_typescript = ['prettier']
+let g:neoformat_enabled_typescript = ['prettier']
 nnoremap <leader>fm :Neoformat<CR>
 
 let g:closetag_xhtml_filenames = '*.xhtml,*.js,*.tsx'
 
 " This will make the list of non closing tags case sensitive (e.g. `<Link>` will be closed while `<link>` won't.)
 let g:closetag_emptyTags_caseSensitive = 1
+let g:closetag_shortcut = '>'
 
-let g:cm_sources_override = {
-  \ 'cm-tags': {'enable':0}
-\ }
-
-imap <C-x><C-o> <Plug>(cm_force_refresh)
+" let g:cm_sources_override = {
+"   \ 'cm-tags': {'enable':0},
+"   \ 'java': {
+"     \ 'abbreviation': '',
+"     \ 'cm_refresh_length': -1,
+"     \ 'cm_refresh_patterns': ['\w+\.', '::', '\->'],
+"   \},
+" \ }
+"
+" imap <C-x><C-o> <Plug>(cm_force_refresh)
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
@@ -230,6 +249,43 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_ignore_case = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#enable_camel_case = 1
+let g:deoplete#enable_refresh_always = 1
+let g:deoplete#file#enable_buffer_path = 1
+let g:deoplete#max_abbr_width = 0
+let g:deoplete#max_menu_width = 0
+let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
+let g:deoplete#omni#input_patterns.java = [
+    \'[^. \t0-9]\.\w*',
+    \'[^. \t0-9]\->\w*',
+    \'[^. \t0-9]\::\w*',
+    \]
+
+call deoplete#custom#set('buffer', 'mark', 'ℬ')
+call deoplete#custom#set('ternjs', 'mark', '')
+call deoplete#custom#set('omni', 'mark', '⌾')
+call deoplete#custom#set('file', 'mark', 'file')
+call deoplete#custom#set('jedi', 'mark', '')
+call deoplete#custom#set('typescript', 'mark', '')
+call deoplete#custom#set('neosnippet', 'mark', '')
+call deoplete#custom#set('java', 'mark', '')
+call deoplete#custom#set('javacomplete2', 'mark', '')
+
+call deoplete#custom#set('typescript',  'rank', 630)
+
+set completefunc=autoprogramming#complete
+let g:deoplete#auto_complete_delay = 50
+let g:deoplete#ignore_sources = get(g:,'deoplete#ignore_sources',{})
+let g:deoplete#ignore_sources.java = ['omni']
+let g:deoplete#ignore_sources.php = ['omni']
+let g:deoplete#omni#functions = get(g:,'deoplete#omni#functions',{})
+call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
+inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
+inoremap <expr><C-x><C-o> deoplete#mappings#manual_complete()
 
 " Use RipGrep instead of Grep
 if executable("rg")
@@ -276,6 +332,10 @@ nnoremap <silent> <C-Left> :bprevious<CR>
 nnoremap <silent> <C-Del> :Sayonara<CR>
 
 let g:startify_custom_header = []
+let g:startify_change_to_vcs_root = 1
+
+let g:qf_auto_open_loclist = 0
+
 let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com', 'http://gitlab.codekoalas.com']
 
 let g:esearch = {
@@ -306,7 +366,7 @@ set conceallevel=2
 set concealcursor=niv
 
 "Some nice mappings for ag
-nnoremap <C-p> :FZF<CR>
+nnoremap <C-p> :FZF<ENTER>
 if has('nvim')
   aug fzf_setup
     au!
@@ -366,6 +426,7 @@ nnoremap <silent> <C-W>j    :TmuxNavigateDown<CR>
 nnoremap <silent> <C-W>h    :TmuxNavigateLeft<CR>
 nnoremap <silent> <C-W>l    :TmuxNavigateRight<CR>
 let g:airline_theme="gotham"
+" let g:airline_extensions = []
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#right_sep = ''
 let g:airline#extensions#tabline#left_sep = ''
@@ -399,6 +460,22 @@ function! Lint()
 endfunction
 
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
+" let g:neomake_json_pjdl_maker = {
+"   \ 'errorformat': '%E%f: line %l\, col %c\, Error - %m,' .
+"   \   '%W%f: line %l\, col %c\, Warning - %m,%-G,%-G%*\d problems%#'
+"   \ }
+" let g:neomake_json_enabled_makers = ['pjdl']
+"
+" autocmd BufRead,BufWritePost package.json Neomake pjdl
+
+
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+    \ }
+
+autocmd CursorHold *.rs :call LanguageClient_textDocument_hover()<CR>
+autocmd FileType rust nnoremap <buffer> <C-]> :call LanguageClient_textDocument_definition()<CR>
+autocmd FileType rust nnoremap <buffer> <F6> :call LanguageClient_textDocument_rename()<CR>
 
 let g:neoformat_typescript_prettiereslint = {
         \ 'exe': 'prettier-eslint',
@@ -414,6 +491,7 @@ let g:neomake_typescript_eslint_maker = {
   \ }
 let g:neomake_typescript_enabled_makers = ['tsc', 'eslint']
 let g:neomake_javascript_enabled_makers = ['flow', 'eslint']
+
 augroup lint_events
   autocmd!
   autocmd BufWritePost * call Lint()
@@ -440,8 +518,8 @@ let g:gutentags_ctags_executable_php = 'ctags --langmap=php:.engine.inc.module.t
 " HTML/CSS/Markdown/Octopress Stuff
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css,scss,sass setlocal iskeyword+=-
-autocmd FileType html setlocal keywordprg=:MdnQueryFirstMatch
 
+let g:vim_json_syntax_conceal = 0
 " Python Stuff
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
@@ -457,6 +535,7 @@ let g:nvim_typescript#max_completion_detail = 200
 
 autocmd FileType javascript nnoremap <buffer> <F3> :TSImport<CR>
 autocmd FileType javascript inoremap <buffer> <F3> :TSImport<CR>
+autocmd FileType json setlocal conceallevel=0
 
 let g:nvim_typescript#kind_symbols = {
     \ 'keyword': 'keyword',
@@ -553,11 +632,18 @@ let g:rubycomplete_buffer_loading = 1
 let g:rubycomplete_classes_in_global = 1
 
 
-hi htmlArg gui=italic
-hi Comment gui=italic
-hi Type    gui=italic
 hi htmlArg cterm=italic
 hi Comment cterm=italic
 hi Type    cterm=italic
-let g:startify_change_to_vcs_root = 1
-let g:qf_auto_open_loclist = 0
+source ~/.rhubarb_credentials
+
+let g:rainbow_levels = [
+    \{'ctermbg': 232, 'guibg': '#080808'},
+    \{'ctermbg': 233, 'guibg': '#121212'},
+    \{'ctermbg': 234, 'guibg': '#1c1c1c'},
+    \{'ctermbg': 235, 'guibg': '#262626'},
+    \{'ctermbg': 236, 'guibg': '#303030'},
+    \{'ctermbg': 237, 'guibg': '#3a3a3a'},
+    \{'ctermbg': 238, 'guibg': '#444444'},
+    \{'ctermbg': 239, 'guibg': '#4e4e4e'},
+    \{'ctermbg': 240, 'guibg': '#585858'}]
