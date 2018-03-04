@@ -5,8 +5,8 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall
 endif
 
-let g:python_host_prog = '/usr/bin/python2'
-let g:python3_host_prog = '/usr/bin/python3'
+let g:python_host_prog = '/bin/python2'
+let g:python3_host_prog = '/bin/python3'
 
 call plug#begin()
 
@@ -58,7 +58,16 @@ Plug 'rhysd/clever-f.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'jeetsukumaran/vim-filebeagle'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/asyncomplete-file.vim'
+Plug 'prabirshrestha/asyncomplete-buffer.vim'
+Plug 'yami-beta/asyncomplete-omni.vim'
+Plug 'DonnieWest/autocomplete_shim_ncm'
+
 Plug 'Shougo/context_filetype.vim'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
@@ -84,7 +93,7 @@ Plug 'sbdchd/neoformat'
 
 "Git plugins
 Plug 'jreybert/vimagit'
-Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter', { 'commit': '932ffaca092cca246b82c33e23d2d3a05e192e08' }
 " Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/gv.vim'
@@ -130,6 +139,7 @@ Plug 'zchee/deoplete-jedi', { 'for': 'python' }
 
 "VIMScript Plugins
 Plug 'Shougo/neco-vim'
+Plug 'prabirshrestha/asyncomplete-necovim.vim'
 
 " Rust
 
@@ -218,6 +228,8 @@ let g:indentLine_enabled = 0
 " Allow gitgutter on large files
 let g:gitgutter_max_signs=10000
 
+let g:signify_vcs_list = [ 'git' ]
+
 "Generic wildignores
 set wildignore+=*/log/*,*/.git/*,**/*.pyc
 
@@ -232,16 +244,40 @@ let g:closetag_xhtml_filenames = '*.xhtml,*.js,*.tsx'
 let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 
-" let g:cm_sources_override = {
-"   \ 'cm-tags': {'enable':0},
-"   \ 'java': {
-"     \ 'abbreviation': '',
-"     \ 'cm_refresh_length': -1,
-"     \ 'cm_refresh_patterns': ['\w+\.', '::', '\->'],
-"   \},
-" \ }
-"
-" imap <C-x><C-o> <Plug>(cm_force_refresh)
+let g:cm_sources_override = {
+  \ 'cm-tags': {'enable':0},
+  \ 'java': {
+    \ 'abbreviation': '',
+    \ 'cm_refresh_length': -1,
+    \ 'cm_refresh_patterns': ['\w+\.', '::', '\->'],
+  \},
+\ }
+
+imap <C-x><C-o> <Plug>(asyncomplete_force_refresh)
+let g:asyncomplete_remove_duplicates = 1
+
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+    \ 'name': 'file',
+    \ 'whitelist': ['*'],
+    \ 'priority': 10,
+    \ 'completor': function('asyncomplete#sources#file#completor')
+    \ }))
+
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+    \ 'name': 'buffer',
+    \ 'whitelist': ['*'],
+    \ 'blacklist': ['go', 'javascript', 'javascript.jsx'],
+    \ 'completor': function('asyncomplete#sources#buffer#completor'),
+    \ }))
+
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
+    \ 'name': 'omni',
+    \ 'whitelist': ['java'],
+    \ 'completor': function('asyncomplete#sources#omni#completor')
+    \  }))
+
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
+
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
@@ -249,43 +285,8 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_ignore_case = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#enable_camel_case = 1
-let g:deoplete#enable_refresh_always = 1
-let g:deoplete#file#enable_buffer_path = 1
-let g:deoplete#max_abbr_width = 0
-let g:deoplete#max_menu_width = 0
-let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
-let g:deoplete#omni#input_patterns.java = [
-    \'[^. \t0-9]\.\w*',
-    \'[^. \t0-9]\->\w*',
-    \'[^. \t0-9]\::\w*',
-    \]
-
-call deoplete#custom#set('buffer', 'mark', 'ℬ')
-call deoplete#custom#set('ternjs', 'mark', '')
-call deoplete#custom#set('omni', 'mark', '⌾')
-call deoplete#custom#set('file', 'mark', 'file')
-call deoplete#custom#set('jedi', 'mark', '')
-call deoplete#custom#set('typescript', 'mark', '')
-call deoplete#custom#set('neosnippet', 'mark', '')
-call deoplete#custom#set('java', 'mark', '')
-call deoplete#custom#set('javacomplete2', 'mark', '')
-
-call deoplete#custom#set('typescript',  'rank', 630)
-
+let g:lsp_signs_enabled = 1
 set completefunc=autoprogramming#complete
-let g:deoplete#auto_complete_delay = 50
-let g:deoplete#ignore_sources = get(g:,'deoplete#ignore_sources',{})
-let g:deoplete#ignore_sources.java = ['omni']
-let g:deoplete#ignore_sources.php = ['omni']
-let g:deoplete#omni#functions = get(g:,'deoplete#omni#functions',{})
-call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
-inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> deoplete#mappings#smart_close_popup()."\<C-h>"
-inoremap <expr><C-x><C-o> deoplete#mappings#manual_complete()
 
 " Use RipGrep instead of Grep
 if executable("rg")
@@ -647,3 +648,4 @@ let g:rainbow_levels = [
     \{'ctermbg': 238, 'guibg': '#444444'},
     \{'ctermbg': 239, 'guibg': '#4e4e4e'},
     \{'ctermbg': 240, 'guibg': '#585858'}]
+
