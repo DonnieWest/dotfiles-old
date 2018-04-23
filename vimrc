@@ -42,6 +42,7 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'kshenoy/vim-signature'
 Plug 'Firef0x/PKGBUILD.vim'
 Plug 'blueyed/vim-diminactive'
+Plug 'wincent/terminus'
 
 " UI
 Plug 'whatyouhide/vim-gotham'
@@ -74,15 +75,12 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
+Plug 'wsdjeg/FlyGrep.vim'
 Plug 'neomake/neomake', { 'on': 'Neomake' }
 Plug 'benjie/neomake-local-eslint.vim'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'metakirby5/codi.vim'
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': './install.sh'
-    \ }
 
 " Appearance
 
@@ -108,12 +106,12 @@ Plug 'styled-components/vim-styled-components'
 
 "Javascript Plugins
 Plug 'jungomi/vim-mdnquery'
-Plug 'pangloss/vim-javascript'
-Plug 'maxmellon/vim-jsx-pretty'
+" Plug 'pangloss/vim-javascript'
+" Plug 'maxmellon/vim-jsx-pretty'
+Plug 'chemzqm/vim-jsx-improve'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
 Plug 'mhartington/nvim-typescript'
-Plug 'neovim/node-host', { 'do': 'npm install' }
 Plug 'jparise/vim-graphql'
 Plug 'styled-components/vim-styled-components'
 Plug 'ap/vim-css-color'
@@ -128,6 +126,9 @@ Plug 'leafgarland/typescript-vim'
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 Plug 'DonnieWest/VimStudio'
 Plug 'npacker/vim-java-syntax-after'
+
+" Kotlin
+Plug 'udalov/kotlin-vim'
 
 " Ruby
 Plug 'tpope/vim-rails'
@@ -144,6 +145,8 @@ Plug 'prabirshrestha/asyncomplete-necovim.vim'
 " Rust
 
 Plug 'rust-lang/rust.vim', { 'do': 'cargo install racer && rustup component add rust-src' }
+Plug 'racer-rust/vim-racer'
+Plug 'roxma/nvim-cm-racer'
 
 "Markdown/Octopress Plugins
 
@@ -199,7 +202,7 @@ set undodir=~/.vim/undodir
 set nobackup
 set nowb
 set noswapfile
-set shortmess+=I
+set shortmess+=cI
 set showcmd
 set laststatus=2
 set diffopt+=vertical
@@ -375,7 +378,13 @@ if has('nvim')
   aug END
 end
 
-nnoremap \ :GrepperRg 
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+nnoremap \ :Rg <CR>
 
 " Map ,t to search for my Todos
 map <LEADER>t :GrepperRg TODO: <CR>
@@ -606,14 +615,18 @@ autocmd FileType java inoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveU
 let g:JavaComplete_ImportSortType = 'packageName'
 let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
 
-au User CmSetup call cm#register_source({'name' : 'java',
-        \ 'priority': 9,
-        \ 'scopes': ['java'],
-        \ 'abbreviation': 'java',
-        \ 'cm_refresh_length': -1,
-        \ 'cm_refresh_patterns': ['\w+\.', '::', '\->'],
-        \ 'cm_refresh': {'omnifunc': 'javacomplete#Complete' },
-        \ })
+autocmd BufWritePost build.gradle :JCclasspathGenerate
+
+autocmd CursorHold *.java :JCGetSymbolType
+
+" au User CmSetup call cm#register_source({'name' : 'java',
+"         \ 'priority': 9,
+"         \ 'scopes': ['java'],
+"         \ 'abbreviation': 'java',
+"         \ 'cm_refresh_length': -1,
+"         \ 'cm_refresh_patterns': ['\w+\.', '::', '\->'],
+"         \ 'cm_refresh': {'omnifunc': 'javacomplete#Complete' },
+"         \ })
 
 let g:neoformat_java_googleformatter = {
             \ 'exe': 'google-java-format',
