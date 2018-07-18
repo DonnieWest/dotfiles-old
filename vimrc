@@ -5,9 +5,9 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall
 endif
 
-let g:python_host_prog = '/bin/python2'
-let g:python3_host_prog = '/bin/python3'
-
+let g:python_host_prog = '/usr/bin/python2'
+let g:python3_host_prog = '/usr/bin/python3'
+let g:node_host_prog = '/home/igneo676/bin/neovim-node-host'
 call plug#begin()
 
 "Generic Plugins
@@ -42,7 +42,6 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'kshenoy/vim-signature'
 Plug 'Firef0x/PKGBUILD.vim'
 Plug 'blueyed/vim-diminactive'
-Plug 'wincent/terminus'
 
 " UI
 Plug 'whatyouhide/vim-gotham'
@@ -60,14 +59,16 @@ Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'jeetsukumaran/vim-filebeagle'
 
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/asyncomplete-file.vim'
-Plug 'prabirshrestha/asyncomplete-buffer.vim'
-Plug 'yami-beta/asyncomplete-omni.vim'
-Plug 'DonnieWest/autocomplete_shim_ncm'
+Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
+Plug 'ncm2/ncm2-path'
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+Plug 'kristijanhusak/vim-carbon-now-sh'
+Plug 'tpope/vim-db'
 
 Plug 'Shougo/context_filetype.vim'
 Plug 'kassio/neoterm'
@@ -75,12 +76,13 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
-Plug 'wsdjeg/FlyGrep.vim'
 Plug 'neomake/neomake', { 'on': 'Neomake' }
 Plug 'benjie/neomake-local-eslint.vim'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'metakirby5/codi.vim'
+
+Plug 'editorconfig/editorconfig-vim'
 
 " Appearance
 
@@ -91,7 +93,8 @@ Plug 'sbdchd/neoformat'
 
 "Git plugins
 Plug 'jreybert/vimagit'
-Plug 'airblade/vim-gitgutter', { 'commit': '932ffaca092cca246b82c33e23d2d3a05e192e08' }
+" Plug 'airblade/vim-gitgutter', { 'commit': '932ffaca092cca246b82c33e23d2d3a05e192e08' }
+Plug 'airblade/vim-gitgutter'
 " Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/gv.vim'
@@ -102,45 +105,42 @@ Plug 'tpope/vim-rhubarb'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5.vim'
 Plug 'alvan/vim-closetag'
-Plug 'styled-components/vim-styled-components'
 
 "Javascript Plugins
 Plug 'jungomi/vim-mdnquery'
 " Plug 'pangloss/vim-javascript'
 " Plug 'maxmellon/vim-jsx-pretty'
-Plug 'chemzqm/vim-jsx-improve'
+Plug 'neoclide/vim-jsx-improve'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
-Plug 'mhartington/nvim-typescript'
+Plug 'ncm2/nvim-typescript', { 'branch': 'master', 'do': './install.sh' }
 Plug 'jparise/vim-graphql'
-Plug 'styled-components/vim-styled-components'
+Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'ap/vim-css-color'
 Plug 'mvolkmann/vim-react'
 Plug 'mvolkmann/vim-js-arrow-function'
 Plug 'PsychoLlama/further.vim'
+Plug 'benjie/local-npm-bin.vim'
 
 " Typescript
 Plug 'leafgarland/typescript-vim'
 
 "Java/Android/Gradle plugins
 Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
-Plug 'DonnieWest/VimStudio'
+" Plug 'DonnieWest/VimStudio'
+Plug '~/Code/VimStudio'
 Plug 'npacker/vim-java-syntax-after'
 
 " Kotlin
 Plug 'udalov/kotlin-vim'
 
 " Ruby
-Plug 'tpope/vim-rails'
+" Plug 'tpope/vim-rails'
 Plug 'vim-ruby/vim-ruby'
-Plug 'tpope/vim-bundler'
-
-" Python Plugins
-Plug 'zchee/deoplete-jedi', { 'for': 'python' }
+" Plug 'tpope/vim-bundler'
 
 "VIMScript Plugins
 Plug 'Shougo/neco-vim'
-Plug 'prabirshrestha/asyncomplete-necovim.vim'
 
 " Rust
 
@@ -155,6 +155,10 @@ Plug 'junegunn/goyo.vim'
 " Plug 'junegunn/limelight.vim'
 " Plug 'Juev/vim-jekyll'
 " Plug 'tpope/vim-liquid'
+
+
+" C Based plugins
+Plug 'ncm2/ncm2-pyclang'
 
 function! DoRemote(arg)
   UpdateRemotePlugins
@@ -187,9 +191,10 @@ set softtabstop=2
 set tabstop=2
 set magic
 set noshowmode
-set completeopt+=longest
-set completeopt+=noselect
-set completeopt-=preview
+" set completeopt+=longest
+" set completeopt+=noselect
+" set completeopt-=preview
+set completeopt=noinsert,menuone,noselect
 set shiftround
 set autoread
 set whichwrap+=<,>,h,l,[,]
@@ -231,6 +236,8 @@ let g:indentLine_enabled = 0
 " Allow gitgutter on large files
 let g:gitgutter_max_signs=10000
 
+autocmd BufWritePost * :GitGutter
+
 let g:signify_vcs_list = [ 'git' ]
 
 "Generic wildignores
@@ -247,48 +254,19 @@ let g:closetag_xhtml_filenames = '*.xhtml,*.js,*.tsx'
 let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 
-let g:cm_sources_override = {
-  \ 'cm-tags': {'enable':0},
-  \ 'java': {
-    \ 'abbreviation': '',
-    \ 'cm_refresh_length': -1,
-    \ 'cm_refresh_patterns': ['\w+\.', '::', '\->'],
-  \},
-\ }
+let g:LanguageClient_serverCommands = {
+    \ 'kotlin': ['/home/igneo676/Code/kotlin-language-server/build/install/kotlin-language-server/bin/kotlin-language-server'],
+    \ }
+let g:LanguageClient_loggingFile = '/tmp/lc.log'
+let g:LanguageClient_loggingLevel = 'DEBUG'
 
-imap <C-x><C-o> <Plug>(asyncomplete_force_refresh)
-let g:asyncomplete_remove_duplicates = 1
-
-au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-    \ 'name': 'file',
-    \ 'whitelist': ['*'],
-    \ 'priority': 10,
-    \ 'completor': function('asyncomplete#sources#file#completor')
-    \ }))
-
-au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-    \ 'name': 'buffer',
-    \ 'whitelist': ['*'],
-    \ 'blacklist': ['go', 'javascript', 'javascript.jsx'],
-    \ 'completor': function('asyncomplete#sources#buffer#completor'),
-    \ }))
-
-au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
-    \ 'name': 'omni',
-    \ 'whitelist': ['java'],
-    \ 'completor': function('asyncomplete#sources#omni#completor')
-    \  }))
-
-autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
-
-
+autocmd BufEnter * call ncm2#enable_for_buffer()
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
 
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
-let g:lsp_signs_enabled = 1
 set completefunc=autoprogramming#complete
 
 " Use RipGrep instead of Grep
@@ -377,13 +355,16 @@ if has('nvim')
     au TermOpen term://*FZF tnoremap <silent> <buffer><nowait> <esc> <c-c>
   aug END
 end
+" inoremap <expr> <plug>(fzf-complete-file-ag) fzf#vim#complete#path('ag -l -g ""')
 
+" Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
   \   <bang>0 ? fzf#vim#with_preview('up:60%')
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
+
 nnoremap \ :Rg <CR>
 
 " Map ,t to search for my Todos
@@ -479,10 +460,6 @@ autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 " autocmd BufRead,BufWritePost package.json Neomake pjdl
 
 
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
-    \ }
-
 autocmd CursorHold *.rs :call LanguageClient_textDocument_hover()<CR>
 autocmd FileType rust nnoremap <buffer> <C-]> :call LanguageClient_textDocument_definition()<CR>
 autocmd FileType rust nnoremap <buffer> <F6> :call LanguageClient_textDocument_rename()<CR>
@@ -500,7 +477,7 @@ let g:neomake_typescript_eslint_maker = {
   \   '%W%f: line %l\, col %c\, Warning - %m,%-G,%-G%*\d problems%#'
   \ }
 let g:neomake_typescript_enabled_makers = ['tsc', 'eslint']
-let g:neomake_javascript_enabled_makers = ['flow', 'eslint']
+let g:neomake_javascript_enabled_makers = ['eslint']
 
 augroup lint_events
   autocmd!
@@ -612,21 +589,20 @@ autocmd FileType java nnoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMiss
 autocmd FileType java inoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMissing)
 autocmd FileType java nnoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
 autocmd FileType java inoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
-let g:JavaComplete_ImportSortType = 'packageName'
-let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
 
-autocmd BufWritePost build.gradle :JCclasspathGenerate
+
+
+autocmd FileType kotlin nnoremap <buffer> <C-]> :call LanguageClient_textDocument_definition()<CR>
+autocmd FileType kotlin nnoremap <buffer> <F6> :call LanguageClient_textDocument_rename()<CR>
+autocmd FileType kotlin nnoremap <buffer> <F5> :call LanguageClient_contextMenu()<CR>
+
+let g:JavaComplete_ImportSortType = 'packageName'
+" let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
+let g:JavaComplete_ImportOrder = ['*']
+let g:JavaComplete_StaticImportsAtTop = 1
+" let g:JavaComplete_CompletionResultSort = 1
 
 autocmd CursorHold *.java :JCGetSymbolType
-
-" au User CmSetup call cm#register_source({'name' : 'java',
-"         \ 'priority': 9,
-"         \ 'scopes': ['java'],
-"         \ 'abbreviation': 'java',
-"         \ 'cm_refresh_length': -1,
-"         \ 'cm_refresh_patterns': ['\w+\.', '::', '\->'],
-"         \ 'cm_refresh': {'omnifunc': 'javacomplete#Complete' },
-"         \ })
 
 let g:neoformat_java_googleformatter = {
             \ 'exe': 'google-java-format',
