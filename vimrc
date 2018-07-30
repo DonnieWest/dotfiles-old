@@ -45,6 +45,7 @@ Plug 'blueyed/vim-diminactive'
 
 " UI
 Plug 'whatyouhide/vim-gotham'
+Plug 'mhartington/oceanic-next'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
 Plug 'vim-airline/vim-airline'
@@ -63,10 +64,10 @@ Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
 Plug 'ncm2/ncm2-path'
 
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'ncm2/ncm2-vim-lsp'
+
 Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'tpope/vim-db'
 
@@ -76,7 +77,7 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
-Plug 'neomake/neomake', { 'on': 'Neomake' }
+Plug 'neomake/neomake'
 Plug 'benjie/neomake-local-eslint.vim'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
@@ -113,7 +114,7 @@ Plug 'jungomi/vim-mdnquery'
 Plug 'neoclide/vim-jsx-improve'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
-Plug 'ncm2/nvim-typescript', { 'branch': 'master', 'do': './install.sh' }
+Plug 'mhartington/nvim-typescript', { 'branch': 'master', 'do': './install.sh' }
 Plug 'jparise/vim-graphql'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'ap/vim-css-color'
@@ -126,9 +127,11 @@ Plug 'benjie/local-npm-bin.vim'
 Plug 'leafgarland/typescript-vim'
 
 "Java/Android/Gradle plugins
-Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
+" Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
 " Plug 'DonnieWest/VimStudio'
+Plug '~/Code/vim-javacomplete2'
 Plug '~/Code/VimStudio'
+Plug 'hsanson/vim-android'
 Plug 'npacker/vim-java-syntax-after'
 
 " Kotlin
@@ -254,11 +257,19 @@ let g:closetag_xhtml_filenames = '*.xhtml,*.js,*.tsx'
 let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 
-let g:LanguageClient_serverCommands = {
-    \ 'kotlin': ['/home/igneo676/Code/kotlin-language-server/build/install/kotlin-language-server/bin/kotlin-language-server'],
-    \ }
-let g:LanguageClient_loggingFile = '/tmp/lc.log'
-let g:LanguageClient_loggingLevel = 'DEBUG'
+imap <C-x><C-o> <Plug>(ncm2_manual_trigger)
+
+let g:lsp_signs_error = {'text': 'X'}
+let g:lsp_signs_warning = {'text': '?' }
+let g:lsp_signs_hint = {'text': '!'}
+let g:lsp_signs_enabled = 1
+let g:lsp_diagnostics_echo_cursor = 1
+
+au User lsp_setup call lsp#register_server({
+    \ 'name': 'kotlinLanguageServer',
+    \ 'cmd': {server_info->['/home/igneo676/Code/kotlin-language-server/build/install/kotlin-language-server/bin/kotlin-language-server']},
+    \ 'whitelist': ['kotlin'],
+    \ })
 
 autocmd BufEnter * call ncm2#enable_for_buffer()
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -284,6 +295,9 @@ set clipboard+=unnamedplus
 " Some default colorschemes I like
 " colorscheme darkburn
 colorscheme gotham256
+" let g:oceanic_next_terminal_bold = 1
+" let g:oceanic_next_terminal_italic = 1
+" colorscheme OceanicNext
 
 "Gimme a colored column for lines that are too long
 highlight ColorColumn ctermbg=blue
@@ -365,7 +379,7 @@ command! -bang -nargs=* Rg
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
 
-nnoremap \ :Rg <CR>
+nnoremap \ :GrepperRg 
 
 " Map ,t to search for my Todos
 map <LEADER>t :GrepperRg TODO: <CR>
@@ -417,6 +431,7 @@ nnoremap <silent> <C-W>j    :TmuxNavigateDown<CR>
 nnoremap <silent> <C-W>h    :TmuxNavigateLeft<CR>
 nnoremap <silent> <C-W>l    :TmuxNavigateRight<CR>
 let g:airline_theme="gotham"
+" let g:airline_theme='oceanicnext'
 " let g:airline_extensions = []
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#right_sep = ''
@@ -436,18 +451,6 @@ function! Strip_trailing_whitespace()
   %s/\n\{3,}/\r\r/e
   %s#\($\n\s*\)\+\%$##e
   call setpos(".", l:pos)
-endfunction
-
-function! Lint()
-  if &filetype =~ 'typescript'
-    if (executable(findfile('node_modules/.bin/prettier-tslint', '.;')))
-      Neomake tslint
-    else
-      Neomake eslint
-    endif
-  else
-    Neomake
-  end
 endfunction
 
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
@@ -479,10 +482,7 @@ let g:neomake_typescript_eslint_maker = {
 let g:neomake_typescript_enabled_makers = ['tsc', 'eslint']
 let g:neomake_javascript_enabled_makers = ['eslint']
 
-augroup lint_events
-  autocmd!
-  autocmd BufWritePost * call Lint()
-augroup end
+call neomake#configure#automake('w')
 
 function! GutentagsFilter(path) abort
     if fnamemodify(a:path, ':e') == 'java'
@@ -590,11 +590,19 @@ autocmd FileType java inoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMiss
 autocmd FileType java nnoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
 autocmd FileType java inoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
 
+au User Ncm2Plugin call ncm2#register_source({
+        \ 'name' : 'JC',
+        \ 'priority': 9, 
+        \ 'subscope_enable': 1,
+        \ 'scope': ['java'],
+        \ 'mark': 'JC',
+        \ 'complete_pattern':['\.', '::'], 
+        \ 'on_complete': ['ncm2#on_complete#omni', 'javacomplete#Complete'],
+        \ })
 
 
-autocmd FileType kotlin nnoremap <buffer> <C-]> :call LanguageClient_textDocument_definition()<CR>
-autocmd FileType kotlin nnoremap <buffer> <F6> :call LanguageClient_textDocument_rename()<CR>
-autocmd FileType kotlin nnoremap <buffer> <F5> :call LanguageClient_contextMenu()<CR>
+
+autocmd FileType kotlin nnoremap <buffer> <C-]> LspDefinition<CR>
 
 let g:JavaComplete_ImportSortType = 'packageName'
 " let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
@@ -637,4 +645,3 @@ let g:rainbow_levels = [
     \{'ctermbg': 238, 'guibg': '#444444'},
     \{'ctermbg': 239, 'guibg': '#4e4e4e'},
     \{'ctermbg': 240, 'guibg': '#585858'}]
-
