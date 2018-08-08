@@ -22,6 +22,7 @@ Plug 'tpope/vim-projectionist'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-easy-align'
 Plug 'idanarye/vim-vebugger', { 'branch': 'develop' }
+Plug 'justinmk/vim-sneak'
 
 " VIM Quirks fixes
 Plug 'lervag/file-line'
