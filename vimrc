@@ -638,6 +638,10 @@ highlight Type    cterm=italic
 highlight Keywords cterm=italic
 highlight xmlAttrib cterm=italic ctermfg=214
 highlight jsxAttrib cterm=italic
+highlight Statement cterm=italic
+highlight Keyword cterm=italic
+highlight Constant cterm=italic
+highlight Boolean cterm=italic
 
 highlight htmlArg gui=italic
 highlight Comment gui=italic
@@ -647,6 +651,9 @@ highlight xmlAttrib gui=italic ctermfg=214
 highlight jsxAttrib gui=italic
 highlight Statement gui=italic
 highlight Keyword gui=italic
+highlight Constant gui=italic
+highlight Boolean gui=italic
+
 source ~/.rhubarb_credentials
 
 let g:rainbow_levels = [
