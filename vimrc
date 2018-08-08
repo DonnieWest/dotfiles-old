@@ -59,6 +59,7 @@ Plug 'rhysd/clever-f.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'jeetsukumaran/vim-filebeagle'
+Plug 'mg979/vim-visual-multi', {'branch': 'test'}
 
 Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
@@ -109,9 +110,9 @@ Plug 'alvan/vim-closetag'
 
 "Javascript Plugins
 Plug 'jungomi/vim-mdnquery'
-" Plug 'pangloss/vim-javascript'
-" Plug 'maxmellon/vim-jsx-pretty'
-Plug 'neoclide/vim-jsx-improve'
+Plug 'pangloss/vim-javascript'
+Plug 'maxmellon/vim-jsx-pretty'
+" Plug 'neoclide/vim-jsx-improve'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
 Plug 'mhartington/nvim-typescript', { 'branch': 'master', 'do': './install.sh' }
@@ -270,7 +271,7 @@ au User lsp_setup call lsp#register_server({
     \ 'cmd': {server_info->['/home/igneo676/Code/kotlin-language-server/build/install/kotlin-language-server/bin/kotlin-language-server']},
     \ 'whitelist': ['kotlin'],
     \ })
-
+let g:ncm2#matcher = 'substrfuzzy'
 autocmd BufEnter * call ncm2#enable_for_buffer()
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
@@ -630,9 +631,21 @@ let g:rubycomplete_buffer_loading = 1
 let g:rubycomplete_classes_in_global = 1
 
 
-hi htmlArg cterm=italic
-hi Comment cterm=italic
-hi Type    cterm=italic
+highlight htmlArg cterm=italic
+highlight Comment cterm=italic
+highlight Type    cterm=italic
+highlight Keywords cterm=italic
+highlight xmlAttrib cterm=italic ctermfg=214
+highlight jsxAttrib cterm=italic
+
+highlight htmlArg gui=italic
+highlight Comment gui=italic
+highlight Type    gui=italic
+highlight Keywords gui=italic
+highlight xmlAttrib gui=italic ctermfg=214
+highlight jsxAttrib gui=italic
+highlight Statement gui=italic
+highlight Keyword gui=italic
 source ~/.rhubarb_credentials
 
 let g:rainbow_levels = [
@@ -645,3 +658,20 @@ let g:rainbow_levels = [
     \{'ctermbg': 238, 'guibg': '#444444'},
     \{'ctermbg': 239, 'guibg': '#4e4e4e'},
     \{'ctermbg': 240, 'guibg': '#585858'}]
+
+
+" vim-visual-multi configuration
+let g:VM_default_mappings           = 1
+let g:VM_sublime_mappings           = 0
+let g:VM_mouse_mappings             = 1
+let g:VM_extended_mappings          = 0
+let g:VM_no_meta_mappings           = 0
+let g:VM_reselect_first_insert      = 0
+let g:VM_reselect_first_always      = 0
+let g:VM_case_setting               = "smart"
+let g:VM_pick_first_after_n_cursors = 0
+let g:VM_dynamic_synmaxcol          = 20
+let g:VM_disable_syntax_in_imode    = 0
+let g:VM_exit_on_1_cursor_left      = 0
+let g:VM_manual_infoline            = 0
+
