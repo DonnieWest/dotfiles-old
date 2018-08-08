@@ -137,7 +137,7 @@ Plug 'hsanson/vim-android'
 Plug 'npacker/vim-java-syntax-after'
 
 " Kotlin
-Plug 'udalov/kotlin-vim'
+Plug 'donniewest/kotlin-vim'
 
 " Ruby
 " Plug 'tpope/vim-rails'
