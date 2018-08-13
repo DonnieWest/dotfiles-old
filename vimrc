@@ -46,12 +46,13 @@ Plug 'blueyed/vim-diminactive'
 
 " UI
 Plug 'whatyouhide/vim-gotham'
-Plug 'mhartington/oceanic-next'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'itchyny/lightline.vim'
+Plug 'mgee/lightline-bufferline'
+Plug 'haishanh/night-owl.vim'
 " Plug 'edkolev/tmuxline.vim'
+Plug 'luochen1990/rainbow'
 
 " Generic IDE features
 
@@ -69,7 +70,6 @@ Plug 'ncm2/ncm2-path'
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'ncm2/ncm2-vim-lsp'
-
 Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'tpope/vim-db'
 
@@ -86,6 +86,8 @@ Plug 'Shougo/neosnippet-snippets'
 Plug 'metakirby5/codi.vim'
 
 Plug 'editorconfig/editorconfig-vim'
+Plug 'justinmk/vim-gtfo'
+Plug 'sunaku/vim-dasht'
 
 " Appearance
 
@@ -96,7 +98,6 @@ Plug 'sbdchd/neoformat'
 
 "Git plugins
 Plug 'jreybert/vimagit'
-" Plug 'airblade/vim-gitgutter', { 'commit': '932ffaca092cca246b82c33e23d2d3a05e192e08' }
 Plug 'airblade/vim-gitgutter'
 " Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
 Plug 'tpope/vim-fugitive'
@@ -113,7 +114,6 @@ Plug 'alvan/vim-closetag'
 Plug 'jungomi/vim-mdnquery'
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
-" Plug 'neoclide/vim-jsx-improve'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
 Plug 'mhartington/nvim-typescript', { 'branch': 'master', 'do': './install.sh' }
@@ -124,15 +124,18 @@ Plug 'mvolkmann/vim-react'
 Plug 'mvolkmann/vim-js-arrow-function'
 Plug 'PsychoLlama/further.vim'
 Plug 'benjie/local-npm-bin.vim'
+Plug 'Quramy/vim-js-pretty-template'
 
 " Typescript
 Plug 'leafgarland/typescript-vim'
 
+
+" Reason
+Plug 'reasonml-editor/vim-reason-plus'
+
 "Java/Android/Gradle plugins
-" Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
-" Plug 'DonnieWest/VimStudio'
-Plug '~/Code/vim-javacomplete2'
-Plug '~/Code/VimStudio'
+Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
+Plug 'DonnieWest/VimStudio'
 Plug 'hsanson/vim-android'
 Plug 'npacker/vim-java-syntax-after'
 
@@ -140,9 +143,7 @@ Plug 'npacker/vim-java-syntax-after'
 Plug 'donniewest/kotlin-vim'
 
 " Ruby
-" Plug 'tpope/vim-rails'
 Plug 'vim-ruby/vim-ruby'
-" Plug 'tpope/vim-bundler'
 
 "VIMScript Plugins
 Plug 'Shougo/neco-vim'
@@ -196,9 +197,6 @@ set softtabstop=2
 set tabstop=2
 set magic
 set noshowmode
-" set completeopt+=longest
-" set completeopt+=noselect
-" set completeopt-=preview
 set completeopt=noinsert,menuone,noselect
 set shiftround
 set autoread
@@ -240,7 +238,6 @@ let g:indentLine_enabled = 0
 
 " Allow gitgutter on large files
 let g:gitgutter_max_signs=10000
-
 autocmd BufWritePost * :GitGutter
 
 let g:signify_vcs_list = [ 'git' ]
@@ -280,6 +277,10 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
+nnoremap <silent> gk :call Dasht([expand('<cword>'), expand('<cWORD>')])<Return>
+let g:dasht_filetype_docsets = {} " filetype => list of docset name regexp
+let g:dasht_filetype_docsets['javascript'] = ['React', 'React_Native', 'Sequelize']
+
 set completefunc=autoprogramming#complete
 
 " Use RipGrep instead of Grep
@@ -288,6 +289,7 @@ if executable("rg")
     set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
 
+let g:rainbow_active = 1
 let g:incsearch#auto_nohlsearch = 1
 let g:asterisk#keeppos = 1
 let g:ag_working_path_mode="r"
@@ -358,7 +360,6 @@ imap <expr><TAB> pumvisible() ? "\<C-n>" : (neosnippet#expandable_or_jumpable() 
 imap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
 
 let g:neosnippet#snippets_directory='~/Code/react-snippets'
-
 " Conceal neosnippet markers
 set conceallevel=2
 set concealcursor=niv
@@ -432,15 +433,35 @@ nnoremap <silent> <C-W>k    :TmuxNavigateUp<CR>
 nnoremap <silent> <C-W>j    :TmuxNavigateDown<CR>
 nnoremap <silent> <C-W>h    :TmuxNavigateLeft<CR>
 nnoremap <silent> <C-W>l    :TmuxNavigateRight<CR>
-let g:airline_theme="gotham"
-" let g:airline_theme='oceanicnext'
-" let g:airline_extensions = []
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#right_sep = ''
-let g:airline#extensions#tabline#left_sep = ''
-let g:airline_right_sep = ''
-let g:airline_left_sep = ''
-let g:airline#extensions#neomake#enabled = 0
+
+set showtabline=2
+
+let g:lightline = {
+      \ 'separator': { 'left': '', 'right': '' },
+      \ 'subseparator': { 'left': '|', 'right': '|' },
+      \ 'colorscheme': 'gotham256',
+      \ 'tabline': {
+      \   'left': [['buffers']],
+      \   'right': [[ 'exit' ]],
+      \ },
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head'
+      \ },
+      \ 'component_expand': {
+      \   'buffers': 'lightline#bufferline#buffers'
+      \ },
+      \ 'component_type': {
+      \   'buffers': 'tabsel'
+      \ },
+      \ }
+let g:lightline#bufferline#enable_devicons = 0
+let g:lightline#bufferline#show_number  = 0
+let g:lightline#bufferline#shorten_path = 1
+" let g:lightline#bufferline#filename_modifier = ':t'
 
 " Ripped out of https://github.com/derekprior/vim-trimmer/blob/master/plugin/vim-trimmer.vim
 if !exists("g:trimmer_blacklist")
@@ -562,6 +583,11 @@ autocmd FileType javascript nnoremap oat :call JSXEachAttributeInLine()<CR>
 autocmd FileType javascript nnoremap eat :call JSXExtractPartialPrompt()<CR>
 autocmd FileType javascript nnoremap cat :call JSXChangeTagPrompt()<CR>
 autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
+
+" Register tag name associated the filetype
+call jspretmpl#register_tag('gql', 'graphql')
+call jspretmpl#register_tag('/* GraphQL */ ', 'graphql')
+autocmd FileType javascript JsPreTmpl html
 
 let g:neomake_warning_sign = {
   \ 'text': '?',
