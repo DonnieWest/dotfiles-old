@@ -46,6 +46,7 @@ Plug 'blueyed/vim-diminactive'
 
 " UI
 Plug 'whatyouhide/vim-gotham'
+Plug 'mhartington/oceanic-next'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
 Plug 'itchyny/lightline.vim'
@@ -53,6 +54,7 @@ Plug 'mgee/lightline-bufferline'
 Plug 'haishanh/night-owl.vim'
 " Plug 'edkolev/tmuxline.vim'
 Plug 'luochen1990/rainbow'
+Plug 'chrisbra/Colorizer'
 
 " Generic IDE features
 
@@ -165,6 +167,7 @@ Plug 'junegunn/goyo.vim'
 
 " C Based plugins
 Plug 'ncm2/ncm2-pyclang'
+Plug 'justinmk/vim-syntax-extra'
 
 function! DoRemote(arg)
   UpdateRemotePlugins
@@ -365,14 +368,50 @@ set conceallevel=2
 set concealcursor=niv
 
 "Some nice mappings for ag
-nnoremap <C-p> :FZF<ENTER>
+" inoremap <expr> <plug>(fzf-complete-file-ag) fzf#vim#complete#path('ag -l -g ""')
+
+
+function! Fzf_dev()
+  function! s:files()
+    let files = split(system($FZF_DEFAULT_COMMAND), '\n')
+    return s:prepend_icon(files)
+  endfunction
+
+  function! s:prepend_icon(candidates)
+    let result = []
+    for candidate in a:candidates
+      let filename = fnamemodify(candidate, ':p:t')
+      let icon = WebDevIconsGetFileTypeSymbol(filename, isdirectory(filename))
+      call add(result, printf("%s %s", icon, candidate))
+    endfor
+
+    return result
+  endfunction
+
+  function! s:edit_file(item)
+    let parts = split(a:item, ' ')
+    let file_path = get(parts, 1, '')
+    execute 'silent e' file_path
+  endfunction
+
+  call fzf#run({
+        \ 'source': <sid>files(),
+        \ 'sink':   function('s:edit_file'),
+        \ 'options': '-m -x +s',
+        \ 'down':    '40%' })
+endfunction
+
+
+command! FilesWithIcon :call Fzf_dev()
+
+nnoremap <C-p> :FilesWithIcon<ENTER>
 if has('nvim')
   aug fzf_setup
     au!
     au TermOpen term://*FZF tnoremap <silent> <buffer><nowait> <esc> <c-c>
   aug END
 end
-" inoremap <expr> <plug>(fzf-complete-file-ag) fzf#vim#complete#path('ag -l -g ""')
+
 
 " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
 command! -bang -nargs=* Rg
@@ -438,7 +477,7 @@ set showtabline=2
 
 let g:lightline = {
       \ 'separator': { 'left': '', 'right': '' },
-      \ 'subseparator': { 'left': '|', 'right': '|' },
+      \ 'subseparator': { 'left': '', 'right': '' },
       \ 'colorscheme': 'gotham256',
       \ 'tabline': {
       \   'left': [['buffers']],
