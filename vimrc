@@ -55,6 +55,7 @@ Plug 'haishanh/night-owl.vim'
 " Plug 'edkolev/tmuxline.vim'
 Plug 'luochen1990/rainbow'
 Plug 'chrisbra/Colorizer'
+Plug 'justinmk/nvim-repl'
 
 " Generic IDE features
 
@@ -497,7 +498,7 @@ let g:lightline = {
       \   'buffers': 'tabsel'
       \ },
       \ }
-let g:lightline#bufferline#enable_devicons = 0
+let g:lightline#bufferline#enable_devicons = 1
 let g:lightline#bufferline#show_number  = 0
 let g:lightline#bufferline#shorten_path = 1
 " let g:lightline#bufferline#filename_modifier = ':t'
