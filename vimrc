@@ -69,6 +69,7 @@ Plug 'mg979/vim-visual-multi', {'branch': 'test'}
 Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
 Plug 'ncm2/ncm2-path'
+Plug 'ncm2/ncm2-github'
 
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
@@ -82,8 +83,9 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
-Plug 'neomake/neomake'
-Plug 'benjie/neomake-local-eslint.vim'
+" Plug 'neomake/neomake'
+" Plug 'benjie/neomake-local-eslint.vim'
+Plug 'w0rp/ale'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'metakirby5/codi.vim'
@@ -101,6 +103,7 @@ Plug 'sbdchd/neoformat'
 
 "Git plugins
 Plug 'jreybert/vimagit'
+" Plug 'airblade/vim-gitgutter', { 'commit': '932ffaca092cca246b82c33e23d2d3a05e192e08' }
 Plug 'airblade/vim-gitgutter'
 " Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
 Plug 'tpope/vim-fugitive'
@@ -117,6 +120,7 @@ Plug 'alvan/vim-closetag'
 Plug 'jungomi/vim-mdnquery'
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
+" Plug 'neoclide/vim-jsx-improve'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
 Plug 'mhartington/nvim-typescript', { 'branch': 'master', 'do': './install.sh' }
@@ -130,15 +134,16 @@ Plug 'benjie/local-npm-bin.vim'
 Plug 'Quramy/vim-js-pretty-template'
 
 " Typescript
-Plug 'leafgarland/typescript-vim'
-
+Plug 'HerringtonDarkholme/yats.vim'
 
 " Reason
 Plug 'reasonml-editor/vim-reason-plus'
 
 "Java/Android/Gradle plugins
-Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
-Plug 'DonnieWest/VimStudio'
+" Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
+" Plug 'DonnieWest/VimStudio'
+Plug '~/Code/vim-javacomplete2'
+Plug '~/Code/VimStudio'
 Plug 'hsanson/vim-android'
 Plug 'npacker/vim-java-syntax-after'
 
@@ -161,6 +166,8 @@ Plug 'roxma/nvim-cm-racer'
 
 Plug 'rhysd/vim-grammarous'
 Plug 'junegunn/goyo.vim'
+Plug 'jxnblk/vim-mdx-js'
+Plug 'gabrielelana/vim-markdown'
 " Plug 'junegunn/limelight.vim'
 " Plug 'Juev/vim-jekyll'
 " Plug 'tpope/vim-liquid'
@@ -265,7 +272,7 @@ imap <C-x><C-o> <Plug>(ncm2_manual_trigger)
 let g:lsp_signs_error = {'text': 'X'}
 let g:lsp_signs_warning = {'text': '?' }
 let g:lsp_signs_hint = {'text': '!'}
-let g:lsp_signs_enabled = 1
+let g:lsp_signs_enabled = 0
 let g:lsp_diagnostics_echo_cursor = 1
 
 au User lsp_setup call lsp#register_server({
@@ -273,6 +280,79 @@ au User lsp_setup call lsp#register_server({
     \ 'cmd': {server_info->['/home/igneo676/Code/kotlin-language-server/build/install/kotlin-language-server/bin/kotlin-language-server']},
     \ 'whitelist': ['kotlin'],
     \ })
+
+au User lsp_setup call lsp#register_server({
+    \ 'name': 'javaLanguageServer',
+    \ 'cmd': {server_info->['java -cp /home/igneo676/bin/vscode-javac.jar -Xverify:none -Xdebug org.javacs.Main']},
+    \ 'whitelist': ['java'],
+    \ })
+
+if executable('ocaml-language-server')
+  au User lsp_setup call lsp#register_server({
+        \ 'name': 'ocaml-language-server',
+        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'ocaml-language-server --stdio']},
+        \ 'whitelist': ['reason', 'ocaml'],
+        \ })
+endif
+
+if executable('vscode-json-languageserver')
+  au User lsp_setup call lsp#register_server({
+        \ 'name': 'vscode-json-languageserver',
+        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'vscode-json-languageserver --stdio']},
+        \ 'whitelist': ['json'],
+        \ 'workspace_config': {
+        \   'json': {
+        \     'format': { 'enable': v:true },
+        \     'schemas': {
+        \       'fileMatch': ['package.json'],
+        \       'url': 'http://json.schemastore.org/package',
+        \       'schema': { 'type': 'array' }
+        \     }
+        \   }
+        \ }
+        \ })
+endif
+
+if executable('docker-langserver')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'docker-langserver',
+        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'docker-langserver --stdio']},
+        \ 'whitelist': ['dockerfile'],
+        \ })
+endif
+
+if executable('html-languageserver')
+  au User lsp_setup call lsp#register_server({
+        \ 'name': 'html-languageserver',
+        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'html-languageserver --stdio']},
+        \ 'whitelist': ['html'],
+        \ })
+endif
+
+if executable('css-languageserver')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'css-languageserver',
+        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'css-languageserver --stdio']},
+        \ 'whitelist': ['css', 'less', 'sass'],
+        \ })
+endif
+
+if executable('pyls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'whitelist': ['python'],
+        \ })
+endif
+
+if executable('rls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'rls',
+        \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
+        \ 'whitelist': ['rust'],
+        \ })
+endif
+
 let g:ncm2#matcher = 'substrfuzzy'
 autocmd BufEnter * call ncm2#enable_for_buffer()
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -293,7 +373,6 @@ if executable("rg")
     set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
 
-let g:rainbow_active = 1
 let g:incsearch#auto_nohlsearch = 1
 let g:asterisk#keeppos = 1
 let g:ag_working_path_mode="r"
@@ -486,13 +565,13 @@ let g:lightline = {
       \ },
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified'] ]
       \ },
       \ 'component_function': {
       \   'gitbranch': 'fugitive#head'
       \ },
       \ 'component_expand': {
-      \   'buffers': 'lightline#bufferline#buffers'
+      \   'buffers': 'lightline#bufferline#buffers',
       \ },
       \ 'component_type': {
       \   'buffers': 'tabsel'
@@ -501,7 +580,6 @@ let g:lightline = {
 let g:lightline#bufferline#enable_devicons = 1
 let g:lightline#bufferline#show_number  = 0
 let g:lightline#bufferline#shorten_path = 1
-" let g:lightline#bufferline#filename_modifier = ':t'
 
 " Ripped out of https://github.com/derekprior/vim-trimmer/blob/master/plugin/vim-trimmer.vim
 if !exists("g:trimmer_blacklist")
@@ -517,13 +595,6 @@ function! Strip_trailing_whitespace()
 endfunction
 
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
-" let g:neomake_json_pjdl_maker = {
-"   \ 'errorformat': '%E%f: line %l\, col %c\, Error - %m,' .
-"   \   '%W%f: line %l\, col %c\, Warning - %m,%-G,%-G%*\d problems%#'
-"   \ }
-" let g:neomake_json_enabled_makers = ['pjdl']
-"
-" autocmd BufRead,BufWritePost package.json Neomake pjdl
 
 
 autocmd CursorHold *.rs :call LanguageClient_textDocument_hover()<CR>
@@ -536,16 +607,6 @@ let g:neoformat_typescript_prettiereslint = {
         \ 'stdin': 1,
         \ }
 let g:neoformat_enabled_typescript = ['prettiereslint']
-
-let g:neomake_typescript_eslint_maker = {
-  \ 'args': ['-f', 'compact'],
-  \ 'errorformat': '%E%f: line %l\, col %c\, Error - %m,' .
-  \   '%W%f: line %l\, col %c\, Warning - %m,%-G,%-G%*\d problems%#'
-  \ }
-let g:neomake_typescript_enabled_makers = ['tsc', 'eslint']
-let g:neomake_javascript_enabled_makers = ['eslint']
-
-call neomake#configure#automake('w')
 
 function! GutentagsFilter(path) abort
     if fnamemodify(a:path, ':e') == 'java'
@@ -629,6 +690,8 @@ call jspretmpl#register_tag('gql', 'graphql')
 call jspretmpl#register_tag('/* GraphQL */ ', 'graphql')
 autocmd FileType javascript JsPreTmpl html
 
+let g:ale_lint_on_enter = 1
+
 let g:neomake_warning_sign = {
   \ 'text': '?',
   \ 'texthl': 'WarningMsg',
@@ -644,6 +707,7 @@ let g:neomake_error_sign = {
 " Automatically wrap at 72 characters and spell check git commit messages
 autocmd FileType gitcommit setlocal textwidth=72
 autocmd FileType gitcommit setlocal spell
+let g:grammarous#languagetool_cmd = 'languagetool'
 
 "VIM Android/Java/Gradle stuff
 
@@ -687,6 +751,12 @@ let g:neoformat_java_googleformatter = {
             \ }
 
 let g:neoformat_enabled_java = ['googleformatter']
+
+let g:neoformat_kotlin_ktlint = {
+            \ 'exe': 'ktlint',
+            \ 'args': ['-F', '-a', '--stdin'],
+            \ 'stdin': 1,
+            \ }
 
 let java_highlight_functions = 'style'
 let java_highlight_all = 1
@@ -749,3 +819,8 @@ let g:VM_disable_syntax_in_imode    = 0
 let g:VM_exit_on_1_cursor_left      = 0
 let g:VM_manual_infoline            = 0
 
+" let g:lsp_log_verbose = 1
+" let g:lsp_log_file = expand('~/vim-lsp.log')
+
+" for asyncomplete.vim log
+" let g:asyncomplete_log_file = expand('~/asyncomplete.log')
