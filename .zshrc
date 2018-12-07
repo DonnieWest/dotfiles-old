@@ -87,7 +87,6 @@ bindkey "^[3;5~" delete-char
 bindkey "\e[3~" delete-char
 bindkey ' ' magic-space
 
-
 ## History
 
 if [ -z $HISTFILE ]; then
@@ -97,6 +96,8 @@ HISTSIZE=500000
 SAVEHIST=100000
 HISTCONTROL=ignoreboth:erasedups
 
+setopt hist_find_no_dups
+setopt hist_expire_dups_first
 setopt append_history
 setopt extended_history
 setopt hist_expire_dups_first
@@ -195,8 +196,7 @@ export GPG_TTY=$(tty)
 # Refresh gpg-agent tty in case user switches into an X session
 gpg-connect-agent updatestartuptty /bye >/dev/null
 
-
-## Misc
+# Misc
 
 # Increase limit of files able to be handled by TernJS
 ulimit -n 2048
@@ -204,6 +204,7 @@ ulimit -n 2048
 # Activate FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+alias ssh='TERM=xterm-256color ssh'
 # Use custom dircolors
 eval $(dircolors ~/.dircolors)
 
@@ -228,7 +229,6 @@ export JAVA7_HOME="/usr/lib/jvm/java-7-openjdk"
 # Setup PATH
 
 export PATH="$PATH:/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/bin:/usr/local/games:/usr/games:$GRADLE_HOME/bin:$HOME/.cabal/bin:/usr/bin/core_perl"
-
 export PATH="$HOME/android-sdk-linux/emulator:$PATH"
 export PATH="$HOME/android-sdk-linux/platform-tools:$PATH"
 export PATH="$HOME/android-sdk-linux/tools/bin:$PATH"
@@ -237,6 +237,7 @@ export PATH="$PATH:$HOME/.local/bin"
 export PATH="$HOME/bin:$PATH"
 
 export PATH="$PATH:$HOME/.npm-global/bin"
+export PATH="$PATH":"$HOME/.pub-cache/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 
 sn() {
@@ -256,4 +257,5 @@ pass() {
 # Custom aliases
 alias package-json-dependency-lint=pjdl
 
+source <(npx --shell-auto-fallback zsh)
 alias ls='exa'

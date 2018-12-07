@@ -83,8 +83,6 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
-" Plug 'neomake/neomake'
-" Plug 'benjie/neomake-local-eslint.vim'
 Plug 'w0rp/ale'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
@@ -103,7 +101,6 @@ Plug 'sbdchd/neoformat'
 
 "Git plugins
 Plug 'jreybert/vimagit'
-" Plug 'airblade/vim-gitgutter', { 'commit': '932ffaca092cca246b82c33e23d2d3a05e192e08' }
 Plug 'airblade/vim-gitgutter'
 " Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
 Plug 'tpope/vim-fugitive'
@@ -120,7 +117,6 @@ Plug 'alvan/vim-closetag'
 Plug 'jungomi/vim-mdnquery'
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
-" Plug 'neoclide/vim-jsx-improve'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
 Plug 'mhartington/nvim-typescript', { 'branch': 'master', 'do': './install.sh' }
@@ -134,7 +130,7 @@ Plug 'benjie/local-npm-bin.vim'
 Plug 'Quramy/vim-js-pretty-template'
 
 " Typescript
-Plug 'HerringtonDarkholme/yats.vim'
+Plug 'leafgarland/typescript-vim'
 
 " Reason
 Plug 'reasonml-editor/vim-reason-plus'
@@ -161,6 +157,10 @@ Plug 'Shougo/neco-vim'
 Plug 'rust-lang/rust.vim', { 'do': 'cargo install racer && rustup component add rust-src' }
 Plug 'racer-rust/vim-racer'
 Plug 'roxma/nvim-cm-racer'
+
+" Dart
+Plug 'dart-lang/dart-vim-plugin'
+Plug 'reisub0/hot-reload.vim'
 
 "Markdown/Octopress Plugins
 
@@ -272,9 +272,16 @@ imap <C-x><C-o> <Plug>(ncm2_manual_trigger)
 let g:lsp_signs_error = {'text': 'X'}
 let g:lsp_signs_warning = {'text': '?' }
 let g:lsp_signs_hint = {'text': '!'}
-let g:lsp_signs_enabled = 0
+let g:lsp_signs_enabled = 1
 let g:lsp_diagnostics_echo_cursor = 1
 
+if executable('dart_language_server')
+  au User lsp_setup call lsp#register_server({
+      \ 'name': 'dartLanguageServer',
+      \ 'cmd': {server_info->['dart_language_server']},
+      \ 'whitelist': ['dart'],
+      \ })
+endif
 au User lsp_setup call lsp#register_server({
     \ 'name': 'kotlinLanguageServer',
     \ 'cmd': {server_info->['/home/igneo676/Code/kotlin-language-server/build/install/kotlin-language-server/bin/kotlin-language-server']},
@@ -286,6 +293,22 @@ au User lsp_setup call lsp#register_server({
     \ 'cmd': {server_info->['java -cp /home/igneo676/bin/vscode-javac.jar -Xverify:none -Xdebug org.javacs.Main']},
     \ 'whitelist': ['java'],
     \ })
+
+if executable('bash-language-server')
+  au User lsp_setup call lsp#register_server({
+      \ 'name': 'bashLanguageServer',
+      \ 'cmd': {server_info->['bash-language-server']},
+      \ 'whitelist': ['bash'],
+      \ })
+endif
+
+if executable('vscode-json-languageserver')
+  au User lsp_setup call lsp#register_server({
+      \ 'name': 'JsonLanguageServer',
+      \ 'cmd': {server_info->['vscode-json-languageserver']},
+      \ 'whitelist': ['json'],
+      \ })
+endif
 
 if executable('ocaml-language-server')
   au User lsp_setup call lsp#register_server({
@@ -353,6 +376,14 @@ if executable('rls')
         \ })
 endif
 
+if executable('html-languageserver')
+  au User lsp_setup call lsp#register_server({
+      \ 'name': 'HTMLLanguageServer',
+      \ 'cmd': {server_info->['html-languageserver --stdio']},
+      \ 'whitelist': ['html'],
+      \ })
+endif
+
 let g:ncm2#matcher = 'substrfuzzy'
 autocmd BufEnter * call ncm2#enable_for_buffer()
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -373,6 +404,7 @@ if executable("rg")
     set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
 
+let g:rainbow_active = 1
 let g:incsearch#auto_nohlsearch = 1
 let g:asterisk#keeppos = 1
 let g:ag_working_path_mode="r"
@@ -528,6 +560,9 @@ nnoremap <Leader>fr :%s/
 xnoremap <Leader>fr :s/
 autocmd FileType esearch nnoremap <buffer> <Leader>fr :ESubstitute/
 autocmd FileType esearch xnoremap <buffer> <Leader>fr :ESubstitute/
+call esearch#map('<leader>ff', 'esearch')
+call esearch#map('<leader>fw', 'esearch-word-under-cursor')
+hi ESearchMatch ctermfg=black ctermbg=white guifg=#000000 guibg=#E6E6FA
 
 let g:highlightedyank_highlight_duration = 100
 
@@ -565,13 +600,13 @@ let g:lightline = {
       \ },
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified'] ]
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
       \ },
       \ 'component_function': {
       \   'gitbranch': 'fugitive#head'
       \ },
       \ 'component_expand': {
-      \   'buffers': 'lightline#bufferline#buffers',
+      \   'buffers': 'lightline#bufferline#buffers'
       \ },
       \ 'component_type': {
       \   'buffers': 'tabsel'
@@ -580,6 +615,7 @@ let g:lightline = {
 let g:lightline#bufferline#enable_devicons = 1
 let g:lightline#bufferline#show_number  = 0
 let g:lightline#bufferline#shorten_path = 1
+" let g:lightline#bufferline#filename_modifier = ':t'
 
 " Ripped out of https://github.com/derekprior/vim-trimmer/blob/master/plugin/vim-trimmer.vim
 if !exists("g:trimmer_blacklist")
@@ -633,6 +669,11 @@ autocmd FileType css,scss,sass setlocal iskeyword+=-
 let g:vim_json_syntax_conceal = 0
 " Python Stuff
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+
+" Dart stuff
+let dart_html_in_string=v:true
+let dart_style_guide = 2
+let dart_format_on_save = 1
 
 " Javascript Stuff
 let g:jsx_ext_required = 0
@@ -693,15 +734,6 @@ autocmd FileType javascript.jsx JsPreTmpl
 
 let g:ale_lint_on_enter = 1
 
-let g:neomake_warning_sign = {
-  \ 'text': '?',
-  \ 'texthl': 'WarningMsg',
-  \ }
-
-let g:neomake_error_sign = {
-  \ 'text': 'X',
-  \ 'texthl': 'ErrorMsg',
-  \ }
 
 " Git Stuff
 
@@ -738,7 +770,7 @@ au User Ncm2Plugin call ncm2#register_source({
 autocmd FileType kotlin nnoremap <buffer> <C-]> LspDefinition<CR>
 
 let g:JavaComplete_ImportSortType = 'packageName'
-" let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
+let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
 let g:JavaComplete_ImportOrder = ['*']
 let g:JavaComplete_StaticImportsAtTop = 1
 " let g:JavaComplete_CompletionResultSort = 1
