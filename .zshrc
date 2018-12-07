@@ -57,6 +57,7 @@ zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
 bindkey -e
+bindkey '\e[3~' delete-char
 bindkey '\ew' kill-region
 bindkey -s '\el' "ls\n"
 bindkey '^r' history-incremental-search-backward
@@ -67,9 +68,13 @@ bindkey "^[[B" down-line-or-beginning-search
 bindkey "^[[H" beginning-of-line
 bindkey "^[[1~" beginning-of-line
 bindkey "^[OH" beginning-of-line
+bindkey '\e[H'  beginning-of-line
+bindkey '\e[OH' beginning-of-line
 bindkey "^[[F" end-of-line
 bindkey "^[[4~" end-of-line
 bindkey "^[OF" end-of-line
+bindkey '\e[F'  end-of-line
+bindkey '\e[OF' end-of-line
 bindkey ' ' magic-space
 bindkey "^F" forward-word
 bindkey "^B" backward-word
@@ -82,12 +87,13 @@ bindkey "^[3;5~" delete-char
 bindkey "\e[3~" delete-char
 bindkey ' ' magic-space
 
+
 ## History
 
 if [ -z $HISTFILE ]; then
     HISTFILE=$HOME/.zsh_history
 fi
-HISTSIZE=100000
+HISTSIZE=500000
 SAVEHIST=100000
 HISTCONTROL=ignoreboth:erasedups
 
@@ -114,6 +120,9 @@ setopt COMPLETE_ALIASES
 WORDCHARS=''
 
 zmodload -i zsh/complist
+
+# Complete . and .. special directories
+zstyle ':completion:*' special-dirs true
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' list-colors ''
@@ -153,7 +162,14 @@ zstyle '*' single-ignored show
 alias less='less -R'
 alias grep='grep --color=auto'
 alias ..='cd ../'
-alias ls="ls --color"
+alias parallel='parallel --no-notice' # remove the citing notice
+alias cp='cp -i'                    # prompt for overwrite
+alias mv='mv -i'                    # prompt for overwrite
+alias df='df -h'                    # human readable
+alias du='du -h'                    # human readable
+alias ls='ls -hF --color=tty'       # colour, readable sizes, indicator
+alias ll='ls -hlF --color=tty'      # long format to show sizes
+alias la='ls -AlF'                  # all but . and ..
 
 ## Stack
 
@@ -191,7 +207,10 @@ ulimit -n 2048
 # Use custom dircolors
 eval $(dircolors ~/.dircolors)
 
+source ~/.zsh_plugins.sh
+
 # Setup Env variables
+export N_PREFIX=$HOME
 export GRADLE_HOME="$HOME/gradle"
 export ANDROID_HOME="$HOME/android-sdk-linux"
 export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
@@ -204,6 +223,7 @@ export EDITOR="nvim"
 export JAVA8_HOME="/usr/lib/jvm/java-8-jdk"
 export JAVA7_HOME="/usr/lib/jvm/java-7-openjdk"
 #export JAVA6_HOME="/usr/lib/jvm/java-6-openjdk-amd64/"
+
 
 # Setup PATH
 
@@ -218,7 +238,22 @@ export PATH="$HOME/bin:$PATH"
 
 export PATH="$PATH:$HOME/.npm-global/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
-export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
+
+sn() {
+  local version
+  version=$(curl --silent https://api.github.com/repos/nodejs/node/tags?per_page=100 | jq ".[] | .name" | tr -d "\""  | fzf)
+  if [ "x$version" != "x" ]
+  then
+    echo "Switching to Node $version"
+    n $version
+  fi
+}
+
+pass() {
+  lpass show -c --password $(lpass ls  | fzf | awk '{print $(NF)}' | sed 's/\]//g')
+}
 
 # Custom aliases
 alias package-json-dependency-lint=pjdl
+
+alias ls='exa'
