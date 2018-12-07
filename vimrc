@@ -688,7 +688,8 @@ autocmd FileType javascript nnoremap vat :call JSXSelectTag()<CR>
 " Register tag name associated the filetype
 call jspretmpl#register_tag('gql', 'graphql')
 call jspretmpl#register_tag('/* GraphQL */ ', 'graphql')
-autocmd FileType javascript JsPreTmpl html
+autocmd FileType javascript JsPreTmpl
+autocmd FileType javascript.jsx JsPreTmpl
 
 let g:ale_lint_on_enter = 1
 
