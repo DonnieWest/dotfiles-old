@@ -92,6 +92,10 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-gtfo'
 Plug 'sunaku/vim-dasht'
 
+Plug 'liuchengxu/vim-which-key'
+Plug 'wakatime/vim-wakatime'
+
+
 " Appearance
 
 Plug 'thiagoalessio/rainbow_levels.vim'
@@ -176,6 +180,9 @@ Plug 'gabrielelana/vim-markdown'
 " C Based plugins
 Plug 'ncm2/ncm2-pyclang'
 Plug 'justinmk/vim-syntax-extra'
+
+" PHP based plugins
+Plug 'felixfbecker/php-language-server', {'do': 'composer install && composer run-script parse-stubs'}
 
 function! DoRemote(arg)
   UpdateRemotePlugins
@@ -282,6 +289,14 @@ if executable('dart_language_server')
       \ 'whitelist': ['dart'],
       \ })
 endif
+
+
+au User lsp_setup call lsp#register_server({
+     \ 'name': 'php-language-server',
+     \ 'cmd': {server_info->['php', expand('~/.config/nvim/plugged/php-language-server/bin/php-language-server.php')]},
+     \ 'whitelist': ['php'],
+     \ })
+
 au User lsp_setup call lsp#register_server({
     \ 'name': 'kotlinLanguageServer',
     \ 'cmd': {server_info->['/home/igneo676/Code/kotlin-language-server/build/install/kotlin-language-server/bin/kotlin-language-server']},
