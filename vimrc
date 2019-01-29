@@ -42,6 +42,7 @@ Plug 'kana/vim-operator-user'
 Plug 'machakann/vim-highlightedyank'
 Plug 'kshenoy/vim-signature'
 Plug 'Firef0x/PKGBUILD.vim'
+Plug 'ekalinin/Dockerfile.vim'
 Plug 'blueyed/vim-diminactive'
 
 " UI
@@ -65,6 +66,8 @@ Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'mg979/vim-visual-multi', {'branch': 'test'}
+
+Plug 'wakatime/vim-wakatime'
 
 Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
@@ -91,11 +94,7 @@ Plug 'metakirby5/codi.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-gtfo'
 Plug 'sunaku/vim-dasht'
-
 Plug 'liuchengxu/vim-which-key'
-Plug 'wakatime/vim-wakatime'
-
-
 " Appearance
 
 Plug 'thiagoalessio/rainbow_levels.vim'
@@ -135,6 +134,7 @@ Plug 'Quramy/vim-js-pretty-template'
 
 " Typescript
 Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
 
 " Reason
 Plug 'reasonml-editor/vim-reason-plus'
@@ -615,13 +615,13 @@ let g:lightline = {
       \ },
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified'] ]
       \ },
       \ 'component_function': {
       \   'gitbranch': 'fugitive#head'
       \ },
       \ 'component_expand': {
-      \   'buffers': 'lightline#bufferline#buffers'
+      \   'buffers': 'lightline#bufferline#buffers',
       \ },
       \ 'component_type': {
       \   'buffers': 'tabsel'
@@ -699,6 +699,7 @@ let g:nvim_typescript#type_info_on_hold = 1
 let g:nvim_typescript#signature_complete = 1
 let g:nvim_typescript#javascript_support = 1
 let g:nvim_typescript#max_completion_detail = 200
+let g:nvim_typescript#diagnostics_enable = 0
 
 autocmd FileType javascript nnoremap <buffer> <F3> :TSImport<CR>
 autocmd FileType javascript inoremap <buffer> <F3> :TSImport<CR>
