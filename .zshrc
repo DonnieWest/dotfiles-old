@@ -251,7 +251,26 @@ sn() {
 }
 
 pass() {
-  lpass show -c --password $(lpass ls  | fzf | awk '{print $(NF)}' | sed 's/\]//g')
+  if hash bw 2>/dev/null; then
+    bw get item "$(bw list items | jq '.[] | "\(.name) | username: \(.login.username) | id: \(.id)" ' | fzf-tmux | awk '{print $(NF -0)}' | sed 's/\"//g')" | jq '.login.password' | sed 's/\"//g' | wl-copy
+  fi
+}
+
+cheat() {
+  curl cht.sh/$1
+}
+
+killport() {
+  if [[ $pid ]]; then
+    kill $pid
+    echo killed process $pid
+  else
+    echo no process is listening on port $port
+  fi
+}
+
+refresh_node() {
+  npm install -g $(ls $(npm root -g))
 }
 
 # Custom aliases
