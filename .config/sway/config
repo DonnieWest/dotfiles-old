@@ -17,12 +17,15 @@ exec swayidle \
 output * bg ~/Wallpapers/the_big_one_by_grivetart-d7mrqvp.jpg fill
 output eDP-1 scale 1
 
+exec libinput-gestures-setup start
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec mlterm
-# bindsym $mod+Return exec /home/igneo676/bin/restraint
+# bindsym $mod+Return exec mlterm
+bindsym $mod+Return exec /home/igneo676/bin/restraint
+# bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+q kill
@@ -106,11 +109,11 @@ bindsym $mod+Shift+0 move container to workspace number "10: Code"
 
 #Custom Keybindings
 
-bindsym XF86MonBrightnessUp --no-startup-id exec brightnessctl s +10%
-bindsym XF86MonBrightnessDown --no-startup-id exec brightnessctl s 10%-
+# bindsym XF86MonBrightnessUp --no-startup-id exec brightnessctl s +10%
+# bindsym XF86MonBrightnessDown --no-startup-id exec brightnessctl s 10%-
 bindsym $mod+w exec --no-startup-id firefox-developer-edition
 bindsym $mod+f exec --no-startup-id caja
-bindsym Print exec scrot -s -e 'mv $f ~/Downloads'
+bindsym Print exec /home/igneo676/bin/screenshot
 bindsym $mod+m move scratchpad
 bindsym $mod+n scratchpad show
 
@@ -125,12 +128,16 @@ for_window [class="Pidgin" instance="Pidgin"] floating enable
 for_window [class="rofi"] floating enable
 
 for_window [class="Pinentry"] floating enable
+for_window [title="OpenSnitch"] floating enable
+
+for_window [class="scrcpy"] floating enable
+assign [class="scrcpy"] 4: Emulator
 
 for_window [instance="crx_gaedmjdfmmahhbjefcbgaolhhanlaolb"] floating enable
 for_window [class="Google-chrome" instance="crx_nckgahadagoaajjgafhacjanaoiihapd"] floating enable
 for_window [class="chrome_app_list"] floating enable
 
-assign [class="Pidgin"] "2: Chat"
+assign [class="Pidgin"] 2: Chat
 
 default_border pixel
 #Hide border if 1 window
@@ -167,7 +174,7 @@ mode "resize" {
 }
 
 
-bindsym $mod+r mode "resize"
+bindsym $mod+r mode resize
 
 input "1739:30381:DLL0665:01_06CB:76AD_Touchpad" {
   accel_profile flat
@@ -188,9 +195,28 @@ input "7185:45133:Input_Club_Infinity_Ergodox/QMK" {
   repeat_rate 25
 }
 
+input "65261:4871:ErgoDox_EZ_ErgoDox_EZ" {
+  repeat_delay 250
+  repeat_rate 25
+}
+
 input "65261:24672:Cartel_Contra" {
   repeat_delay 250
   repeat_rate 25
+}
+
+input "65261:24672:OLKB_Planck" {
+  repeat_delay 250
+  repeat_rate 25
+}
+
+input "1452:782:Dr_Money_Handsomesons's_Domination_Pad" {
+  accel_profile flat
+  middle_emulation enabled
+  dwt enabled
+  pointer_accel 0.2
+  tap enabled
+  click_method clickfinger
 }
 
 
@@ -208,21 +234,22 @@ bindsym $mod+Control+Left resize shrink width 5 px or 5 ppt
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        position top
-        status_command i3blocks
-        font pango:Dank Mono 18
-        pango_markup enabled
-        # strip_workspace_numbers yes
+  position top
+  status_command i3blocks
+  font pango:Dank Mono 18
+  pango_markup enabled
+  # strip_workspace_numbers yes
 
-        colors {
-          separator #586e75
-          background #0c1014
-          statusline #aea79f
-          focused_workspace #091f2e #091f2e #ffffff
-          active_workspace #073642 #073642 #ffffff
-          inactive_workspace #0c1014 #0c1014 #aea79f
-          urgent_workspace #77216f #77216f #ffffff
-        }
+  colors {
+    separator #33859d
+    background #0c1014
+    statusline #599caa
+    focused_workspace #081f2d #081f2d #d3ebe9
+    active_workspace #093748 #093748 #d3ebe9
+    inactive_workspace #0c1014 #0c1014 #aea79f
+    urgent_workspace #c33027 #c33027 #d3ebe9
+
+  }
 }
 
 # exec xfce4-volumed-pulse
@@ -231,6 +258,7 @@ bar {
 # exec blueman-applet
 # exec eventd
 exec mako
+# exec opensnitch-ui
 bindsym Control+Shift+space exec ~/bin/clearNotifications.sh
 
 bindsym XF86AudioLowerVolume exec ~/bin/soundDown.sh

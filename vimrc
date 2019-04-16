@@ -150,6 +150,7 @@ Plug 'npacker/vim-java-syntax-after'
 
 " Kotlin
 Plug 'donniewest/kotlin-vim'
+Plug 'fwcd/KotlinLanguageServer', { 'do': './gradlew build' }
 
 " Ruby
 Plug 'vim-ruby/vim-ruby'
@@ -295,7 +296,6 @@ if executable('dart_language_server')
       \ })
 endif
 
-
 au User lsp_setup call lsp#register_server({
      \ 'name': 'php-language-server',
      \ 'cmd': {server_info->['php', expand('~/.config/nvim/plugged/php-language-server/bin/php-language-server.php')]},
@@ -304,7 +304,7 @@ au User lsp_setup call lsp#register_server({
 
 au User lsp_setup call lsp#register_server({
     \ 'name': 'kotlinLanguageServer',
-    \ 'cmd': {server_info->['/home/igneo676/Code/kotlin-language-server/build/install/kotlin-language-server/bin/kotlin-language-server']},
+    \ 'cmd': {server_info->[expand('~/.config/nvim/plugged/KotlinLanguageServer/build/install/kotlin-language-server/bin/kotlin-language-server')]},
     \ 'whitelist': ['kotlin'],
     \ })
 

@@ -225,7 +225,6 @@ export JAVA8_HOME="/usr/lib/jvm/java-8-jdk"
 export JAVA7_HOME="/usr/lib/jvm/java-7-openjdk"
 #export JAVA6_HOME="/usr/lib/jvm/java-6-openjdk-amd64/"
 
-
 # Setup PATH
 
 export PATH="$PATH:/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/bin:/usr/local/games:/usr/games:$GRADLE_HOME/bin:$HOME/.cabal/bin:/usr/bin/core_perl"
@@ -258,6 +257,22 @@ pass() {
 
 cheat() {
   curl cht.sh/$1
+}
+
+update_npm() {
+  echo "Checking NPM global packages"
+  output=$(ncu -g)
+  lastLine=$(echo -n $output | tail -2 | head | tr -d "\n")
+  echo $output
+  if [ "$lastLine" != "All global packages are up-to-date :)" ]; then
+    echo "Do you wish to update these packages?"
+    select yn in "Yes" "No"; do
+        case $yn in
+            Yes ) $(echo $lastLine); break;;
+            No ) exit;;
+        esac
+    done
+  fi
 }
 
 killport() {
