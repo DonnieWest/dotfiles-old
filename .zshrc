@@ -1,7 +1,11 @@
 source ~/.profile
 
 autoload -Uz compinit promptinit
-compinit
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+	compinit;
+else
+	compinit -C;
+fi;
 promptinit
 
 setopt autocd
@@ -286,6 +290,11 @@ killport() {
 
 refresh_node() {
   npm install -g $(ls $(npm root -g))
+}
+
+
+tmuxattach() {
+  tmux attach-session -t $(tmux ls | fzf | sed 's/:.*//')
 }
 
 # Custom aliases

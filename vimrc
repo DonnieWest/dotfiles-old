@@ -584,6 +584,8 @@ call esearch#map('<leader>ff', 'esearch')
 call esearch#map('<leader>fw', 'esearch-word-under-cursor')
 hi ESearchMatch ctermfg=black ctermbg=white guifg=#000000 guibg=#E6E6FA
 
+tnoremap <Esc> <C-\><C-n>
+
 let g:highlightedyank_highlight_duration = 100
 
 autocmd User Startified setlocal buftype=
@@ -596,6 +598,17 @@ noremap <leader>/ :TComment <CR>
 vmap <leader>/ :TCommentBlock<CR>
 
 let g:tmux_navigator_no_mappings = 1
+
+
+tnoremap <silent> <M-Left> <C-\><C-n>:TmuxNavigateLeft<cr>
+tnoremap <silent> <M-Down> <C-\><C-n>:TmuxNavigateDown<cr>
+tnoremap <silent> <M-Up> <C-\><C-n>:TmuxNavigateUp<cr>
+tnoremap <silent> <M-Right> <C-\><C-n>:TmuxNavigateRight<cr>
+" These mappings are used when nvim IS inside tmux
+tnoremap <silent> <C-W>k    <C-\><C-n>:TmuxNavigateUp<CR>
+tnoremap <silent> <C-W>j    <C-\><C-n>:TmuxNavigateDown<CR>
+tnoremap <silent> <C-W>h    <C-\><C-n>:TmuxNavigateLeft<CR>
+tnoremap <silent> <C-W>l    <C-\><C-n>:TmuxNavigateRight<CR>
 
 nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
 nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
@@ -652,17 +665,12 @@ endfunction
 
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
+autocmd FileType javascript nnoremap <buffer> <C-]> :TSDef<CR>
+
 
 autocmd CursorHold *.rs :call LanguageClient_textDocument_hover()<CR>
 autocmd FileType rust nnoremap <buffer> <C-]> :call LanguageClient_textDocument_definition()<CR>
 autocmd FileType rust nnoremap <buffer> <F6> :call LanguageClient_textDocument_rename()<CR>
-
-let g:neoformat_typescript_prettiereslint = {
-        \ 'exe': 'prettier-eslint',
-        \ 'args': ['--stdin', '--stdin-filepath', '%:p'],
-        \ 'stdin': 1,
-        \ }
-let g:neoformat_enabled_typescript = ['prettiereslint']
 
 function! GutentagsFilter(path) abort
     if fnamemodify(a:path, ':e') == 'java'
@@ -705,6 +713,9 @@ let g:nvim_typescript#signature_complete = 1
 let g:nvim_typescript#javascript_support = 1
 let g:nvim_typescript#max_completion_detail = 200
 let g:nvim_typescript#diagnostics_enable = 0
+let g:nvim_typescript#signature_complete = 1
+let g:nvim_typescript#completion_mark =''
+
 
 autocmd FileType javascript nnoremap <buffer> <F3> :TSImport<CR>
 autocmd FileType javascript inoremap <buffer> <F3> :TSImport<CR>
