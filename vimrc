@@ -681,7 +681,6 @@ let g:nvim_typescript#signature_complete = 1
 let g:nvim_typescript#javascript_support = 1
 let g:nvim_typescript#max_completion_detail = 200
 let g:nvim_typescript#diagnostics_enable = 0
-let g:nvim_typescript#signature_complete = 1
 let g:nvim_typescript#completion_mark =''
 
 
