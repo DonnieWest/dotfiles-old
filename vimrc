@@ -69,11 +69,14 @@ Plug 'mg979/vim-visual-multi', {'branch': 'test'}
 
 Plug 'wakatime/vim-wakatime'
 
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'lighttiger2505/deoplete-vim-lsp'
+Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
+Plug 'ncm2/ncm2-path'
+Plug 'ncm2/ncm2-github'
 
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
+Plug 'ncm2/ncm2-vim-lsp'
 Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'tpope/vim-db'
 
@@ -159,6 +162,7 @@ Plug 'Shougo/neco-vim'
 
 Plug 'rust-lang/rust.vim', { 'do': 'cargo install racer && rustup component add rust-src' }
 Plug 'racer-rust/vim-racer'
+Plug 'roxma/nvim-cm-racer'
 
 "Markdown/Octopress Plugins
 
@@ -256,20 +260,7 @@ let g:closetag_xhtml_filenames = '*.xhtml,*.js,*.tsx'
 let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-imap <C-x><C-o> <C-R>=deoplete#manual_complete()<CR>
-
-call deoplete#custom#option({
-  \ 'auto_complete_delay': 200,
-  \ 'smart_case': v:true,
-  \ 'sources': {
-  \     'javascript': ['typescript'],
-  \     'javascript.jsx': ['typescript'],
-  \  },
-  \ })
-
-let g:deoplete#ignore_sources = {'_': ['around', 'buffer', 'member' ]}
+imap <C-x><C-o> <Plug>(ncm2_manual_trigger)
 
 let g:lsp_signs_error = {'text': 'X'}
 let g:lsp_signs_warning = {'text': '?' }
@@ -379,7 +370,8 @@ if executable('html-languageserver')
       \ })
 endif
 
-
+let g:ncm2#matcher = 'substrfuzzy'
+autocmd BufEnter * call ncm2#enable_for_buffer()
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
 
@@ -735,6 +727,17 @@ let g:ale_lint_on_enter = 1
 let g:ale_virtualtext_cursor = 1
 let g:ale_linters = { 'cs': ['OmniSharp'] }
 
+call ncm2#register_source({'name' : 'OmniSharp',
+            \ 'priority': 9, 
+            \ 'subscope_enable': 1,
+            \ 'scope': ['cs'],
+            \ 'mark': 'cs',
+            \ 'word_pattern': '[\w/]+',
+            \ 'complete_pattern': ['\.'],
+            \ 'on_complete': ['ncm2#on_complete#omni',
+            \               'OmniSharp#Complete'],
+\ })
+
 " Fetch semantic type/interface/identifier names on BufEnter and highlight them
 let g:OmniSharp_highlight_types = 1
 
@@ -809,6 +812,18 @@ autocmd FileType java nnoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMiss
 autocmd FileType java inoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMissing)
 autocmd FileType java nnoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
 autocmd FileType java inoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
+
+au User Ncm2Plugin call ncm2#register_source({
+        \ 'name' : 'JC',
+        \ 'priority': 9, 
+        \ 'subscope_enable': 1,
+        \ 'scope': ['java'],
+        \ 'mark': 'JC',
+        \ 'complete_pattern':['\.', '::'], 
+        \ 'on_complete': ['ncm2#on_complete#omni', 'javacomplete#Complete'],
+        \ })
+
+
 
 autocmd FileType kotlin nnoremap <buffer> <C-]> LspDefinition<CR>
 
