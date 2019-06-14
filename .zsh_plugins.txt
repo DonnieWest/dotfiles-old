@@ -1,7 +1,9 @@
 wfxr/forgit
 lukechilds/zsh-better-npm-completion
-g-plane/zsh-yarn-autocompletions
 gradle/gradle-completion
 walesmd/caniuse.plugin.zsh
 jsahlen/tmux-vim-integration.plugin.zsh
 robbyrussell/oh-my-zsh path:plugins/docker path:plugins/adb
+chrisands/zsh-yarn-completion
+mafredri/zsh-async
+DonnieWest/pure

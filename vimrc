@@ -69,14 +69,11 @@ Plug 'mg979/vim-visual-multi', {'branch': 'test'}
 
 Plug 'wakatime/vim-wakatime'
 
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
-Plug 'ncm2/ncm2-path'
-Plug 'ncm2/ncm2-github'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'lighttiger2505/deoplete-vim-lsp'
 
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
-Plug 'ncm2/ncm2-vim-lsp'
 Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'tpope/vim-db'
 
@@ -162,11 +159,6 @@ Plug 'Shougo/neco-vim'
 
 Plug 'rust-lang/rust.vim', { 'do': 'cargo install racer && rustup component add rust-src' }
 Plug 'racer-rust/vim-racer'
-Plug 'roxma/nvim-cm-racer'
-
-" Dart
-Plug 'dart-lang/dart-vim-plugin'
-Plug 'reisub0/hot-reload.vim'
 
 "Markdown/Octopress Plugins
 
@@ -180,26 +172,10 @@ Plug 'gabrielelana/vim-markdown'
 
 
 " C Based plugins
-Plug 'ncm2/ncm2-pyclang'
 Plug 'justinmk/vim-syntax-extra'
 
 " C# Based Plugins
 Plug 'OmniSharp/omnisharp-vim'
-
-" PHP based plugins
-Plug 'felixfbecker/php-language-server', {'do': 'composer install && composer run-script parse-stubs'}
-
-function! DoRemote(arg)
-  UpdateRemotePlugins
-endfunction
-
-function! BuildComposer(info)
-  if a:info.status != 'unchanged' || a:info.force
-    !cargo build --release
-    UpdateRemotePlugins
-  endif
-endfunction
-
 
 call plug#end()
 
@@ -280,27 +256,26 @@ let g:closetag_xhtml_filenames = '*.xhtml,*.js,*.tsx'
 let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 
-imap <C-x><C-o> <Plug>(ncm2_manual_trigger)
+" Deoplete
+let g:deoplete#enable_at_startup = 1
+imap <C-x><C-o> <C-R>=deoplete#manual_complete()<CR>
+
+call deoplete#custom#option({
+  \ 'auto_complete_delay': 200,
+  \ 'smart_case': v:true,
+  \ 'sources': {
+  \     'javascript': ['typescript'],
+  \     'javascript.jsx': ['typescript'],
+  \  },
+  \ })
+
+let g:deoplete#ignore_sources = {'_': ['around', 'buffer', 'member' ]}
 
 let g:lsp_signs_error = {'text': 'X'}
 let g:lsp_signs_warning = {'text': '?' }
 let g:lsp_signs_hint = {'text': '!'}
-let g:lsp_signs_enabled = 1
+let g:lsp_signs_enabled = 0
 let g:lsp_diagnostics_echo_cursor = 1
-
-if executable('dart_language_server')
-  au User lsp_setup call lsp#register_server({
-      \ 'name': 'dartLanguageServer',
-      \ 'cmd': {server_info->['dart_language_server']},
-      \ 'whitelist': ['dart'],
-      \ })
-endif
-
-au User lsp_setup call lsp#register_server({
-     \ 'name': 'php-language-server',
-     \ 'cmd': {server_info->['php', expand('~/.config/nvim/plugged/php-language-server/bin/php-language-server.php')]},
-     \ 'whitelist': ['php'],
-     \ })
 
 au User lsp_setup call lsp#register_server({
     \ 'name': 'kotlinLanguageServer',
@@ -404,8 +379,7 @@ if executable('html-languageserver')
       \ })
 endif
 
-let g:ncm2#matcher = 'substrfuzzy'
-autocmd BufEnter * call ncm2#enable_for_buffer()
+
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
 
@@ -648,7 +622,6 @@ let g:lightline = {
 let g:lightline#bufferline#enable_devicons = 1
 let g:lightline#bufferline#show_number  = 0
 let g:lightline#bufferline#shorten_path = 1
-" let g:lightline#bufferline#filename_modifier = ':t'
 
 " Ripped out of https://github.com/derekprior/vim-trimmer/blob/master/plugin/vim-trimmer.vim
 if !exists("g:trimmer_blacklist")
@@ -697,11 +670,6 @@ autocmd FileType css,scss,sass setlocal iskeyword+=-
 let g:vim_json_syntax_conceal = 0
 " Python Stuff
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-
-" Dart stuff
-let dart_html_in_string=v:true
-let dart_style_guide = 2
-let dart_format_on_save = 1
 
 " Javascript Stuff
 let g:jsx_ext_required = 0
@@ -765,19 +733,8 @@ autocmd FileType javascript JsPreTmpl
 autocmd FileType javascript.jsx JsPreTmpl
 
 let g:ale_lint_on_enter = 1
+let g:ale_virtualtext_cursor = 1
 let g:ale_linters = { 'cs': ['OmniSharp'] }
-
-call ncm2#register_source({'name' : 'OmniSharp',
-            \ 'priority': 9, 
-            \ 'subscope_enable': 1,
-            \ 'scope': ['cs'],
-            \ 'mark': 'cs',
-            \ 'word_pattern': '[\w/]+',
-            \ 'complete_pattern': ['\.'],
-            \ 'on_complete': ['ncm2#on_complete#omni',
-            \               'OmniSharp#Complete'],
-\ })
-
 
 " Fetch semantic type/interface/identifier names on BufEnter and highlight them
 let g:OmniSharp_highlight_types = 1
@@ -853,18 +810,6 @@ autocmd FileType java nnoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMiss
 autocmd FileType java inoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMissing)
 autocmd FileType java nnoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
 autocmd FileType java inoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
-
-au User Ncm2Plugin call ncm2#register_source({
-        \ 'name' : 'JC',
-        \ 'priority': 9, 
-        \ 'subscope_enable': 1,
-        \ 'scope': ['java'],
-        \ 'mark': 'JC',
-        \ 'complete_pattern':['\.', '::'], 
-        \ 'on_complete': ['ncm2#on_complete#omni', 'javacomplete#Complete'],
-        \ })
-
-
 
 autocmd FileType kotlin nnoremap <buffer> <C-]> LspDefinition<CR>
 
