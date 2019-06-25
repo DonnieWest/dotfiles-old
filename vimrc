@@ -69,14 +69,14 @@ Plug 'mg979/vim-visual-multi', {'branch': 'test'}
 
 Plug 'wakatime/vim-wakatime'
 
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
-Plug 'ncm2/ncm2-path'
-Plug 'ncm2/ncm2-github'
+" Plug 'LeafCage/echos.vim'
 
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/asyncomplete-file.vim'
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
-Plug 'ncm2/ncm2-vim-lsp'
+Plug 'andreypopp/asyncomplete-ale.vim'
 Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'tpope/vim-db'
 
@@ -123,7 +123,6 @@ Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'samuelsimoes/vim-jsx-utils'
 Plug 'alampros/vim-react-keywords'
-Plug 'mhartington/nvim-typescript', { 'branch': 'master', 'do': './install.sh' }
 Plug 'jparise/vim-graphql'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'ap/vim-css-color'
@@ -141,10 +140,6 @@ Plug 'peitalin/vim-jsx-typescript'
 Plug 'reasonml-editor/vim-reason-plus'
 
 "Java/Android/Gradle plugins
-" Plug 'artur-shaik/vim-javacomplete2', { 'branch': 'master' }
-" Plug 'DonnieWest/VimStudio'
-Plug '~/Code/vim-javacomplete2'
-Plug '~/Code/VimStudio'
 Plug 'hsanson/vim-android'
 Plug 'npacker/vim-java-syntax-after'
 
@@ -260,7 +255,25 @@ let g:closetag_xhtml_filenames = '*.xhtml,*.js,*.tsx'
 let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 
-imap <C-x><C-o> <Plug>(ncm2_manual_trigger)
+imap <C-x><C-o> <Plug>(asyncomplete_force_refresh)
+
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+    \ 'name': 'file',
+    \ 'whitelist': ['*'],
+    \ 'priority': 10,
+    \ 'completor': function('asyncomplete#sources#file#completor')
+    \ }))
+
+
+let g:javascript_tsserver_use_global = 1
+
+augroup AleStarted
+  autocmd!
+  autocmd BufEnter *.js,*.jsx autocmd User ALEJobStarted call asyncomplete#ale#register_source({
+      \ 'linter': 'tsserver',
+      \ })
+augroup END
+
 
 let g:lsp_signs_error = {'text': 'X'}
 let g:lsp_signs_warning = {'text': '?' }
@@ -370,8 +383,6 @@ if executable('html-languageserver')
       \ })
 endif
 
-let g:ncm2#matcher = 'substrfuzzy'
-autocmd BufEnter * call ncm2#enable_for_buffer()
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
 
@@ -630,7 +641,9 @@ endfunction
 
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
-autocmd FileType javascript nnoremap <buffer> <C-]> :TSDef<CR>
+autocmd CursorHold *.js,*.jsx :ALEHover
+
+autocmd FileType javascript,javascript.jsx nnoremap <buffer> <C-]> ALEGoToDefinition<CR>
 
 
 autocmd CursorHold *.rs :call LanguageClient_textDocument_hover()<CR>
@@ -668,47 +681,9 @@ let g:jsx_ext_required = 0
 let g:mustache_abbreviations = 1
 autocmd BufNewFile,BufRead .eslintrc set ft=json
 
-let g:nvim_typescript#type_info_on_hold = 1
-let g:nvim_typescript#signature_complete = 1
-let g:nvim_typescript#javascript_support = 1
-let g:nvim_typescript#max_completion_detail = 200
-let g:nvim_typescript#diagnostics_enable = 0
-let g:nvim_typescript#completion_mark =''
-
-
 autocmd FileType javascript nnoremap <buffer> <F3> :TSImport<CR>
 autocmd FileType javascript inoremap <buffer> <F3> :TSImport<CR>
 autocmd FileType json setlocal conceallevel=0
-
-let g:nvim_typescript#kind_symbols = {
-    \ 'keyword': 'keyword',
-    \ 'class': '',
-    \ 'interface': 'interface',
-    \ 'script': 'script',
-    \ 'module': '',
-    \ 'local class': 'local class',
-    \ 'type': 'type',
-    \ 'enum': '',
-    \ 'enum member': '',
-    \ 'alias': '',
-    \ 'type parameter': 'type param',
-    \ 'primitive type': 'primitive type',
-    \ 'var': '',
-    \ 'local var': '',
-    \ 'property': '',
-    \ 'let': '',
-    \ 'const': '',
-    \ 'label': 'label',
-    \ 'parameter': 'param',
-    \ 'index': 'index',
-    \ 'function': '',
-    \ 'local function': 'local function',
-    \ 'method': '',
-    \ 'getter': '',
-    \ 'setter': '',
-    \ 'call': 'call',
-    \ 'constructor': '',
-\}
 
 " autocmd FileType javascript setlocal omnifunc=tsuquyomi#complete
 autocmd FileType javascript nnoremap eir :call JSXEncloseReturn()<CR>
@@ -726,17 +701,6 @@ autocmd FileType javascript.jsx JsPreTmpl
 let g:ale_lint_on_enter = 1
 let g:ale_virtualtext_cursor = 1
 let g:ale_linters = { 'cs': ['OmniSharp'] }
-
-call ncm2#register_source({'name' : 'OmniSharp',
-            \ 'priority': 9, 
-            \ 'subscope_enable': 1,
-            \ 'scope': ['cs'],
-            \ 'mark': 'cs',
-            \ 'word_pattern': '[\w/]+',
-            \ 'complete_pattern': ['\.'],
-            \ 'on_complete': ['ncm2#on_complete#omni',
-            \               'OmniSharp#Complete'],
-\ })
 
 " Fetch semantic type/interface/identifier names on BufEnter and highlight them
 let g:OmniSharp_highlight_types = 1
@@ -812,18 +776,6 @@ autocmd FileType java nnoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMiss
 autocmd FileType java inoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMissing)
 autocmd FileType java nnoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
 autocmd FileType java inoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
-
-au User Ncm2Plugin call ncm2#register_source({
-        \ 'name' : 'JC',
-        \ 'priority': 9, 
-        \ 'subscope_enable': 1,
-        \ 'scope': ['java'],
-        \ 'mark': 'JC',
-        \ 'complete_pattern':['\.', '::'], 
-        \ 'on_complete': ['ncm2#on_complete#omni', 'javacomplete#Complete'],
-        \ })
-
-
 
 autocmd FileType kotlin nnoremap <buffer> <C-]> LspDefinition<CR>
 
