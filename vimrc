@@ -67,16 +67,11 @@ Plug 'mbbill/undotree'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'mg979/vim-visual-multi', {'branch': 'test'}
 
-Plug 'wakatime/vim-wakatime'
-
 " Plug 'LeafCage/echos.vim'
 
 Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/asyncomplete-file.vim'
 Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'andreypopp/asyncomplete-ale.vim'
 Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'tpope/vim-db'
 
@@ -86,7 +81,8 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
-Plug 'w0rp/ale'
+" Plug 'w0rp/ale'
+Plug 'DonnieWest/ale', {'branch': 'aleSymbolSupport'}
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'metakirby5/codi.vim'
@@ -238,6 +234,7 @@ let g:indentLine_enabled = 0
 let g:gitgutter_max_signs=10000
 let g:magit_refresh_gitgutter=1
 autocmd BufWritePost * :GitGutter
+autocmd User ALELintPost :GitGutter
 
 let g:signify_vcs_list = [ 'git' ]
 
@@ -265,123 +262,43 @@ au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#source
     \ }))
 
 
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#ale#get_source_options({
+    \ 'priority': 10,
+    \ }))
+
+let g:ale_completion_tsserver_remove_items_without_detail = 1
+let g:ale_completion_symbols = {
+\ 'keyword': 'keyword',
+\ 'class': '',
+\ 'interface': '',
+\ 'script': 'script',
+\ 'module': '',
+\ 'local class': 'local class',
+\ 'type': '',
+\ 'enum': '',
+\ 'enum member': '',
+\ 'alias': '',
+\ 'type parameter': 'type param',
+\ 'primitive type': 'primitive type',
+\ 'var': '',
+\ 'local var': '',
+\ 'property': '',
+\ 'let': '',
+\ 'const': '',
+\ 'label': 'label',
+\ 'parameter': 'param',
+\ 'index': 'index',
+\ 'function': '',
+\ 'local function': 'local function',
+\ 'method': '',
+\ 'getter': '',
+\ 'setter': '',
+\ 'call': 'call',
+\ 'constructor': '',
+\ '<default>': 'v',
+\ }
+
 let g:javascript_tsserver_use_global = 1
-
-augroup AleStarted
-  autocmd!
-  autocmd BufEnter *.js,*.jsx autocmd User ALEJobStarted call asyncomplete#ale#register_source({
-      \ 'linter': 'tsserver',
-      \ })
-augroup END
-
-
-let g:lsp_signs_error = {'text': 'X'}
-let g:lsp_signs_warning = {'text': '?' }
-let g:lsp_signs_hint = {'text': '!'}
-let g:lsp_signs_enabled = 0
-let g:lsp_diagnostics_echo_cursor = 1
-
-au User lsp_setup call lsp#register_server({
-    \ 'name': 'kotlinLanguageServer',
-    \ 'cmd': {server_info->[expand('~/.config/nvim/plugged/KotlinLanguageServer/build/install/kotlin-language-server/bin/kotlin-language-server')]},
-    \ 'whitelist': ['kotlin'],
-    \ })
-
-au User lsp_setup call lsp#register_server({
-    \ 'name': 'javaLanguageServer',
-    \ 'cmd': {server_info->['java -cp /home/igneo676/bin/vscode-javac.jar -Xverify:none -Xdebug org.javacs.Main']},
-    \ 'whitelist': ['java'],
-    \ })
-
-if executable('bash-language-server')
-  au User lsp_setup call lsp#register_server({
-      \ 'name': 'bashLanguageServer',
-      \ 'cmd': {server_info->['bash-language-server']},
-      \ 'whitelist': ['bash'],
-      \ })
-endif
-
-if executable('vscode-json-languageserver')
-  au User lsp_setup call lsp#register_server({
-      \ 'name': 'JsonLanguageServer',
-      \ 'cmd': {server_info->['vscode-json-languageserver']},
-      \ 'whitelist': ['json'],
-      \ })
-endif
-
-if executable('ocaml-language-server')
-  au User lsp_setup call lsp#register_server({
-        \ 'name': 'ocaml-language-server',
-        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'ocaml-language-server --stdio']},
-        \ 'whitelist': ['reason', 'ocaml'],
-        \ })
-endif
-
-if executable('vscode-json-languageserver')
-  au User lsp_setup call lsp#register_server({
-        \ 'name': 'vscode-json-languageserver',
-        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'vscode-json-languageserver --stdio']},
-        \ 'whitelist': ['json'],
-        \ 'workspace_config': {
-        \   'json': {
-        \     'format': { 'enable': v:true },
-        \     'schemas': {
-        \       'fileMatch': ['package.json'],
-        \       'url': 'http://json.schemastore.org/package',
-        \       'schema': { 'type': 'array' }
-        \     }
-        \   }
-        \ }
-        \ })
-endif
-
-if executable('docker-langserver')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'docker-langserver',
-        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'docker-langserver --stdio']},
-        \ 'whitelist': ['dockerfile'],
-        \ })
-endif
-
-if executable('html-languageserver')
-  au User lsp_setup call lsp#register_server({
-        \ 'name': 'html-languageserver',
-        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'html-languageserver --stdio']},
-        \ 'whitelist': ['html'],
-        \ })
-endif
-
-if executable('css-languageserver')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'css-languageserver',
-        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'css-languageserver --stdio']},
-        \ 'whitelist': ['css', 'less', 'sass'],
-        \ })
-endif
-
-if executable('pyls')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'whitelist': ['python'],
-        \ })
-endif
-
-if executable('rls')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'rls',
-        \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
-        \ 'whitelist': ['rust'],
-        \ })
-endif
-
-if executable('html-languageserver')
-  au User lsp_setup call lsp#register_server({
-      \ 'name': 'HTMLLanguageServer',
-      \ 'cmd': {server_info->['html-languageserver --stdio']},
-      \ 'whitelist': ['html'],
-      \ })
-endif
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
@@ -700,7 +617,10 @@ autocmd FileType javascript.jsx JsPreTmpl
 
 let g:ale_lint_on_enter = 1
 let g:ale_virtualtext_cursor = 1
-let g:ale_linters = { 'cs': ['OmniSharp'] }
+
+let g:ale_fixers = {'javascript': ['prettier_standard']}
+let g:ale_linters = {'javascript': ['standard', 'tsserver'], 'cs': ['OmniSharp']}
+let g:ale_fix_on_save = 1
 
 " Fetch semantic type/interface/identifier names on BufEnter and highlight them
 let g:OmniSharp_highlight_types = 1
