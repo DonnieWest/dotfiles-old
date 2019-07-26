@@ -64,11 +64,8 @@ Plug 'simnalamburt/vim-mundo'
 Plug 'rhysd/clever-f.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'mbbill/undotree'
-Plug 'jeetsukumaran/vim-filebeagle'
+Plug 'justinmk/vim-dirvish'
 Plug 'mg979/vim-visual-multi', {'branch': 'test'}
-
-" Plug 'LeafCage/echos.vim'
-
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-file.vim'
 Plug 'prabirshrestha/async.vim'
@@ -147,7 +144,7 @@ Plug 'fwcd/KotlinLanguageServer', { 'do': './gradlew build' }
 Plug 'vim-ruby/vim-ruby'
 
 "VIMScript Plugins
-Plug 'Shougo/neco-vim'
+Plug 'machakann/vim-Verdin'
 
 " Rust
 
@@ -171,6 +168,7 @@ Plug 'justinmk/vim-syntax-extra'
 
 " C# Based Plugins
 Plug 'OmniSharp/omnisharp-vim'
+Plug 'nickspoons/vim-sharpenup'
 
 call plug#end()
 
@@ -224,6 +222,12 @@ set mouse=a
 
 nnoremap <F2> :MundoToggle<CR>
 
+augroup dirvish_config
+  autocmd!
+  autocmd FileType dirvish silent! unmap <buffer> <C-p>
+  autocmd FileType dirvish silent! unmap <buffer> <C-n>
+augroup END
+
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
@@ -253,6 +257,7 @@ let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 
 imap <C-x><C-o> <Plug>(asyncomplete_force_refresh)
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
 au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
     \ 'name': 'file',
@@ -261,6 +266,8 @@ au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#source
     \ 'completor': function('asyncomplete#sources#file#completor')
     \ }))
 
+
+let g:javascript_tsserver_use_global = 1
 
 au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#ale#get_source_options({
     \ 'priority': 10,
@@ -327,7 +334,7 @@ set clipboard+=unnamedplus
 
 " Some default colorschemes I like
 " colorscheme darkburn
-colorscheme gotham256
+colorscheme gotham
 " let g:oceanic_next_terminal_bold = 1
 " let g:oceanic_next_terminal_italic = 1
 " colorscheme OceanicNext
@@ -364,8 +371,6 @@ let g:startify_custom_header = []
 let g:startify_change_to_vcs_root = 1
 
 let g:qf_auto_open_loclist = 0
-
-let g:fugitive_gitlab_domains = ['http://gitlab.intomni.com', 'http://gitlab.codekoalas.com']
 
 let g:esearch = {
   \ 'adapter':    'rg',
@@ -517,6 +522,8 @@ nnoremap <silent> <C-W>l    :TmuxNavigateRight<CR>
 
 set showtabline=2
 
+let g:sharpenup_statusline_opts = { 'Highlight': 0 }
+
 let g:lightline = {
       \ 'separator': { 'left': '', 'right': '' },
       \ 'subseparator': { 'left': '', 'right': '' },
@@ -527,7 +534,14 @@ let g:lightline = {
       \ },
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified'] ]
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified'] ],
+      \   'right': [['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype', 'sharpenup']]
+      \ },
+      \ 'inactive': {
+      \   'right': [['lineinfo'], ['percent'], ['sharpenup']]
+      \ },
+      \ 'component': {
+      \   'sharpenup': sharpenup#statusline#Build()
       \ },
       \ 'component_function': {
       \   'gitbranch': 'fugitive#head'
@@ -542,6 +556,7 @@ let g:lightline = {
 let g:lightline#bufferline#enable_devicons = 1
 let g:lightline#bufferline#show_number  = 0
 let g:lightline#bufferline#shorten_path = 1
+" let g:lightline#bufferline#filename_modifier = ':t'
 
 " Ripped out of https://github.com/derekprior/vim-trimmer/blob/master/plugin/vim-trimmer.vim
 if !exists("g:trimmer_blacklist")
@@ -560,7 +575,7 @@ autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
 autocmd CursorHold *.js,*.jsx :ALEHover
 
-autocmd FileType javascript,javascript.jsx nnoremap <buffer> <C-]> ALEGoToDefinition<CR>
+autocmd FileType javascript,javascript.jsx nnoremap <buffer> <C-]> :ALEGoToDefinition<CR>
 
 
 autocmd CursorHold *.rs :call LanguageClient_textDocument_hover()<CR>
@@ -624,6 +639,14 @@ let g:ale_fix_on_save = 1
 
 " Fetch semantic type/interface/identifier names on BufEnter and highlight them
 let g:OmniSharp_highlight_types = 1
+let g:OmniSharp_server_stdio = 1
+
+let g:sharpenup_create_mappings = 0
+
+augroup lightline_integration
+  autocmd!
+  autocmd User OmniSharpStarted,OmniSharpReady,OmniSharpStopped call lightline#update()
+augroup END
 
 augroup omnisharp_commands
     autocmd!
@@ -752,8 +775,6 @@ highlight Statement gui=italic
 highlight Keyword gui=italic
 highlight Constant gui=italic
 highlight Boolean gui=italic
-
-source ~/.rhubarb_credentials
 
 let g:rainbow_levels = [
     \{'ctermbg': 232, 'guibg': '#080808'},
