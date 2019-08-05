@@ -1,3 +1,6 @@
+zsh-users/zsh-history-substring-search
+zsh-users/zsh-completions
+zsh-users/zsh-syntax-highlighting
 wfxr/forgit
 lukechilds/zsh-better-npm-completion
 gradle/gradle-completion
