@@ -179,14 +179,13 @@ ulimit -n 2048
 
 alias ssh='TERM=xterm-256color ssh'
 # Use custom dircolors
-eval $(dircolors ~/.dircolors)
 
 source ~/.zsh_plugins.sh
 
 # Setup Env variables
 export N_PREFIX=$HOME
 export GRADLE_HOME="$HOME/gradle"
-export ANDROID_HOME="$HOME/android-sdk-linux"
+export ANDROID_HOME="$HOME/Android/Sdk"
 export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
 export POWERLINE_CONFIG_COMMAND="$HOME/.local/bin/powerline-config"
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
@@ -194,16 +193,18 @@ export STEAM_RUNTIME=0
 
 export EDITOR="nvim"
 
-export JAVA8_HOME="/usr/lib/jvm/java-8-jdk"
-export JAVA7_HOME="/usr/lib/jvm/java-7-openjdk"
-#export JAVA6_HOME="/usr/lib/jvm/java-6-openjdk-amd64/"
+export JAVA_HOME="/usr/lib/jvm/default"
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=red"
+export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+export ZSH_AUTOSUGGEST_USE_ASYNC=1
+export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 # Setup PATH
 
 export PATH="$PATH:/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/bin:/usr/local/games:/usr/games:$GRADLE_HOME/bin:$HOME/.cabal/bin:/usr/bin/core_perl"
-export PATH="$HOME/android-sdk-linux/emulator:$PATH"
-export PATH="$HOME/android-sdk-linux/platform-tools:$PATH"
-export PATH="$HOME/android-sdk-linux/tools/bin:$PATH"
+export PATH="$ANDROID_HOME/emulator:$PATH"
+export PATH="$ANDROID_HOME/platform-tools:$PATH"
+export PATH="$ANDROID_HOME/tools/bin:$PATH"
 
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$HOME/bin:$PATH"
@@ -269,5 +270,24 @@ tmuxattach() {
 # Custom aliases
 alias package-json-dependency-lint=pjdl
 
-source <(npx --shell-auto-fallback zsh)
+# source <(npx --shell-auto-fallback zsh)
+command_not_found_handler() {
+  # Do not run within a pipe
+  if test ! -t 1; then
+    >&2 echo "command not found: $1"
+    return 127
+  fi
+  if which npx > /dev/null; then
+    echo "$1 not found. Trying with npx..." >&2
+  else
+    return 127
+  fi
+  if ! [[ $1 =~ @ ]]; then
+    npx --no-install "$@"
+  else
+    npx "$@"
+  fi
+  return $?
+}
+
 alias ls='exa'

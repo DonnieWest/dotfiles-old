@@ -52,6 +52,7 @@ Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
 Plug 'itchyny/lightline.vim'
 Plug 'mgee/lightline-bufferline'
+Plug 'maximbaz/lightline-ale'
 Plug 'haishanh/night-owl.vim'
 " Plug 'edkolev/tmuxline.vim'
 Plug 'luochen1990/rainbow'
@@ -135,10 +136,11 @@ Plug 'reasonml-editor/vim-reason-plus'
 "Java/Android/Gradle plugins
 Plug 'hsanson/vim-android'
 Plug 'npacker/vim-java-syntax-after'
+Plug 'georgewfraser/java-language-server', { 'do': './scripts/link_mac.sh' }
 
 " Kotlin
 Plug 'donniewest/kotlin-vim'
-Plug 'fwcd/KotlinLanguageServer', { 'do': './gradlew build' }
+Plug 'fwcd/KotlinLanguageServer', { 'do': './gradlew :server:installDist' }
 
 " Ruby
 Plug 'vim-ruby/vim-ruby'
@@ -535,7 +537,10 @@ let g:lightline = {
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified'] ],
-      \   'right': [['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype', 'sharpenup']]
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              ['gradle_project', 'gradle_running', 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok'],
+      \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ] ]
       \ },
       \ 'inactive': {
       \   'right': [['lineinfo'], ['percent'], ['sharpenup']]
@@ -548,11 +553,32 @@ let g:lightline = {
       \ },
       \ 'component_expand': {
       \   'buffers': 'lightline#bufferline#buffers',
+      \   'linter_checking': 'lightline#ale#checking',
+      \   'linter_warnings': 'lightline#ale#warnings',
+      \   'linter_errors': 'lightline#ale#errors',
+      \   'linter_ok': 'lightline#ale#ok',
+      \   'gradle_errors': 'lightline#gradle#errors',
+      \   'gradle_warnings': 'lightline#gradle#warnings',
+      \   'gradle_running': 'lightline#gradle#running',
+      \   'gradle_project': 'lightline#gradle#project'
       \ },
       \ 'component_type': {
-      \   'buffers': 'tabsel'
+      \   'buffers': 'tabsel',
+      \   'gradle_erros': 'error',
+      \   'gradle_warnings': 'warning',
+      \   'gradle_running': 'left',
+      \   'gradle_project': 'right',
+      \   'linter_checking': 'left',
+      \   'linter_warnings': 'warning',
+      \   'linter_errors': 'error',
+      \   'linter_ok': 'left'
       \ },
       \ }
+
+let g:lightline#ale#indicator_checking = ''
+let g:lightline#ale#indicator_warnings = ''
+let g:lightline#ale#indicator_errors   = ''
+let g:lightline#ale#indicator_ok       = ''
 let g:lightline#bufferline#enable_devicons = 1
 let g:lightline#bufferline#show_number  = 0
 let g:lightline#bufferline#shorten_path = 1
@@ -633,8 +659,8 @@ autocmd FileType javascript.jsx JsPreTmpl
 let g:ale_lint_on_enter = 1
 let g:ale_virtualtext_cursor = 1
 
-let g:ale_fixers = {'javascript': ['prettier_standard']}
-let g:ale_linters = {'javascript': ['standard', 'tsserver'], 'cs': ['OmniSharp']}
+let g:ale_fixers = {'javascript': ['prettier_eslint']}
+let g:ale_linters = {'javascript': ['eslint', 'tsserver'], 'cs': ['OmniSharp'], 'java': ['android', 'javalsp'], 'kotlin': ['android', 'ktlint', 'languageserver']}
 let g:ale_fix_on_save = 1
 
 " Fetch semantic type/interface/identifier names on BufEnter and highlight them
@@ -708,27 +734,30 @@ autocmd FileType gitcommit setlocal spell
 let g:grammarous#languagetool_cmd = 'languagetool'
 
 "VIM Android/Java/Gradle stuff
+let g:android_sdk_path = expand("$ANDROID_HOME")
+let g:gradle_daemon=1
+let g:gradle_show_signs=0
+let g:gradle_loclist_show=0
+let g:gradle_sync_on_load=1
+
+let g:gradle_glyph_error=''
+let g:gradle_glyph_warning=''
+let g:gradle_glyph_gradle=''
+let g:gradle_glyph_android=''
+let g:gradle_glyph_building=''
+
+augroup GradleGroup
+  autocmd!
+  au BufWrite build.gradle call gradle#sync()
+augroup END
 
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
-autocmd FileType java nnoremap <buffer> <F3> <Plug>(JavaComplete-Imports-Add)
-autocmd FileType java inoremap <buffer> <F3> <Plug>(JavaComplete-Imports-Add)
-autocmd FileType java nnoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMissing)
-autocmd FileType java inoremap <buffer> <F4> <Plug>(JavaComplete-Imports-AddMissing)
-autocmd FileType java nnoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
-autocmd FileType java inoremap <buffer> <F5> <Plug>(JavaComplete-Imports-RemoveUnused)
-
 autocmd FileType kotlin nnoremap <buffer> <C-]> LspDefinition<CR>
+let g:ale_kotlin_languageserver_executable = '~/.config/nvim/plugged/KotlinLanguageServer/server/build/install/server/bin/kotlin-language-server '
 
-let g:JavaComplete_ImportSortType = 'packageName'
-let g:JavaComplete_ImportOrder = ['android.', 'com.', 'junit.', 'net.', 'org.', 'java.', 'javax.']
-let g:JavaComplete_ImportOrder = ['*']
-let g:JavaComplete_StaticImportsAtTop = 1
-" let g:JavaComplete_CompletionResultSort = 1
-
-autocmd CursorHold *.java :JCGetSymbolType
+let g:ale_java_javalsp_executable = '~/.config/nvim/plugged/java-language-server/dist/mac/bin/launcher'
 
 let g:neoformat_java_googleformatter = {
             \ 'exe': 'google-java-format',

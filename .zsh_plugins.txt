@@ -10,3 +10,6 @@ robbyrussell/oh-my-zsh path:plugins/docker path:plugins/adb
 chrisands/zsh-yarn-completion
 mafredri/zsh-async
 DonnieWest/pure
+# gretzky/n.zsh
+laggardkernel/git-ignore
+zsh-users/zsh-autosuggestions
