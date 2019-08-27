@@ -291,3 +291,7 @@ command_not_found_handler() {
 }
 
 alias ls='exa'
+
+findAlias() {
+  PS4='+%x:%I>' zsh -i -x -c '' |& grep $1
+}

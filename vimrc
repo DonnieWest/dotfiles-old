@@ -110,6 +110,8 @@ Plug 'lambdalisue/gina.vim'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/html5.vim'
 Plug 'alvan/vim-closetag'
+Plug 'mattn/emmet-vim'
+Plug 'AndrewRadev/tagalong.vim'
 
 "Javascript Plugins
 Plug 'jungomi/vim-mdnquery'
@@ -150,9 +152,8 @@ Plug 'machakann/vim-Verdin'
 
 " Rust
 
-Plug 'rust-lang/rust.vim', { 'do': 'cargo install racer && rustup component add rust-src' }
+Plug 'rust-lang/rust.vim'
 Plug 'racer-rust/vim-racer'
-Plug 'roxma/nvim-cm-racer'
 
 "Markdown/Octopress Plugins
 
@@ -241,6 +242,8 @@ let g:gitgutter_max_signs=10000
 let g:magit_refresh_gitgutter=1
 autocmd BufWritePost * :GitGutter
 autocmd User ALELintPost :GitGutter
+autocmd User VimagitLeaveCommit :GitGutterAll
+autocmd User VimagitUpdateFile :GitGutterAll
 
 let g:signify_vcs_list = [ 'git' ]
 
@@ -268,6 +271,12 @@ au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#source
     \ 'completor': function('asyncomplete#sources#file#completor')
     \ }))
 
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#Verdin#get_source_options({
+    \ 'name': 'Verdin',
+    \ 'whitelist': ['vim'],
+    \ 'priority': 10,
+    \ 'completor': function('asyncomplete#sources#Verdin#completor')
+    \ }))
 
 let g:javascript_tsserver_use_global = 1
 
@@ -399,10 +408,6 @@ let g:neosnippet#snippets_directory='~/Code/react-snippets'
 " Conceal neosnippet markers
 set conceallevel=2
 set concealcursor=niv
-
-"Some nice mappings for ag
-" inoremap <expr> <plug>(fzf-complete-file-ag) fzf#vim#complete#path('ag -l -g ""')
-
 
 function! Fzf_dev()
   function! s:files()
@@ -540,7 +545,9 @@ let g:lightline = {
       \   'right': [ [ 'lineinfo' ],
       \              [ 'percent' ],
       \              ['gradle_project', 'gradle_running', 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok'],
-      \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ] ]
+      \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ],
+      \              ['sharpenup']
+      \            ]
       \ },
       \ 'inactive': {
       \   'right': [['lineinfo'], ['percent'], ['sharpenup']]
@@ -658,7 +665,6 @@ autocmd FileType javascript.jsx JsPreTmpl
 
 let g:ale_lint_on_enter = 1
 let g:ale_virtualtext_cursor = 1
-
 let g:ale_fixers = {'javascript': ['prettier_eslint']}
 let g:ale_linters = {'javascript': ['eslint', 'tsserver'], 'cs': ['OmniSharp'], 'java': ['android', 'javalsp'], 'kotlin': ['android', 'ktlint', 'languageserver']}
 let g:ale_fix_on_save = 1
