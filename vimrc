@@ -80,7 +80,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
 " Plug 'w0rp/ale'
-Plug 'DonnieWest/ale', {'branch': 'aleSymbolSupport'}
+Plug 'DonnieWest/ale', {'branch': 'aleSymbolSupportRebased'}
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'metakirby5/codi.vim'
@@ -284,6 +284,9 @@ au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#source
     \ 'priority': 10,
     \ }))
 
+let g:ale_completion_tsserver_autoimport = 1
+let g:ale_rename_tsserver_find_in_comments = 1
+let g:ale_rename_tsserver_find_in_comments = 1
 let g:ale_completion_tsserver_remove_items_without_detail = 1
 let g:ale_completion_symbols = {
 \ 'keyword': 'keyword',
@@ -545,7 +548,7 @@ let g:lightline = {
       \   'right': [ [ 'lineinfo' ],
       \              [ 'percent' ],
       \              ['gradle_project', 'gradle_running', 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok'],
-      \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ],
+      \              [ 'fileformat', 'fileencoding', 'filetype' ],
       \              ['sharpenup']
       \            ]
       \ },
