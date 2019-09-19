@@ -212,6 +212,7 @@ export PATH="$HOME/bin:$PATH"
 export PATH="$PATH:$HOME/.npm-global/bin"
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
+export PATH="$PATH:$HOME/.dotnet/tools"
 
 sn() {
   local version
