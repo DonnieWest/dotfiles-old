@@ -142,7 +142,7 @@ Plug 'georgewfraser/java-language-server', { 'do': './scripts/link_mac.sh' }
 
 " Kotlin
 Plug 'donniewest/kotlin-vim'
-Plug 'fwcd/KotlinLanguageServer', { 'do': './gradlew :server:installDist' }
+Plug 'fwcd/kotlin-language-server', { 'do': './gradlew :server:installDist' }
 
 " Ruby
 Plug 'vim-ruby/vim-ruby'
