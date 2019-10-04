@@ -183,9 +183,9 @@ alias ssh='TERM=xterm-256color ssh'
 source ~/.zsh_plugins.sh
 
 # Setup Env variables
-export N_PREFIX=$HOME
-export GRADLE_HOME="$HOME/gradle"
-export ANDROID_HOME="$HOME/Android/Sdk"
+export N_PREFIX=$HOME/.config/n
+export GRADLE_HOME="$HOME/.gradle"
+export ANDROID_HOME="$HOME/.android-sdk-linux"
 export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
 export POWERLINE_CONFIG_COMMAND="$HOME/.local/bin/powerline-config"
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
@@ -207,7 +207,10 @@ export PATH="$ANDROID_HOME/platform-tools:$PATH"
 export PATH="$ANDROID_HOME/tools/bin:$PATH"
 
 export PATH="$PATH:$HOME/.local/bin"
+export PATH="$HOME/.config/n/bin:$PATH"
+export PATH="$HOME/.config/npm/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/.bin:$PATH"
 
 export PATH="$PATH:$HOME/.npm-global/bin"
 export PATH="$PATH":"$HOME/.pub-cache/bin"
@@ -295,4 +298,14 @@ alias ls='exa'
 
 findAlias() {
   PS4='+%x:%I>' zsh -i -x -c '' |& grep $1
+}
+
+unmount_drives() {
+  local drive
+  drive=$(udiskie-info -a | fzf)
+  if [ "x$drive" != "x" ]
+  then
+    echo "Unmounting $drive"
+    udisksctl unmount -b $drive && udisksctl power-off -b $drive
+  fi
 }

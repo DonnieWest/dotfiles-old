@@ -80,7 +80,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
 " Plug 'w0rp/ale'
-Plug 'DonnieWest/ale', {'branch': 'aleSymbolSupportRebased'}
+Plug 'DonnieWest/ale', {'branch': 'aleSymbolSupport'}
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'metakirby5/codi.vim'
