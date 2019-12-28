@@ -44,9 +44,11 @@ Plug 'kshenoy/vim-signature'
 Plug 'Firef0x/PKGBUILD.vim'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'blueyed/vim-diminactive'
+Plug 'keith/swift.vim'
 
 " UI
 Plug 'whatyouhide/vim-gotham'
+Plug 'fenetikm/falcon'
 Plug 'mhartington/oceanic-next'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
@@ -462,6 +464,8 @@ command! -bang -nargs=* Rg
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
 
+runtime plugin/grepper.vim
+let g:grepper.rg.grepprg .= ' -i'
 nnoremap \ :GrepperRg 
 
 " Map ,t to search for my Todos
@@ -609,14 +613,8 @@ endfunction
 
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
-autocmd CursorHold *.js,*.jsx :ALEHover
-
-autocmd FileType javascript,javascript.jsx nnoremap <buffer> <C-]> :ALEGoToDefinition<CR>
-
-
-autocmd CursorHold *.rs :call LanguageClient_textDocument_hover()<CR>
-autocmd FileType rust nnoremap <buffer> <C-]> :call LanguageClient_textDocument_definition()<CR>
-autocmd FileType rust nnoremap <buffer> <F6> :call LanguageClient_textDocument_rename()<CR>
+autocmd CursorHold *.js,*.jsx,*.kt :ALEHover
+nnoremap <silent> <C-]> :ALEGoToDefinition<CR>
 
 function! GutentagsFilter(path) abort
     if fnamemodify(a:path, ':e') == 'java'
@@ -668,7 +666,8 @@ autocmd FileType javascript.jsx JsPreTmpl
 
 let g:ale_lint_on_enter = 1
 let g:ale_virtualtext_cursor = 1
-let g:ale_fixers = {'javascript': ['prettier_eslint']}
+let g:ale_fixers = {'javascript': ['prettier_eslint'], 'kotlin': ['ktlint']}
+" let g:ale_linters = {'javascript': ['eslint', 'tsserver'], 'cs': ['OmniSharp'], 'java': ['android', 'javalsp', 'intellijserver'], 'kotlin': ['android', 'ktlint', 'intellijserver'], 'xml': ['intellijserver']}
 let g:ale_linters = {'javascript': ['eslint', 'tsserver'], 'cs': ['OmniSharp'], 'java': ['android', 'javalsp'], 'kotlin': ['android', 'ktlint', 'languageserver']}
 let g:ale_fix_on_save = 1
 
@@ -763,7 +762,6 @@ augroup END
 "XML completion based on CTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
-autocmd FileType kotlin nnoremap <buffer> <C-]> LspDefinition<CR>
 let g:ale_kotlin_languageserver_executable = '~/.config/nvim/plugged/KotlinLanguageServer/server/build/install/server/bin/kotlin-language-server '
 
 let g:ale_java_javalsp_executable = '~/.config/nvim/plugged/java-language-server/dist/mac/bin/launcher'
@@ -802,6 +800,8 @@ highlight Statement cterm=italic
 highlight Keyword cterm=italic
 highlight Constant cterm=italic
 highlight Boolean cterm=italic
+highlight ktInclude cterm=italic
+highlight Type cterm=italic
 
 highlight htmlArg gui=italic
 highlight Comment gui=italic
@@ -813,6 +813,8 @@ highlight Statement gui=italic
 highlight Keyword gui=italic
 highlight Constant gui=italic
 highlight Boolean gui=italic
+highlight ktInclude gui=italic
+highlight Type gui=italic
 
 let g:rainbow_levels = [
     \{'ctermbg': 232, 'guibg': '#080808'},

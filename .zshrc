@@ -309,3 +309,34 @@ unmount_drives() {
     udisksctl unmount -b $drive && udisksctl power-off -b $drive
   fi
 }
+
+connectToDevice() {
+  device=$(adb devices | tail -n +2 | fzf | awk '{ print $1 }')
+  scrcpy -s $device &!
+}
+
+launchEmulator() {
+  avd=$(avdmanager list avd | grep "Name:" | awk '{ print $2 }')
+  if [ "x$avd" != "x" ]
+  then
+    emulator "@${avd%.*}" &!
+  else
+    echo "Failed to launch Emulator"
+  fi
+}
+
+launchAPK() {
+  ./gradlew assembleDebug
+  device=$(adb devices -l | tail -n +2 | awk '{ print $1, $5 }' | fzf | sed -e 's/model://g' | awk '{ print $1 }')
+  if [ "x$device" != "x" ]
+  then
+    adb -s $device install-multiple -r -d $(find ./ -name "*.apk" | tr "\n" " " | tr "//" "/")
+    appId=$(rg 'applicationId "' | awk '{ print $3 }' | sed -e "s/\"//g")
+    if [ "x$appId" != "x" ]
+    then
+      adb -s $device shell monkey -p "$appId.debug" 1
+    fi
+  else
+    echo "No device selected"
+  fi
+}
