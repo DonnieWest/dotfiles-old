@@ -74,6 +74,7 @@ Plug 'prabirshrestha/asyncomplete-file.vim'
 Plug 'prabirshrestha/async.vim'
 Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'tpope/vim-db'
+Plug 'puremourning/vimspector'
 
 Plug 'Shougo/context_filetype.vim'
 Plug 'kassio/neoterm'
@@ -81,8 +82,7 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
-" Plug 'w0rp/ale'
-Plug 'DonnieWest/ale', {'branch': 'aleSymbolSupport'}
+Plug 'w0rp/ale'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'metakirby5/codi.vim'
@@ -156,6 +156,7 @@ Plug 'machakann/vim-Verdin'
 
 Plug 'rust-lang/rust.vim'
 Plug 'racer-rust/vim-racer'
+Plug 'mhinz/vim-crates'
 
 "Markdown/Octopress Plugins
 
@@ -241,6 +242,7 @@ let g:indentLine_enabled = 0
 
 " Allow gitgutter on large files
 let g:gitgutter_max_signs=10000
+let g:magit_discard_untracked_do_delete=1
 let g:magit_refresh_gitgutter=1
 autocmd BufWritePost * :GitGutter
 autocmd User ALELintPost :GitGutter
@@ -287,6 +289,8 @@ au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#source
     \ }))
 
 let g:ale_completion_tsserver_autoimport = 1
+let g:ale_hover_to_preview = 0
+let g:ale_set_balloons = 1
 let g:ale_rename_tsserver_find_in_comments = 1
 let g:ale_rename_tsserver_find_in_comments = 1
 let g:ale_completion_tsserver_remove_items_without_detail = 1
@@ -615,6 +619,7 @@ autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 
 autocmd CursorHold *.js,*.jsx,*.kt :ALEHover
 nnoremap <silent> <C-]> :ALEGoToDefinition<CR>
+nnoremap <silent> <M-Return> :ALEFix<CR>
 
 function! GutentagsFilter(path) abort
     if fnamemodify(a:path, ':e') == 'java'
