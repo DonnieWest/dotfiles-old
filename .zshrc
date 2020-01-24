@@ -20,8 +20,6 @@ autoload -U colors && colors
 
 setopt prompt_subst
 
-PURE_PROMPT_SYMBOL=" %%"
-
 ## Keybindings
 
 autoload -U up-line-or-beginning-search
@@ -182,6 +180,24 @@ alias ssh='TERM=xterm-256color ssh'
 
 source ~/.zsh_plugins.sh
 
+ZSH_GIT_PROMPT_FORCE_BLANK=1
+ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg_bold[default]%} "
+ZSH_THEME_GIT_PROMPT_SUFFIX=""
+ZSH_THEME_GIT_PROMPT_SEPARATOR=" "
+ZSH_THEME_GIT_PROMPT_DETACHED="%{$fg_no_bold[cyan]%}:"
+ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg_no_bold[cyan]%}"
+ZSH_THEME_GIT_PROMPT_BEHIND="%{$fg_no_bold[cyan]%}↓"
+ZSH_THEME_GIT_PROMPT_AHEAD="%{$fg_no_bold[cyan]%}↑"
+ZSH_THEME_GIT_PROMPT_UNMERGED="%{$fg[red]%}✖"
+ZSH_THEME_GIT_PROMPT_STAGED="%{$fg[green]%}●"
+ZSH_THEME_GIT_PROMPT_UNSTAGED="%{$fg[red]%}✚"
+ZSH_THEME_GIT_PROMPT_UNTRACKED="…"
+ZSH_THEME_GIT_PROMPT_STASHED="%{$fg[blue]%}⚑"
+ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg_bold[green]%}✔"
+
+PROMPT='%(?,%{$fg[green]%},%{$fg[red]%}) %% '
+RPS1='%{$fg[white]%}%2~$(gitprompt) %{$fg_bold[blue]%}%{$reset_color%}'
+
 # Setup Env variables
 export N_PREFIX=$HOME/.config/n
 export GRADLE_HOME="$HOME/.gradle"
@@ -300,6 +316,15 @@ findAlias() {
   PS4='+%x:%I>' zsh -i -x -c '' |& grep $1
 }
 
+launch-emulator() {
+  emulator=$(ls ~/.android/avd | grep avd | sed 's/\.avd//g' | fzf)
+  if [ "x$emulator" != "x" ]
+  then
+    echo "Launching $emulator"
+    QT_QPA_PLATFORM=xcb emulator @$emulator &!
+  fi
+}
+
 unmount_drives() {
   local drive
   drive=$(udiskie-info -a | fzf)
@@ -340,3 +365,7 @@ launchAPK() {
     echo "No device selected"
   fi
 }
+
+export OPENER=rifle
+alias git=hub
+

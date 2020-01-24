@@ -60,6 +60,7 @@ Plug 'haishanh/night-owl.vim'
 Plug 'luochen1990/rainbow'
 Plug 'chrisbra/Colorizer'
 Plug 'justinmk/nvim-repl'
+Plug 'christoomey/vim-run-interactive'
 
 " Generic IDE features
 
@@ -82,7 +83,7 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-grepper'
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'metakirby5/codi.vim'
@@ -91,6 +92,8 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-gtfo'
 Plug 'sunaku/vim-dasht'
 Plug 'liuchengxu/vim-which-key'
+Plug 'liuchengxu/vista.vim'
+Plug 'neovim/nvim-lsp'
 " Appearance
 
 Plug 'thiagoalessio/rainbow_levels.vim'
@@ -103,6 +106,7 @@ Plug 'jreybert/vimagit'
 Plug 'airblade/vim-gitgutter'
 " Plug 'mhinz/vim-signify' "Good for other VCS other than GIT
 Plug 'tpope/vim-fugitive'
+Plug 'christoomey/vim-conflicted'
 Plug 'junegunn/gv.vim'
 Plug 'tpope/vim-rhubarb'
 Plug 'lambdalisue/gina.vim'
@@ -249,6 +253,10 @@ autocmd User ALELintPost :GitGutter
 autocmd User VimagitLeaveCommit :GitGutterAll
 autocmd User VimagitUpdateFile :GitGutterAll
 
+
+
+nnoremap <leader>ri :RunInInteractiveShell<space>
+
 let g:signify_vcs_list = [ 'git' ]
 
 "Generic wildignores
@@ -294,35 +302,66 @@ let g:ale_set_balloons = 1
 let g:ale_rename_tsserver_find_in_comments = 1
 let g:ale_rename_tsserver_find_in_comments = 1
 let g:ale_completion_tsserver_remove_items_without_detail = 1
+let ale_completion_tsserver_remove_warnings = 1
+let g:ale_hover_to_popup = 1
+
 let g:ale_completion_symbols = {
-\ 'keyword': 'keyword',
+\ 'text': '',
+\ 'method': '',
+\ 'function': '',
+\ 'constructor': '',
+\ 'field': '',
+\ 'variable': '',
 \ 'class': '',
 \ 'interface': '',
-\ 'script': 'script',
 \ 'module': '',
-\ 'local class': 'local class',
-\ 'type': '',
-\ 'enum': '',
-\ 'enum member': '',
-\ 'alias': '',
-\ 'type parameter': 'type param',
-\ 'primitive type': 'primitive type',
-\ 'var': '',
-\ 'local var': '',
 \ 'property': '',
-\ 'let': '',
-\ 'const': '',
-\ 'label': 'label',
-\ 'parameter': 'param',
-\ 'index': 'index',
-\ 'function': '',
-\ 'local function': 'local function',
+\ 'unit': 'unit',
+\ 'value': 'val',
+\ 'enum': '',
+\ 'keyword': 'keyword',
+\ 'snippet': '',
+\ 'color': 'color',
+\ 'file': '',
+\ 'reference': 'ref',
+\ 'folder': '',
+\ 'enum member': '',
+\ 'constant': '',
+\ 'struct': '',
+\ 'event': 'event',
+\ 'operator': '',
+\ 'type_parameter': 'type param',
+\ '<default>': 'v'
+\ }
+
+
+let g:asyncomplete_completion_symbols = {
+\ 'text': '',
 \ 'method': '',
-\ 'getter': '',
-\ 'setter': '',
-\ 'call': 'call',
+\ 'function': '',
 \ 'constructor': '',
-\ '<default>': 'v',
+\ 'field': '',
+\ 'variable': '',
+\ 'class': '',
+\ 'interface': '',
+\ 'module': '',
+\ 'property': '',
+\ 'unit': 'unit',
+\ 'value': 'val',
+\ 'enum': '',
+\ 'keyword': 'keyword',
+\ 'snippet': '',
+\ 'color': 'color',
+\ 'file': '',
+\ 'reference': 'ref',
+\ 'folder': '',
+\ 'enum member': '',
+\ 'constant': '',
+\ 'struct': '',
+\ 'event': 'event',
+\ 'operator': '',
+\ 'type_parameter': 'type param',
+\ '*': 'v'
 \ }
 
 let g:javascript_tsserver_use_global = 1
@@ -542,6 +581,16 @@ set showtabline=2
 
 let g:sharpenup_statusline_opts = { 'Highlight': 0 }
 
+function! NearestMethodOrFunction() abort
+  return get(b:, 'vista_nearest_method_or_function', '')
+endfunction
+
+" By default vista.vim never run if you don't call it explicitly.
+"
+" If you want to show the nearest function in your statusline automatically,
+" you can add the following line to your vimrc 
+autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+
 let g:lightline = {
       \ 'separator': { 'left': '', 'right': '' },
       \ 'subseparator': { 'left': '', 'right': '' },
@@ -552,7 +601,7 @@ let g:lightline = {
       \ },
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified'] ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'method'] ],
       \   'right': [ [ 'lineinfo' ],
       \              [ 'percent' ],
       \              ['gradle_project', 'gradle_running', 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok'],
@@ -567,7 +616,8 @@ let g:lightline = {
       \   'sharpenup': sharpenup#statusline#Build()
       \ },
       \ 'component_function': {
-      \   'gitbranch': 'fugitive#head'
+      \   'gitbranch': 'fugitive#head',
+      \   'method': 'NearestMethodOrFunction'
       \ },
       \ 'component_expand': {
       \   'buffers': 'lightline#bufferline#buffers',
@@ -620,6 +670,15 @@ autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
 autocmd CursorHold *.js,*.jsx,*.kt :ALEHover
 nnoremap <silent> <C-]> :ALEGoToDefinition<CR>
 nnoremap <silent> <M-Return> :ALEFix<CR>
+
+nnoremap <silent> gd    :ALEGoToTypeDefinition<CR>
+nnoremap <silent> K     :ALEDetail<CR>
+nnoremap <silent> gD    :ALESymbolSearch<CR>
+nnoremap <silent> <c-k> :ALEDetail<CR>
+nnoremap <silent> 1gD   :ALEGoToTypeDefinition<CR>
+nnoremap <silent> gr    :ALEFindReferences<CR>
+
+
 
 function! GutentagsFilter(path) abort
     if fnamemodify(a:path, ':e') == 'java'
