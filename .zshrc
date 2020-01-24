@@ -336,34 +336,47 @@ unmount_drives() {
 }
 
 connectToDevice() {
-  device=$(adb devices | tail -n +2 | fzf | awk '{ print $1 }')
-  scrcpy -s $device &!
+  adb devices | tail -n +2 | fzf -m | awk '{ print $1 }' | while read device; do
+    scrcpy -s $device -p $(python -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()') &!
+  done
 }
 
-launchEmulator() {
-  avd=$(avdmanager list avd | grep "Name:" | awk '{ print $2 }')
-  if [ "x$avd" != "x" ]
-  then
-    emulator "@${avd%.*}" &!
-  else
-    echo "Failed to launch Emulator"
-  fi
+launchemulator() {
+  avdmanager list avd | grep "name:" | awk '{ print $2 }' | fzf -m | while read emulator; do
+    emulator "@${emulator%.*}" 1>/dev/null 2>/dev/null &!
+  done
 }
 
 launchAPK() {
   ./gradlew assembleDebug
-  device=$(adb devices -l | tail -n +2 | awk '{ print $1, $5 }' | fzf | sed -e 's/model://g' | awk '{ print $1 }')
-  if [ "x$device" != "x" ]
-  then
+  adb devices -l | tail -n +2 | awk '{ print $1, $5 }' | sed -e 's/model://g' | awk '{ print $1 }'  | fzf -m | while read device; do
     adb -s $device install-multiple -r -d $(find ./ -name "*.apk" | tr "\n" " " | tr "//" "/")
-    appId=$(rg 'applicationId "' | awk '{ print $3 }' | sed -e "s/\"//g")
-    if [ "x$appId" != "x" ]
-    then
-      adb -s $device shell monkey -p "$appId.debug" 1
-    fi
-  else
-    echo "No device selected"
-  fi
+    # appId=$(rg 'applicationId "' | awk '{ print $3 }' | sed -e "s/\"//g")
+    # if [ "x$appId" != "x" ]
+    # then
+    #   adb -s $device shell monkey -p "$appId" 1
+    # fi
+  done
+}
+
+launchReleaseAPK() {
+  ./gradlew assembleRelease
+  adb devices -l | tail -n +2 | awk '{ print $1, $5 }' | sed -e 's/model://g' | awk '{ print $1 }'  | fzf -m | while read device; do
+    adb -s $device install-multiple -r -d $(find ./ -name "*.apk" | tr "\n" " " | tr "//" "/")
+    # appId=$(rg 'applicationId "' | awk '{ print $3 }' | sed -e "s/\"//g")
+    # if [ "x$appId" != "x" ]
+    # then
+    #   adb -s $device shell monkey -p "$appId" 1
+    # fi
+  done
+}
+
+watchCalendar() {
+  while true; do clear ; gcalcli calw --no-military --noweekend --details description ; sleep 600s; done
+}
+
+logsForDevice() {
+  device=$(adb devices | tail -n +2 | fzf | awk '{ print $1 }') && pidcat -s $device --current
 }
 
 export OPENER=rifle

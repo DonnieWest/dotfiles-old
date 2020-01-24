@@ -3,10 +3,9 @@ zsh-users/zsh-completions
 zsh-users/zsh-syntax-highlighting
 wfxr/forgit
 lukechilds/zsh-better-npm-completion
-gradle/gradle-completion
 walesmd/caniuse.plugin.zsh
 jsahlen/tmux-vim-integration.plugin.zsh
-robbyrussell/oh-my-zsh path:plugins/docker path:plugins/adb
+robbyrussell/oh-my-zsh path:plugins/docker path:plugins/adb path:plugins/gradle
 chrisands/zsh-yarn-completion
 mafredri/zsh-async
 # gretzky/n.zsh
